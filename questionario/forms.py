@@ -1,5 +1,5 @@
 from django.forms import *
-
+from django import forms
 from atividades.models import Tema
 from questionario.models import Questionario, Pergunta, TemaPerg, TipoResposta, PergQuest
 
@@ -14,11 +14,23 @@ class QuestionarioForm(ModelForm):
             'titulo': TextInput(attrs={'class': 'input'}),
         }
 
-class Questionario2Form(ModelForm):
-    class Meta:
-        model = Questionario
-        exclude = ['id', 'estadoquestid', 'titulo']
-        widgets = {}
+
+class Questionario2Form(forms.Form):
+    questionario = forms.ModelChoiceField(
+        queryset=Questionario.objects.all(),
+        widget=forms.Select(attrs={'class': 'input'}),
+        label='', # Isto removerá o label
+        empty_label=None
+    )
+
+# class Questionario2Form(ModelForm):
+#     questionarios = forms.ModelChoiceField(queryset=Questionario.objects.all(), empty_label=None)
+    # class Meta:
+    #     model = Questionario
+    #     exclude = ['id', 'estadoquestid', 'titulo']
+    #     widgets = {
+    #         'titulo': forms.Select(attrs={'class': 'input'}),
+    #     }
 
 
 class PerguntasForm(ModelForm):
@@ -38,12 +50,13 @@ class TemaFormPerg(ModelForm):
             'tema': TextInput(attrs={'class': 'input'}),
         }
 
+
 class TipoRespostaForm(ModelForm):
     class Meta:
         model = TipoResposta
         exclude = ['id']
         widgets = {
-            'tiporesposta' : TextInput(attrs={'class': 'input'}),
+            'tiporesposta': TextInput(attrs={'class': 'input'}),
         }
 
 

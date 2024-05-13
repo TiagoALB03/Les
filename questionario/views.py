@@ -5,6 +5,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, JsonResponse
 from django.urls import reverse
 
+import questionario
 from configuracao.forms import TemaForm
 from utilizadores.views import user_check
 from .filters import QuestionarioFilter, TemaPergFilter, TipoRespostaFilter
@@ -142,48 +143,57 @@ def arquivarQuestionario(request, questionario_id):
     return redirect('questionarios:consultar-questionarios-admin')
 
 
-def associarAnoQuestionario(request, questionario_id):
+def associarAnoQuestionario(request, diaaberto_id):
     user_check_var = user_check(request=request, user_profile=[Administrador])
     if user_check_var.get('exists') == False:
         return user_check_var.get('render')
 
-    questionario = Questionario.objects.get(id=questionario_id)
+    # questionario = Questionario.objects.get(id=questionario_id)
 
-    questionarioForm = Questionario2Form(instance=questionario)
+    # questionarioForm = Questionario2Form(instance=questionario)
     tabelaDiaAberto = DiaabertoTable(Diaaberto.objects.all())
     RequestConfig(request).configure(tabelaDiaAberto)
     flagError = False
 
     if request.method == 'POST':
-        questionarioForm = Questionario2Form(request.POST, request.FILES, instance=questionario)
-        if questionarioForm.is_valid():
-            if Diaaberto.objects.get(ano=questionario.dateid.ano).questionarioid is None:
-                questionario_copia = Questionario.objects.create(titulo=questionario.titulo,
-                                                                 dateid=questionario.dateid,
-                                                                 estadoquestid=EstadosQuest.objects.get(id=2))
-
-                perguntas_originais = Pergunta.objects.filter(questionarioid=questionario)
-                for pergunta in perguntas_originais:
-                    pergunta_copia = Pergunta.objects.create(
-                        pergunta=pergunta.pergunta,
-                        questionarioid=questionario_copia,
-                        temaid=pergunta.temaid,
-                        tiporespostaid=pergunta.tiporespostaid
-                    )
-
-                diaaberto = Diaaberto.objects.get(ano=questionario_copia.dateid.ano)
-                diaaberto.questionarioid = questionario_copia
-                diaaberto.save()
-                return redirect('questionarios:consultar-questionarios-admin')
-            else:
-                flagError = True
-
+        quest = Questionario2Form(request.POST)
+        if quest.is_valid():
+            questionario_selecionado = quest.cleaned_data['questionario']
+            diaaberto = Diaaberto.objects.get(id=diaaberto_id)
+            diaaberto.questionarioid = questionario_selecionado
+            diaaberto.save()
+            print(questionario_selecionado)
+            return redirect('configuracao:diasAbertos')
+            # if Diaaberto.objects.get(ano=questionario.dateid.ano).questionarioid is None:
+            #     questionario_copia = Questionario.objects.create(titulo=questionario.titulo,
+            #                                                      dateid=questionario.dateid,
+            #                                                      estadoquestid=EstadosQuest.objects.get(id=2))
+            #
+            #     perguntas_originais = Pergunta.objects.filter(questionarioid=questionario)
+            #     for pergunta in perguntas_originais:
+            #         pergunta_copia = Pergunta.objects.create(
+            #             pergunta=pergunta.pergunta,
+            #             questionarioid=questionario_copia,
+            #             temaid=pergunta.temaid,
+            #             tiporespostaid=pergunta.tiporespostaid
+            #         )
+            #
+            #     diaaberto = Diaaberto.objects.get(ano=questionario_copia.dateid.ano)
+            #     diaaberto.questionarioid = questionario_copia
+            #     diaaberto.save()
+            #     return redirect('questionarios:consultar-questionarios-admin')
+            # else:
+            #     flagError = True
+    else:
+        quest = Questionario2Form()
+    # 'form': questionarioForm,
     return render(request=request,
                   template_name='questionario/alterarAno.html',
-                  context={'form': questionarioForm,
-                           # 'questionario': questionario,
-                           'flagError': flagError,
-                           'diaabertotable': tabelaDiaAberto})
+                  context={
+                      'quest': quest,
+                      # 'questionario': questionario,
+                      'flagError': flagError,
+                      'diaabertotable': tabelaDiaAberto})
 
 
 def criarperguntas(request, questionario_id):

@@ -7,7 +7,7 @@ urlpatterns = [
     path('criarQuestionario', views.criarquestionario, name='criar-questionario'),
     path('criarQuestionario/<int:questionario_id>', views.criarquestionario, name='criar-questionario'),
     path('arquivarQuestionario/<int:questionario_id>', views.arquivarQuestionario, name='arquivar-questionario'),
-    path('associarAnoQuestionario/<int:questionario_id>', views.associarAnoQuestionario, name='associar-ano-questionario'),
+    path('associarAnoQuestionario/<int:diaaberto_id>', views.associarAnoQuestionario, name='associar-ano-questionario'),
 
     path('criarPerguntas/<int:questionario_id>', views.criarperguntas, name='criar-perguntas'),
 
