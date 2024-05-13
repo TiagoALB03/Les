@@ -96,7 +96,8 @@ class Atividade(models.Model):
     # Field name made lowercase.
     tema = models.ForeignKey('Tema', models.CASCADE,
                              db_column='Tema', blank=False, null=False)
-
+    roteiro = models.ForeignKey('roteiro.Roteiro', on_delete=models.SET_NULL, null=True, db_column='RoteiroID',
+                                blank=True)
     class Meta:
         db_table = 'Atividade'
 
@@ -196,12 +197,14 @@ class Sessao(models.Model):
     vagas = models.IntegerField(db_column='Vagas')
     # Field name made lowercase.
     atividadeid = models.ForeignKey(
-        Atividade, models.CASCADE, db_column='AtividadeID')
+        Atividade, models.CASCADE, db_column='AtividadeID',null=True)
     # Field name made lowercase.
     dia = models.DateField(db_column='Dia', blank=True, null=True)
     # Field name made lowercase.
     horarioid = models.ForeignKey(
         'configuracao.Horario', models.DO_NOTHING, db_column='HorarioID')
+    roteiro = models.ForeignKey('roteiro.Roteiro', on_delete=models.SET_NULL, null=True, db_column='RoteiroID',
+                                blank=True)
 
     def get_colaboradores(self):
         tarefas = TarefaAuxiliar.objects.filter(sessao = self).exclude(tarefaid__estado="naoAtribuida")

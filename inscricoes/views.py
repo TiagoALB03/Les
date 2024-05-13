@@ -1,5 +1,9 @@
+import csv
+
 from django.shortcuts import get_object_or_404, redirect, render
-from inscricoes.models import Inscricao, Inscricaosessao, Responsavel
+from inscricoes.models import Inscricao, Inscricaosessao, Responsavel, Inscricaoprato
+from inscricoes.templatetags.inscricoes_extras import almocampenhaDia, almocamPenhaInscricao, almocamgambelasDia, \
+    almocamGambelasInscricao
 from inscricoes.utils import add_vagas_sessao, enviar_mail_confirmacao_inscricao, init_form, nao_tem_permissoes, render_pdf, save_form, update_context, update_post
 from atividades.models import Atividade, Sessao
 from atividades.serializers import AtividadeSerializer
@@ -7,7 +11,7 @@ from atividades.filters import AtividadeFilter
 from inscricoes.forms import AlmocoForm, InfoForm, InscricaoForm, ResponsavelForm, SessoesForm, TransporteForm
 from utilizadores.models import Administrador, Coordenador, Participante
 from utilizadores.views import user_check
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from inscricoes.tables import InscricoesTable
 from inscricoes.filters import InscricaoFilter
@@ -20,7 +24,7 @@ from django_tables2 import SingleTableMixin
 from django_filters.rest_framework.backends import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter, SearchFilter
 from django_filters.views import FilterView
-from configuracao.models import Departamento, Diaaberto
+from configuracao.models import Departamento, Diaaberto, Prato
 from datetime import datetime
 import pytz
 from configuracao.tests.test_models import create_open_day
@@ -368,3 +372,119 @@ def estatisticas(request, diaabertoid=None):
         'dias': dias,
         'meios': Inscricao.MEIO_TRANSPORTE_CHOICES,
     })
+
+def relatorio_almoco(request, diaabertoid=None):
+    """ View que mostra as estatísticas do Dia Aberto """
+    user_check_var = user_check(request=request, user_profile=[Administrador])
+    if not user_check_var.get('exists'):
+        return user_check_var.get('render')
+    if diaabertoid is None:
+        try:
+            diaabertoid = Diaaberto.objects.filter(
+                ano__lte=datetime.now().year).order_by('-ano').first().id
+        except:
+            return redirect('utilizadores:mensagem', 18)
+    diaaberto = get_object_or_404(Diaaberto, id=diaabertoid)
+    numdays = int((diaaberto.datadiaabertofim -
+                   diaaberto.datadiaabertoinicio).days) + 1
+    dias = [(diaaberto.datadiaabertoinicio + timedelta(days=x)
+             ).strftime("%d/%m/%Y") for x in range(numdays)]
+
+    return render(request, 'inscricoes/escolherAnoRelatorioAlmoco.html', {
+        'diaaberto': diaaberto,
+        'diasabertos': Diaaberto.objects.all(),
+        'ultimo_dia_aberto': Diaaberto.objects.order_by('-datadiaabertofim').first(),
+        'departamentos': Departamento.objects.filter(
+            Exists(
+                Atividade.objects.filter(
+                    professoruniversitarioutilizadorid__departamento__id=OuterRef(
+                        'id'),
+                    diaabertoid__id=diaabertoid,
+                    estado="Aceite",
+                )
+            )
+        ),
+        'dias': dias,
+        'meios': Inscricao.MEIO_TRANSPORTE_CHOICES,
+        'comidas': Prato.tipos,
+        "incricao_comida": Inscricaoprato.npratosalunos,
+        "pratos_numero": Inscricaoprato,
+    })
+
+def relatorio_almoco_excel(request, diaabertoid=None):
+    inscricoes = Inscricao.objects.filter(diaaberto_id=diaabertoid)
+    diaaberto = get_object_or_404(Diaaberto, id=diaabertoid)
+    numdays = int((diaaberto.datadiaabertofim - diaaberto.datadiaabertoinicio).days) + 1
+    dias = [(diaaberto.datadiaabertoinicio + timedelta(days=x)).strftime("%d/%m/%Y") for x in range(numdays)]
+
+    if not inscricoes.exists():
+        return HttpResponse("Não existem inscrições para o Dia Aberto do ano fornecido.", status=404)
+
+    try:
+        dia_aberto = Diaaberto.objects.get(id=diaabertoid)
+    except Diaaberto.DoesNotExist:
+        return HttpResponse("Não existe Dia Aberto para o ano fornecido.", status=404)
+
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = f'attachment; filename="Refeições_dia_aberto{dia_aberto}.csv"'
+
+
+
+    for dia in dias:
+        totalpenha = almocampenhaDia(dia)
+        totalgambelas = almocamgambelasDia(dia)
+        writer = csv.writer(response, delimiter=';')
+        writer.writerow(['Informacao sobre os almocos no dia aberto',dia])
+        writer.writerow(['Numero grupo', 'Escola', 'Localidade', 'Cantina Penha', 'Cantina Gambelas'])
+        for inscricao in inscricoes:
+            if dia == inscricao.dia.strftime("%d/%m/%Y"):
+                penha = almocamPenhaInscricao(inscricao)
+                gambelas = almocamGambelasInscricao(inscricao)
+                writer.writerow(
+                    [inscricao.id, inscricao.escola.nome, inscricao.escola.local, penha, gambelas])
+
+        writer.writerow(['total de almocos','','',totalpenha,totalgambelas])
+        writer.writerow([])
+        writer.writerow([])
+
+    return response
+
+
+def pdfalmocos(request, diaabertoid=None):
+    inscricoes = Inscricao.objects.filter(diaaberto_id=diaabertoid)
+    if not inscricoes.exists():
+        return HttpResponse("Não existem inscrições para o Dia Aberto do ano fornecido.", status=404)
+    user_check_var = user_check(request=request, user_profile=[Administrador])
+    if not user_check_var.get('exists'):
+        return user_check_var.get('render')
+    if diaabertoid is None:
+        try:
+            diaabertoid = Diaaberto.objects.filter(
+                ano__lte=datetime.now().year).order_by('-ano').first().id
+        except:
+            return redirect('utilizadores:mensagem', 18)
+    diaaberto = get_object_or_404(Diaaberto, id=diaabertoid)
+    numdays = int((diaaberto.datadiaabertofim -
+                   diaaberto.datadiaabertoinicio).days) + 1
+    dias = [(diaaberto.datadiaabertoinicio + timedelta(days=x)
+             ).strftime("%d/%m/%Y") for x in range(numdays)]
+
+    context = {'diaaberto': diaaberto,
+               'diasabertos': Diaaberto.objects.all(),
+               'departamentos': Departamento.objects.filter(
+                   Exists(
+                       Atividade.objects.filter(
+                           professoruniversitarioutilizadorid__departamento__id=OuterRef(
+                               'id'),
+                           diaabertoid__id=diaabertoid,
+                           estado="Aceite",
+                       )
+                   )
+               ),'dias': dias,
+        'meios': Inscricao.MEIO_TRANSPORTE_CHOICES,
+        'comidas': Prato.tipos,
+        "incricao_comida": Inscricaoprato.npratosalunos,
+        "pratos_numero": Inscricaoprato,
+        'inscricao': Inscricao.objects.filter(diaaberto__id=diaabertoid).all(),}
+
+    return render_pdf("inscricoes/almoco_pdf.html", context, f"Almoço_dia_aberto_{diaaberto}.pdf")
