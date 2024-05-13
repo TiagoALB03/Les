@@ -38,6 +38,7 @@ urlpatterns = [
     path('configuracao/', include('configuracao.urls')),
     path('coordenadores/', include('coordenadores.urls')),
     path('questionario/', include('questionario.urls')),
+    path('roteiro/', include('roteiro.urls')),
 
     path('', views.home, name='home'),
 
