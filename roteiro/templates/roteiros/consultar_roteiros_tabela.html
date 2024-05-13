@@ -1,0 +1,62 @@
+{% extends 'app2.html' %}
+{% block content %}
+    {% load l10n %}
+    {% load configuracao_tags %}
+    {% load django_tables2 %}
+    <div class="columns">
+    <div class="column is-1">
+    </div>
+    <div class="column">
+    <nav class="breadcrumb" aria-label="breadcrumbs">
+        <ul>
+            <li><a href="{% url 'home' %}">Início</a></li>
+            <li><a href="{% url 'roteiros:roteiroCoordenador' %}">Roteiros</a></li>
+            <li>Consultar Roteiro</li>
+        </ul>
+    </nav>
+    <ul>
+    <div style="margin-left: 40%">
+    <strong>Informação geral do roteiro:</strong>
+</div>
+<ul style="list-style-type: none; padding: 0; margin: 0;">
+    <li><strong>Publico Alvo:</strong> <span style="margin-left: 10px;">{{ roteiros.publicoalvo }}</span></li>
+    <li><strong>Descrição:</strong> <span style="margin-left: 33px;">{{ roteiros.descricao }}</span></li>
+    <li><strong>Duração:</strong> <span style="margin-left: 47px;">{{ roteiros.duracaoesperada }} minutos</span></li>
+    <li><strong>Numero máximo de vagas:</strong> <span style="margin-left: 10px;">{{ roteiros.participantesmaximo }}</span></li>
+</ul>
+
+
+    <div style="margin-left: 40%"><strong>Atividades:</strong></div>
+   {% for atividade in atividades %}
+    <li style="padding-bottom: 10px; border-bottom: 1px solid #ccc;">
+        <strong>Atividade:</strong> <span style="margin-left: 10px;">{{ atividade.nome }}</span><br>
+        <strong>Edifício:</strong> <span style="margin-left: 45px;">{{ atividade.espacoid.edificio }}</span><br>
+        <strong>Andar:</strong> <span style="margin-left: 61px;">{{ atividade.espacoid.andar }}</span><br>
+        <strong>Sala:</strong> <span style="margin-left: 71px;">{{ atividade.espacoid.nome }}</span>
+    </li>
+{% endfor %}
+    <div style="margin-left: 40%"><strong>Sessões:</strong></div>
+    <ul style="list-style-type: none; padding: 0; margin: 0;">
+    <ul style="list-style-type: none; padding: 0; margin: 0;">
+        {% for sessao in sessoes %}
+            <li style="padding-bottom: 10px; border-bottom: 1px solid #ccc; overflow: hidden;">
+                <div style="width: 33.33%; float: left;">
+                    <strong>Dia:</strong> <span>{{ sessao.dia }}</span><br>
+                </div>
+                <div style="width: 33.33%; float: left;">
+                    <strong>Horário:</strong> <span>{{ sessao.horarioid.inicio }}/{{ sessao.horarioid.fim }}h</span><br>
+                </div>
+                <div style="width: 33.33%; float: left;">
+                    <strong>Inscrições:</strong> <span>{{ sessao.ninscritos }}</span>
+                </div>
+                <div style="clear: both;"></div>
+            </li>
+        {% endfor %}
+    </ul>
+    </ul>
+    </ul>
+    </div>
+    </div>
+{% endblock content %}
+{% block scripts %}
+{% endblock scripts %}
