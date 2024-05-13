@@ -274,6 +274,13 @@ class DiaAbertoTable(tables.Table):
 
     def render_acoes(self, record):
         quarto_botao = """<span class="icon"></span>"""
+        terceiro_botao = f"""
+            <a id='questionarioAalterar', data-tooltip="Alteração de ano", href="{reverse('questionarios:associar-ano-questionario', args=[record.getDiaAbertoID])}">
+                <span class="icon is-small">
+                    <i class="mdi mdi-calendar-blank mdi-24px" style="color: #3273DC"></i>
+                </span>
+            </a>
+        """
         if record.getQuestionario is not None:
             quarto_botao = f"""
                             <a data-tooltip="Mudificação no questionário" href="">
@@ -284,23 +291,8 @@ class DiaAbertoTable(tables.Table):
                             """
         return format_html(f"""
             <div>
-                <a id='edit' href="{reverse('configuracao:editarDia', kwargs={'id': record.pk})}">
-                    <span class="icon is-small">
-                        <i class="mdi mdi-circle-edit-outline mdi-24px"></i>
-                    </span>
-                </a>
-                &nbsp;          
-                <a onclick="alert.render('Tem a certeza que pretende eliminar este Dia? <strong>Isto vai eliminar tudo o que depende do dia aberto como as Atividades e as Inscrições</strong>','{reverse('configuracao:eliminarDia', kwargs={'id': record.pk})}')">
-                    <span class="icon is-small">
-                        <i class="mdi mdi-trash-can-outline mdi-24px" style="color: #ff0000"></i>
-                    </span>
-                </a>
-                &nbsp;          
-                <a id='questionarioAalterar', data-tooltip="Alteração de ano",href='{reverse('configuracao:eliminarDia', kwargs={'id': record.pk})}')">
-                    <span class="icon is-small">
-                        <i class="mdi mdi-calendar-blank mdi-24px" style="color: #3273DC"></i>
-                    </span>
-                </a>
+                        
+                {terceiro_botao}
                 &nbsp;
                 {quarto_botao}
             </div> 

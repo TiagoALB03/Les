@@ -48,7 +48,7 @@
 								<label class="label">Titulo</label>
 								<div class="control">
 									<span class="select is-fullwidth is-empty">
-										{{form.titulo}}
+										{{quest.as_p}}
 									</span>
 								</div>
 								</div>
@@ -63,7 +63,7 @@
 					<div class="column is-8 is-offset-2">
 						<div class="level">
 							<div class="level-left">
-								<a class="button is-medium is-outlined" type="button" href="{% url 'questionarios:consultar-questionarios-admin' %}">
+								<a class="button is-medium is-outlined" type="button" href="{% url 'configuracao:diasAbertos' %}">
 								<span>Cancelar</span>
 								</a>
 							</div>

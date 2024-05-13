@@ -148,6 +148,9 @@ class Diaaberto(models.Model):
     questionarioid = models.ForeignKey('questionario.Questionario', models.CASCADE, db_column='Questionario', null=True, blank=True)
 
     @property
+    def getDiaAbertoID(self):
+        return self.id
+    @property
     def getQuestionario(self):
         return self.questionarioid
 
