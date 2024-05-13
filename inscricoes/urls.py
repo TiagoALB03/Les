@@ -32,4 +32,8 @@ urlpatterns = [
          name='estatisticas'),
     path('estatisticas/<int:diaabertoid>', views.estatisticas,
          name='estatisticas'),
+    path('almoco_pdf/<int:diaabertoid>', views.pdfalmocos, name='almoco_pdf'),
+    path('relatorio_almoco_excel/<int:diaabertoid>', views.relatorio_almoco_excel, name='relatorio_almoco_excel'),
+
+    path('relatorio_almoço', views.relatorio_almoco,name='relatorio_almoço'),
 ]

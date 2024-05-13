@@ -217,3 +217,58 @@ def respostaRConfortoComValor(respostas, valor ):
 def respostaRapidezComValor(respostas, valor ):
     return respostas.filter(resposta=valor, perguntaID__pergunta="Como avalias a rapidez do transporte?").count()
 
+@register.filter
+def almocamPenhaInscricao(incricao):
+    alunos = Inscricaoprato.objects.filter(
+        inscricao__id=incricao.id,campus__nome="Penha",
+    ).aggregate(Sum('npratosalunos'))
+    docentes = Inscricaoprato.objects.filter(
+        inscricao__id=incricao.id,campus__nome="Penha",
+    ).aggregate(Sum('npratosdocentes'))
+    result = alunos['npratosalunos__sum'] if alunos['npratosalunos__sum'] is not None else 0
+    result += docentes['npratosdocentes__sum'] if docentes['npratosdocentes__sum'] is not None else 0
+    return result
+
+
+@register.filter
+def almocamGambelasInscricao(incricao):
+    alunos = Inscricaoprato.objects.filter(
+        inscricao__id=incricao.id,campus__nome="Gambelas",
+    ).aggregate(Sum('npratosalunos'))
+    docentes = Inscricaoprato.objects.filter(
+        inscricao__id=incricao.id,campus__nome="Gambelas",
+    ).aggregate(Sum('npratosdocentes'))
+    result = alunos['npratosalunos__sum'] if alunos['npratosalunos__sum'] is not None else 0
+    result += docentes['npratosdocentes__sum'] if docentes['npratosdocentes__sum'] is not None else 0
+    return result
+
+
+@register.filter
+def almocampenhaDia(dia):
+    formatted_date = datetime.strptime(dia, "%d/%m/%Y").strftime("%Y-%m-%d")
+    alunos = Inscricaoprato.objects.filter(
+        inscricao__dia=formatted_date,
+        campus__nome="Penha",
+    ).aggregate(Sum('npratosalunos'))
+    docentes = Inscricaoprato.objects.filter(
+        inscricao__dia=formatted_date,
+        campus__nome="Penha",
+    ).aggregate(Sum('npratosdocentes'))
+    result = alunos['npratosalunos__sum'] if alunos['npratosalunos__sum'] is not None else 0
+    result += docentes['npratosdocentes__sum'] if docentes['npratosdocentes__sum'] is not None else 0
+    return result
+
+@register.filter
+def almocamgambelasDia(dia):
+    formatted_date = datetime.strptime(dia, "%d/%m/%Y").strftime("%Y-%m-%d")
+    alunos = Inscricaoprato.objects.filter(
+        inscricao__dia=formatted_date,
+        campus__nome="Gambelas",
+    ).aggregate(Sum('npratosalunos'))
+    docentes = Inscricaoprato.objects.filter(
+        inscricao__dia=formatted_date,
+        campus__nome="Gambelas",
+    ).aggregate(Sum('npratosdocentes'))
+    result = alunos['npratosalunos__sum'] if alunos['npratosalunos__sum'] is not None else 0
+    result += docentes['npratosdocentes__sum'] if docentes['npratosdocentes__sum'] is not None else 0
+    return result

@@ -95,6 +95,19 @@
                             Resposta</a>
                         <a href="{% url 'questionarios:estatisticas' %}" class="navbar-item">Estatistica</a>
                     </div>
+
+                </div>
+                <div class="navbar-item has-dropdown is-hoverable">
+                    <a class="navbar-link">
+                        Relatórios
+                    </a>
+                    <div class="navbar-dropdown">
+                        <a href="{% url 'configuracao:verUOs' %}" class="navbar-item">Transportes</a>
+                        <a href="{% url 'inscricoes:relatorio_almoço' %}" class="navbar-item">Refeições</a>
+                        <a href="{% url 'configuracao:verDepartamentos' %}" class="navbar-item">Presenças no dia
+                            aberto</a>
+                        <a href="{% url 'configuracao:verCursos' %}" class="navbar-item">Atividades/roteiro</a>
+                    </div>
                 </div>
                 </div>
             {% else %}
