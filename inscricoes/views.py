@@ -9,7 +9,7 @@ from atividades.models import Atividade, Sessao
 from atividades.serializers import AtividadeSerializer
 from atividades.filters import AtividadeFilter
 from inscricoes.forms import AlmocoForm, InfoForm, InscricaoForm, ResponsavelForm, SessoesForm, TransporteForm
-from questionario.models import Resposta, Pergunta
+from questionario.models import Resposta, Pergunta, Questionario
 from utilizadores.models import Administrador, Coordenador, Participante
 from utilizadores.views import user_check
 from django.http import HttpResponseRedirect, HttpResponse
@@ -487,3 +487,116 @@ def pdfalmocos(request, diaabertoid=None):
 
     return render_pdf("inscricoes/almoco_pdf.html", context, f"Almoço_dia_aberto_{diaaberto}.pdf")
 
+def estatisticasano(request, diaabertoid=None):
+    """ View que mostra as estatísticas do Dia Aberto """
+    user_check_var = user_check(request=request, user_profile=[Administrador])
+    if not user_check_var.get('exists'):
+        return user_check_var.get('render')
+    if diaabertoid is None:
+        try:
+            diaabertoid = Diaaberto.objects.filter(
+                ano__lte=datetime.now().year).order_by('-ano').first().id
+        except:
+            return redirect('utilizadores:mensagem', 18)
+    diaaberto = get_object_or_404(Diaaberto, id=diaabertoid)
+    numdays = int((diaaberto.datadiaabertofim -
+                   diaaberto.datadiaabertoinicio).days)+1
+    dias = [(diaaberto.datadiaabertoinicio + timedelta(days=x)
+             ).strftime("%d/%m/%Y") for x in range(numdays)]
+    return render(request, 'inscricoes/ano.html', {
+        'diaaberto': diaaberto,
+        'diasabertos': Diaaberto.objects.all(),
+        'departamentos': Departamento.objects.filter(
+            Exists(
+                Atividade.objects.filter(
+                    professoruniversitarioutilizadorid__departamento__id=OuterRef(
+                        'id'),
+                    diaabertoid__id=diaabertoid,
+                    estado="Aceite",
+                )
+            )
+        ),
+        'dias': dias,
+        'meios': Inscricao.MEIO_TRANSPORTE_CHOICES,
+        'comidas': Prato.tipos,
+        "incricao_comida": Inscricaoprato.npratosalunos,
+        "pratos_numero": Inscricaoprato,
+    })
+
+def estatisticasAlmocos(request, diaabertoid=None):
+    """ View que mostra as estatísticas do Dia Aberto """
+    user_check_var = user_check(request=request, user_profile=[Administrador])
+    if not user_check_var.get('exists'):
+        return user_check_var.get('render')
+    if diaabertoid is None:
+        try:
+            diaabertoid = Diaaberto.objects.filter(
+                ano__lte=datetime.now().year).order_by('-ano').first().id
+        except:
+            return redirect('utilizadores:mensagem', 18)
+    diaaberto = get_object_or_404(Diaaberto, id=diaabertoid)
+    numdays = int((diaaberto.datadiaabertofim -
+                   diaaberto.datadiaabertoinicio).days)+1
+    dias = [(diaaberto.datadiaabertoinicio + timedelta(days=x)
+             ).strftime("%d/%m/%Y") for x in range(numdays)]
+    return render(request, 'inscricoes/estatisticaAlmoco.html', {
+        'diaaberto': diaaberto,
+        'diasabertos': Diaaberto.objects.all(),
+        'departamentos': Departamento.objects.filter(
+            Exists(
+                Atividade.objects.filter(
+                    professoruniversitarioutilizadorid__departamento__id=OuterRef(
+                        'id'),
+                    diaabertoid__id=diaabertoid,
+                    estado="Aceite",
+                )
+            )
+        ),
+        'dias': dias,
+        'meios': Inscricao.MEIO_TRANSPORTE_CHOICES,
+        'comidas': Prato.tipos,
+        "incricao_comida": Inscricaoprato.npratosalunos,
+        "pratos_numero": Inscricaoprato,
+        'respostas': Resposta.objects.all().filter(perguntaID__pergquest__questionarioid=diaaberto.questionarioid,perguntaID=147),
+        'pergunta':Pergunta.objects.get(id=147),
+        'respostas2': Resposta.objects.all().filter(perguntaID__pergquest__questionarioid=diaaberto.questionarioid,perguntaID=148),
+        'pergunta2': Pergunta.objects.get(id=148),
+        'respostas3': Resposta.objects.all().filter(perguntaID__pergquest__questionarioid=diaaberto.questionarioid,perguntaID=149),
+        'pergunta3': Pergunta.objects.get(id=149),
+        'respostas4': Resposta.objects.all().filter(perguntaID__pergquest__questionarioid=diaaberto.questionarioid,perguntaID=150),
+        'pergunta4': Pergunta.objects.get(id=150),
+    })
+
+def exportarcsv(request,diaabertoid=None):
+    respostas = Resposta.objects.all()
+    if not respostas.exists():
+        return HttpResponse("Não existem respostas de questionário para o Dia Aberto do ano fornecido.", status=404)
+
+    if diaabertoid is None:
+        try:
+            diaabertoid = Diaaberto.objects.filter(
+                ano__lte=datetime.now().year).order_by('-ano').first().id
+        except:
+            return redirect('utilizadores:mensagem', 18)
+    diaaberto = get_object_or_404(Diaaberto, id=diaabertoid)
+
+    response = HttpResponse(content_type='text/csv')
+    writer = csv.writer(response)
+    writer.writerow(['ID', 'Qestionario', 'Estado'])
+    for questionario in Questionario.objects.all().values_list('id', 'titulo', 'estadoquestid'):
+        writer.writerow(questionario)
+    writer.writerow([])
+
+    writer.writerow(['id', 'Pergunta', 'Tema', 'Tipo de Resposta'])
+    for pergunta in Pergunta.objects.all().values_list('id','pergunta', 'temaid', 'tiporespostaid'):
+        writer.writerow(pergunta)
+
+    writer.writerow([])
+    writer.writerow(['PerguntaID', 'Resposta',])
+
+    for resposta in Resposta.objects.all().values_list('perguntaID', 'resposta'):
+        writer.writerow(resposta)
+
+    response['Content-Disposition'] = f'attachment;filename="Refeições_dia_aberto{diaaberto}.csv"'
+
+    return response

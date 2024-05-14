@@ -35,5 +35,9 @@ urlpatterns = [
     path('almoco_pdf/<int:diaabertoid>', views.pdfalmocos, name='almoco_pdf'),
     path('relatorio_almoco_excel/<int:diaabertoid>', views.relatorio_almoco_excel, name='relatorio_almoco_excel'),
     path('relatorio_almoço', views.relatorio_almoco,name='relatorio_almoço'),
+    path('estatisticasAno', views.estatisticasano, name='ano'),
+    path('estatisticasAlmoco/<int:diaabertoid>', views.estatisticasAlmocos,
+         name='estatisticasAlmocos'),
+    path('exportarcsv/<int:diaabertoid>', views.exportarcsv, name='exportarcsvAlmoco'),
 
 ]

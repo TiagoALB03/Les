@@ -14,7 +14,7 @@
 
         function selectDiaAberto(selectObject) {
             const value = selectObject.value;
-            location.href = "{% url 'inscricoes:estatisticas' 12345 %}".replace(/12345/, value);
+            location.href = "{% url 'inscricoes:estatisticasAlmocos' 12345 %}".replace(/12345/, value);
         }
     </script>
 
@@ -27,7 +27,7 @@
         </ul>
     </nav>
 
-    <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem">Relatório Almoços</h2>
+    <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem">Estatística Almoços</h2>
 
     <hr>
     <div class="field" style="margin-left: 35%">

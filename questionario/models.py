@@ -118,7 +118,7 @@ class Resposta(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)
     perguntaID = models.ForeignKey('Pergunta', models.CASCADE, db_column='PerguntaID', blank=True, null=False)
     resposta = models.CharField(db_column='Resposta', default='', max_length=255, blank=True)
-    subtemaid = models.CharField(db_column='SubTemaId', default='', max_length=255, blank=True)
+    subtemaid = models.CharField(db_column='SubTemaId', default='', max_length=255, blank=True,null=True)
     idcodigo = models.ForeignKey('CodigoQuestionario', models.CASCADE, db_column='CodigoID', blank=True, null=False,
                                  default='')
 

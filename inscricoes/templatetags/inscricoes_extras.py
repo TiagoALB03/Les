@@ -2,6 +2,8 @@ import base64
 from io import StringIO
 import urllib
 from django import template
+
+from questionario.models import Resposta
 from ..models import Inscricao
 from utilizadores.models import Participante
 from configuracao.models import Diaaberto
@@ -272,3 +274,45 @@ def almocamgambelasDia(dia):
     result = alunos['npratosalunos__sum'] if alunos['npratosalunos__sum'] is not None else 0
     result += docentes['npratosdocentes__sum'] if docentes['npratosdocentes__sum'] is not None else 0
     return result
+
+@register.filter
+def RespostaComValorAlmoco(pergunta,diaaberto):
+    respostas = Resposta.objects.filter(
+        perguntaID=pergunta.id,resposta="1",perguntaID__pergquest__questionarioid=diaaberto.questionarioid
+    ).count()
+    return respostas
+
+@register.filter
+def RespostaComValorAlmoco(pergunta,diaaberto):
+    respostas = Resposta.objects.filter(
+        perguntaID=pergunta.id,resposta="1",perguntaID__pergquest__questionarioid=diaaberto.questionarioid
+    ).count()
+    return respostas
+
+@register.filter
+def RespostaComValorAlmoco2(pergunta,diaaberto):
+    respostas = Resposta.objects.filter(
+        perguntaID=pergunta.id,resposta="2",perguntaID__pergquest__questionarioid=diaaberto.questionarioid
+    ).count()
+    return respostas
+
+@register.filter
+def RespostaComValorAlmoco3(pergunta,diaaberto):
+    respostas = Resposta.objects.filter(
+        perguntaID=pergunta.id,resposta="3",perguntaID__pergquest__questionarioid=diaaberto.questionarioid
+    ).count()
+    return respostas
+
+@register.filter
+def RespostaComValorAlmoco4(pergunta,diaaberto):
+    respostas = Resposta.objects.filter(
+        perguntaID=pergunta.id,resposta="4",perguntaID__pergquest__questionarioid=diaaberto.questionarioid
+    ).count()
+    return respostas
+
+@register.filter
+def RespostaComValorAlmoco5(pergunta,diaaberto):
+    respostas = Resposta.objects.filter(
+        perguntaID=pergunta.id,resposta="5",perguntaID__pergquest__questionarioid=diaaberto.questionarioid
+    ).count()
+    return respostas
