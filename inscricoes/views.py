@@ -9,6 +9,7 @@ from atividades.models import Atividade, Sessao
 from atividades.serializers import AtividadeSerializer
 from atividades.filters import AtividadeFilter
 from inscricoes.forms import AlmocoForm, InfoForm, InscricaoForm, ResponsavelForm, SessoesForm, TransporteForm
+from questionario.models import Resposta, Pergunta
 from utilizadores.models import Administrador, Coordenador, Participante
 from utilizadores.views import user_check
 from django.http import HttpResponseRedirect, HttpResponse
@@ -428,8 +429,6 @@ def relatorio_almoco_excel(request, diaabertoid=None):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = f'attachment; filename="Refeições_dia_aberto{dia_aberto}.csv"'
 
-
-
     for dia in dias:
         totalpenha = almocampenhaDia(dia)
         totalgambelas = almocamgambelasDia(dia)
@@ -448,7 +447,6 @@ def relatorio_almoco_excel(request, diaabertoid=None):
         writer.writerow([])
 
     return response
-
 
 def pdfalmocos(request, diaabertoid=None):
     inscricoes = Inscricao.objects.filter(diaaberto_id=diaabertoid)
@@ -488,3 +486,4 @@ def pdfalmocos(request, diaabertoid=None):
         'inscricao': Inscricao.objects.filter(diaaberto__id=diaabertoid).all(),}
 
     return render_pdf("inscricoes/almoco_pdf.html", context, f"Almoço_dia_aberto_{diaaberto}.pdf")
+

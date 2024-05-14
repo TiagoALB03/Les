@@ -4,10 +4,12 @@ from atividades.models import Tema
 from configuracao.models import Diaaberto
 from utilizadores.models import Administrador
 from django.db.models import Count
-from questionario.models import Questionario, TemaPerg, TipoResposta
+from questionario.models import Questionario, TemaPerg, TipoResposta, EstadosQuest
 from django.utils.html import format_html
 from django.urls import reverse
 from django.db.models import F
+import django_tables2 as django_tables
+import django_tables2 as tables
 
 
 class QuestionarioTable(django_tables.Table):
@@ -130,3 +132,56 @@ class DiaabertoTable(django_tables.Table):
     class Meta:
         model = Diaaberto
         fields = ('ano', 'questionarioid')  # Define as colunas a serem exibidas
+
+
+class EstadoTable(tables.Table):
+    cor = tables.Column('Cor', accessor='getEstadoCor', orderable=False)
+    acoes = tables.Column('Ações', empty_values=(), orderable=False)
+    id = tables.Column('Id', accessor='getEstadoId', orderable=False)
+
+    class Meta:
+        model = EstadosQuest
+        sequence = ('nome', 'cor', 'acoes')
+
+    def definir_javascript(self):
+        return format_html('<script type="text/javascript" src="{}"></script>', '{% static "js/js_custom.js" %}')
+
+    def before_render(self, request):
+        self.columns.hide('id')
+
+    def render_cor(self, record):
+        return format_html(f"""
+                     <span class="tag is-warning" style="background-color: {record.getEstadoCor}; font-size: small; min-width: 12vw;">
+                    </span>
+                    """)
+
+    def render_acoes(self, record):
+        primeiro_botao = f"""
+                           <a data-tooltip="Editar" href="{reverse('questionarios:editarEstado', kwargs={'estados_id': record.getEstadoId})}">
+                               <span class="icon">
+                                   <i class="fas fa-edit" aria-hidden="true" style="color: #F4B400"></i>
+                               </span>
+                           </a>
+                       """
+
+        if Questionario.objects.filter(estadoquestid=record.getEstadoId).exists():
+            segundo_botao = f"""
+                                        <a data-tooltip="eliminar" onclick="alert2.render('O estado está a ser utilizado num questionário.<strong>Não o pode apagar.</strong>','{reverse('questionarios:consultar-estados-admin')}')">
+                                            <span class="icon is-small">
+                                                <i class="mdi mdi-trash-can-outline mdi-24px" style="color: #ff0000"></i>
+                                            </span>
+                                        </a> 
+                                    """
+        else:
+            segundo_botao = f"""
+                            <a data-tooltip="Eliminar" onclick="alert.render('Tem a certeza que pretende eliminar este estado?','{reverse('questionarios:eliminarEstado', kwargs={'estados_id': record.getEstadoId})}')">
+                                <span class="icon is-small">
+                                    <i class="mdi mdi-trash-can-outline mdi-24px" style="color: #ff0000"></i>
+                                </span>
+                            </a> 
+                        """
+
+        return format_html(f"""
+                           {primeiro_botao}
+                           {segundo_botao}
+                   """)

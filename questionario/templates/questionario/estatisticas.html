@@ -25,7 +25,6 @@
             location.href = "{% url 'questionarios:estatisticas' 12345 %}".replace(/12345/, value);
         }
 
-
         const resposta1GostasteAtividade = {{ respostas|respostaGostasteComValor:"1" }};
         const resposta2GostasteAtividade = {{ respostas|respostaGostasteComValor:"2" }};
         const resposta3GostasteAtividade = {{ respostas|respostaGostasteComValor:"3" }};

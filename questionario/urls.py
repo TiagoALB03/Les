@@ -16,6 +16,9 @@ urlpatterns = [
 
     path('consultarTipoResposta/', views.consultartiporesposta.as_view(), name='consultar-tipo-resposta'),
     path('criarTipoRespost/', views.criarTipoRespost, name='criar-tipo-resposta'),
+    path('estados', views.consultar_estados.as_view(), name='consultar-estados-admin'),
+    path('eliminarEstados/<int:estados_id>', views.eliminarEstado, name='eliminarEstado'),
+    path('editarEstados/<int:estados_id>', views.editarEstado, name='editarEstado'),
 
     # #ajax ----------
     path('ajax/addPergRow', views.newPergRow, name='ajaxAddPergRow'),

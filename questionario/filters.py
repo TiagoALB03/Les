@@ -40,3 +40,12 @@ class TipoRespostaFilter(django_filters.FilterSet):
         print("passaste pelo filtro")
         model = TipoResposta
         fields = '__all__'
+
+
+class EstadosFilter(django_filters.FilterSet):
+    nome = django_filters.CharFilter(
+        field_name="estado", lookup_expr='icontains')
+
+    class Meta:
+        model = EstadosQuest
+        fields = '__all__'

@@ -8,7 +8,7 @@ from django.urls import reverse
 import questionario
 from configuracao.forms import TemaForm
 from utilizadores.views import user_check
-from .filters import QuestionarioFilter, TemaPergFilter, TipoRespostaFilter
+from .filters import QuestionarioFilter, TemaPergFilter, TipoRespostaFilter, EstadosFilter
 from .forms import *
 from .models import *
 from configuracao.models import *
@@ -24,7 +24,7 @@ from django_tables2 import SingleTableMixin, SingleTableView
 from django_filters.views import FilterView
 from configuracao.filters import CursoFilter, DepartamentoFilter, DiaAbertoFilter, EdificioFilter, MenuFilter, \
     TemaFilter, TransporteFilter, UOFilter
-from .tables import QuestionarioTable, TemaPergTable, TipoRespostaTable, DiaabertoTable
+from .tables import QuestionarioTable, TemaPergTable, TipoRespostaTable, DiaabertoTable, EstadoTable
 import csv
 from django_tables2 import RequestConfig
 
@@ -47,7 +47,7 @@ class consultar_questionarios(SingleTableMixin, FilterView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["facs"] = list(map(lambda x: (x.id, x.estado), EstadosQuest.objects.all()))
+        context["facs"] = list(map(lambda x: (x.id, x.nome), EstadosQuest.objects.all()))
         return context
 
 
@@ -74,7 +74,7 @@ def criarquestionario(request, questionario_id=None):
             # if questionario.dateid is not None:
             #     print("passaste pelo date")
             # if Diaaberto.objects.get(ano=questionario.dateid.ano).questionarioid is None:
-            if questionario.titulo is not None and questionario.dateid is not None:
+            if questionario.titulo is not None:
                 print("Entraste no questionario")
                 questionario.estadoquestid = EstadosQuest.objects.get(id=2)
                 questionario.save()
@@ -444,3 +444,83 @@ def exportarCSV(request):
     response['Content-Disposition'] = 'attachment; filename="Respostas.csv"'
 
     return response
+
+
+class consultar_estados(SingleTableMixin, FilterView):
+    table_class = EstadoTable
+    template_name = 'questionario/listarEstados.html'
+    table_pagination = {
+        'per_page': 5
+    }
+    filterset_class = EstadosFilter
+
+    def dispatch(self, request, *args, **kwargs):
+        user_check_var = user_check(
+            request=request, user_profile=[Administrador])
+        if not user_check_var.get('exists'):
+            return user_check_var.get('render')
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(SingleTableMixin, self).get_context_data(**kwargs)
+        table = self.get_table(**self.get_table_kwargs())
+        table.request = self.request
+        table.fixed = True
+        context[self.get_context_table_name(table)] = table
+        return context
+
+def eliminarEstado(request, estados_id):
+    user_check_var = user_check(request=request, user_profile=[Administrador])
+    if not user_check_var.get('exists'):
+        return user_check_var.get('render')
+    estado = get_object_or_404(EstadosQuest, id=estados_id)
+    estado.delete()
+    return redirect('questionarios:consultar-estados-admin')
+
+def editarEstado(request, estados_id):
+    user_check_var = user_check(request=request, user_profile=[Administrador])
+    if user_check_var.get('exists') == False:
+        return user_check_var.get('render')
+    estadoFormSet = modelformset_factory(model=EstadosQuest, exclude=['id'], widgets={
+        'nome': TextInput(attrs={'class': 'input'}),
+        'cor': TextInput(
+            attrs={'type': 'color', 'class': 'color-picker', 'id': 'colorpicker', 'onchange': 'displayHexColor()'}),
+    }, extra=0, min_num=1, can_delete=True)
+    estadoForms = estadoFormSet(queryset=EstadosQuest.objects.none())
+    estado = EstadosQuest()
+    mensagemErro = ''
+    if estados_id is not None:
+        estado = EstadosQuest.objects.get(id=estados_id)
+        estadoForms = estadoFormSet(queryset=EstadosQuest.objects.filter(id=estado.id))
+        allowMore, allowDelete = False, False
+    if (request.method == 'POST'):
+        estadoForms = estadoFormSet(request.POST)
+        if estadoForms.is_valid():
+            novoEstadoNome = estadoForms.cleaned_data[0]['nome']
+            novaCor = estadoForms.cleaned_data[0]['cor']
+            flagCor=EstadosQuest.objects.filter(cor=novaCor).exists() and novaCor != estado.cor
+            flagNome = EstadosQuest.objects.filter(nome=novoEstadoNome).exists() and novoEstadoNome != estado.nome
+            flagQuest =Questionario.objects.filter(estadoquestid__nome=estado.nome).exists() and novoEstadoNome != estado.nome
+            if flagQuest and flagCor:
+                mensagemErro = 'Não podes mudar o nome de um estado que está em uso num questionário.A cor já existe,escolhe outra.'
+            elif flagQuest:
+                mensagemErro = 'Não podes mudar o nome de um estado que está em uso num questionário.'
+            elif flagCor and flagNome:
+                mensagemErro = 'O estado e a cor já existem. Escolhe outros.'
+            elif flagNome:
+                mensagemErro = "O estado já existe. Escolhe outro."
+            elif flagCor:
+                mensagemErro = "A cor já existe. Escolhe outra."
+            else:
+                estado.cor = novaCor
+                estado.nome = novoEstadoNome
+                estado.save()
+                return redirect('questionarios:consultar-estados-admin')
+
+    return render(request=request,
+                  template_name='questionario/editarEstados.html',
+                  context={'form': estadoForms,
+                           'allowMore': allowMore,
+                           'allowDelete': allowDelete,
+                           'erroMensagem': mensagemErro,
+                           })

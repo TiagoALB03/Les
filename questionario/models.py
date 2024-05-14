@@ -4,13 +4,25 @@ from django.db import models
 # Create your models here.
 class EstadosQuest(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)
-    estado = models.CharField(db_column='Estado', max_length=100, null=False, blank=False)
+    nome = models.CharField(db_column='Nome', max_length=100, null=False, blank=False)
+    cor = models.CharField(db_column='Cor', max_length=10, null=False, blank=False, default='#0033ff')
 
     class Meta:
         db_table = 'EstadosQuest'
-
     def __str__(self):
-        return str(self.estado)
+        return str(self.nome)
+
+    @property
+    def getEstadoId(self):
+        return self.id
+
+    @property
+    def getEstadoNome(self):
+        return self.nome
+
+    @property
+    def getEstadoCor(self):
+        return self.cor
 
 
 class TemaPerg(models.Model):
@@ -48,7 +60,7 @@ class Questionario(models.Model):
 
     @property
     def getQuestionarioEstado(self):
-        return self.estadoquestid.estado
+        return self.estadoquestid.nome
 
     @property
     def getQuestionarioEstadoID(self):
