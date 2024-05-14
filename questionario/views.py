@@ -370,8 +370,8 @@ def estatisticas(request, diaabertoid=None):
         subtemaid = request.GET.get('atividade_id')
         print("Esta certo subtema ->", subtemaid)
 
-    # perguntaid__questionarioid__dateid
-    respostas = Resposta.objects.filter(perguntaID__pergquest__questionarioid__dateid=diaaberto)
+    # perguntaid__questionarioid__dateid   perguntaID__pergquest__questionarioid__dateid
+    respostas = Resposta.objects.filter(perguntaID__pergquest__questionarioid=diaaberto.questionarioid)
     return render(request, 'questionario/estatisticas.html', {
         'diaaberto': diaaberto,
         'diasabertos': Diaaberto.objects.all(),
