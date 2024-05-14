@@ -6,7 +6,7 @@
 <nav class="breadcrumb" aria-label="breadcrumbs">
 	<ul>
 	<li><a href="{% url 'home' %}">Início</a></li>
-	<li><a href="{% url 'configuracao:verTemas' %}">Tipo de Resposta</a></li>
+	<li><a href="{% url 'questionarios:consultar-tipo-resposta' %}">Tipo de Resposta</a></li>
 	<li class='is-active'><a href="">Criar Tipo de Resposta</a></li>
 	</ul>
 </nav>
@@ -37,6 +37,17 @@
 									<label class="label">Tipo de resposta</label>
 									<div class="control">
 										{{form.tiporesposta}}
+									</div>
+								</div>
+							</div>
+                            <div class="column is-half">
+								<strong>{{form.nome.errors}}</strong>
+								<div class="field">
+									<label class="label">Tipo de dados</label>
+									<div class="control">
+                                        <span class="select is-fullwidth is-empty" required>
+                                          {{form.type}}
+                                        </span>
 									</div>
 								</div>
 							</div>

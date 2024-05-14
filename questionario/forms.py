@@ -57,6 +57,7 @@ class TipoRespostaForm(ModelForm):
         exclude = ['id']
         widgets = {
             'tiporesposta': TextInput(attrs={'class': 'input'}),
+            'type': Select(attrs={'class': 'input'}),
         }
 
 
