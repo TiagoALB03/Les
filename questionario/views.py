@@ -524,3 +524,17 @@ def editarEstado(request, estados_id):
                            'allowDelete': allowDelete,
                            'erroMensagem': mensagemErro,
                            })
+
+def publicarQuestionario(request, questionario_id):
+    user_check_var = user_check(request=request, user_profile=[Administrador])
+    if not user_check_var.get('exists'):
+        return user_check_var.get('render')
+    try:
+        questionario = Questionario.objects.get(id=questionario_id)
+        questionario.estadoquestid = EstadosQuest.objects.get(nome='publicado')
+        questionario.save()
+        return redirect('questionarios:consultar-questionarios-admin')
+    except Questionario.DoesNotExist:
+        return HttpResponse("Questionário não encontrado.")
+    except EstadosQuest.DoesNotExist:
+        return HttpResponse("Estado não encontrado.")

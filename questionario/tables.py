@@ -57,6 +57,7 @@ class QuestionarioTable(django_tables.Table):
 
     def render_acoes(self, record):
         primeiro_botao = """<span class="icon"></span>"""
+        quarto_botao = """<span class="icon"></span>"""
         if record.getQuestionarioEstado == "concluido":
             primeiro_botao = f"""
                            <a data-tooltip="Arquivar" href="{reverse('questionarios:arquivar-questionario', args=[record.getQuestionarioID])}">
@@ -65,12 +66,20 @@ class QuestionarioTable(django_tables.Table):
                                </span>
                            </a>
                            """
+        if record.getQuestionarioEstado == "validado":
+                quarto_botao = f"""
+                               <a data-tooltip="Publicar" href="{reverse('questionarios:publicar-questionario', args=[record.getQuestionarioID])}">
+                                   <span class="icon">
+                                        <i class="fas fa-upload" style="color:#DB2323"></i>
+                                   </span>
+                               </a>
+                           """
 
         segundo_botao = """<span class="icon"></span>"""
 
         terceiro_botao = """<span class="icon"></span>"""
 
-        quarto_botao = """<span class="icon"></span>"""
+
 
         return format_html(f"""
         <div>
@@ -78,6 +87,7 @@ class QuestionarioTable(django_tables.Table):
             {segundo_botao}
             {terceiro_botao}
             {quarto_botao}
+            
         </div>
         """)
 
