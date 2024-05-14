@@ -59,8 +59,6 @@ def criarquestionario(request, questionario_id=None):
     questionario = Questionario()
     if questionario_id is not None:
         questionario = Questionario.objects.get(id=questionario_id)
-        # questionarioForms = questionarioFormSet(queryset=Questionario.objects.filter(id=questionario.id))
-        # allowMore, allowDelete = False, False
     questionarioForm = QuestionarioForm(instance=questionario)
 
     flagError = False
@@ -71,25 +69,14 @@ def criarquestionario(request, questionario_id=None):
         questionarioForm = QuestionarioForm(request.POST, request.FILES, instance=questionario)
         if questionarioForm.is_valid():
             questionario = questionarioForm.save(commit=False)
-            # if questionario.dateid is not None:
-            #     print("passaste pelo date")
-            # if Diaaberto.objects.get(ano=questionario.dateid.ano).questionarioid is None:
             if questionario.titulo is not None:
                 print("Entraste no questionario")
                 questionario.estadoquestid = EstadosQuest.objects.get(id=2)
                 questionario.save()
-                # diaaberto = Diaaberto.objects.get(ano=questionario.dateid.ano)
-                # diaaberto.questionarioid = questionario
-                # diaaberto.save()
                 return redirect('questionarios:criar-perguntas', questionario_id=questionario.id)
             else:
                 flagTituloEmpty = True
                 print(flagTituloEmpty)
-                # else:
-                #     flagError = True
-            # else:
-            #     flagDateEmpty = True
-            #     print(flagDateEmpty)
 
     return render(request=request,
                   template_name='questionario/criarQuestionario.html',
