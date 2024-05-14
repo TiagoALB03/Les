@@ -65,14 +65,7 @@ class QuestionarioTable(django_tables.Table):
                                </span>
                            </a>
                            """
-        if record.getQuestionarioEstado == "arquivado":
-            primeiro_botao = f"""
-                            <a data-tooltip="Alteração de ano" href="{reverse('questionarios:associar-ano-questionario', args=[record.getQuestionarioID])}">
-                               <span class="icon">
-                                    <i class="fas fa-calendar" aria-hidden="true" style="color: #3273DC"></i>
-                               </span>
-                            </a>
-                            """
+
         segundo_botao = """<span class="icon"></span>"""
 
         terceiro_botao = """<span class="icon"></span>"""
