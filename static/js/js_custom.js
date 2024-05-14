@@ -30,6 +30,47 @@ function eliminar() {
         msg.classList.add("is-active");        
     }   
 }
+var alert2 = new eliminar2();
+function eliminar2() {
+    var operationRef_global = null;
+    this.render = function(txt, operationRef = null) {
+        operationRef_global = operationRef;
+        var msg2 = document.getElementById("msg2");
+        document.getElementById('text-01').innerHTML = txt;
+        document.getElementById('dialog-confirm').style.display = '';
+        document.getElementById('dialog-cancel').style.display = '';
+        msg2.classList.add("is-active");
+        console.log("mer");
+    };
+
+    this.confirmar = function() {
+        if (operationRef_global != null)
+            window.location.href = operationRef_global;
+        else
+            document.getElementById('msg2').classList.remove('is-active');
+    };
+
+    this.cancelar = function() {
+        var msg2 = document.getElementById("msg2");
+        document.getElementById('text-00').innerHTML = '';
+        operationRef_global = null;
+        msg2.classList.remove("is-active");
+    };
+
+    this.warning = function(txt) {
+        var msg2 = document.getElementById('msg2');
+        document.getElementById('text-00').innerHTML = txt;
+        document.getElementById('dialog-confirm').style.display = '';
+        document.getElementById('dialog-cancel').style.display = 'none';
+        msg2.classList.add("is-active");
+    };
+
+    this.renderPopup2 = function(txt) {
+        var msg2 = document.getElementById("msg2");
+        document.getElementById('text-00').innerHTML = txt;
+        msg2.style.display = 'block';
+    };
+}
 
 function resetForm(){
     oFormObject = document.forms['filter'];
