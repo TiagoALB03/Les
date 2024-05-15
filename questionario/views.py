@@ -547,3 +547,33 @@ def criarEstado(request):
 
     return render(request, 'questionario/criarEstado.html', {'form': form,
                                                              'erroMensagem': mensagemErro})
+
+
+
+
+def criar_escala_resposta(request):
+    if request.method == 'POST':
+        form = EscalaRespostaForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('questionarios:consultar-tipo-resposta')  # Redirecionar após criar a escala
+    else:
+        form = EscalaRespostaForm()
+    return render(request, 'questionario/criarEscalaResposta.html', {'form': form})
+
+
+
+def listar_escala_resposta(request):
+    escalas = questionario_escalaresposta.objects.all()
+    return render(request, 'questionario/listarEscalaResposta.html', {'escalas': escalas})
+
+
+
+def editar_escala_resposta(request, id):
+    escala = get_object_or_404(questionario_escalaresposta, id=id)
+    form = EscalaRespostaForm(request.POST or None, instance=escala)
+    if form.is_valid():
+        form.save()
+        return redirect('questionarios:listar-escala-resposta')  # Substitua pela sua view de listagem
+    return render(request, 'questionario/editarEscalaResposta.html', {'form': form})
+

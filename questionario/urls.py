@@ -32,6 +32,11 @@ urlpatterns = [
     path('ajax/getRespostas', views.getRespostas, name='getRespostas'),
     path('criarEstado', views.criarEstado, name='criar-estado-admin'),
 
+
+    path('criarEscalaResposta/', views.criar_escala_resposta, name='criar-escala-resposta'),
+    path('listarEscalaResposta/', views.listar_escala_resposta, name='listar-escala-resposta'),
+    path('editarEscalaResposta/<int:id>/', views.editar_escala_resposta, name='editar-escala-resposta'),
+
     # path('questionario/<int:diaabertoid>', views.relatorio_respostas_transporte_excel, name='relatorio_respostas_transporte_excel'),
     path('exportarcsv/', views.exportarCSV, name='exportarcsv'),
 
