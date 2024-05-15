@@ -54,6 +54,11 @@ class Questionario(models.Model):
     def getQuestionarioID(self):
         return self.id
 
+    @property
+    def getQuestionarioCor(self):
+        return self.estadoquestid.cor
+
+
     # @property
     # def getQuestionarioDateID(self):
     #     return self.dateid

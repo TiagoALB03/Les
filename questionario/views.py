@@ -437,7 +437,7 @@ class consultar_estados(SingleTableMixin, FilterView):
     table_class = EstadoTable
     template_name = 'questionario/listarEstados.html'
     table_pagination = {
-        'per_page': 5
+        'per_page': 8
     }
     filterset_class = EstadosFilter
 
@@ -455,6 +455,7 @@ class consultar_estados(SingleTableMixin, FilterView):
         table.fixed = True
         context[self.get_context_table_name(table)] = table
         return context
+
 
 def eliminarEstado(request, estados_id):
     user_check_var = user_check(request=request, user_profile=[Administrador])
