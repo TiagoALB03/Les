@@ -20,6 +20,7 @@ urlpatterns = [
     path('eliminarEstados/<int:estados_id>', views.eliminarEstado, name='eliminarEstado'),
     path('editarEstados/<int:estados_id>', views.editarEstado, name='editarEstado'),
     path('publicarQuestionario/<int:questionario_id>', views.publicarQuestionario, name='publicar-questionario'),
+    path('validarQuestionario/<int:questionario_id>', views.validarQuestionario, name='validar-questionario'),
 
     # #ajax ----------
     path('ajax/addPergRow', views.newPergRow, name='ajaxAddPergRow'),
