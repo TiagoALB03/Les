@@ -30,6 +30,7 @@ urlpatterns = [
     # path('test', views.test, name='test'),
     # path('ajax/getInc', views.simpIncrement, name='getInc'),
     path('ajax/getRespostas', views.getRespostas, name='getRespostas'),
+    path('criarEstado', views.criarEstado, name='criar-estado-admin'),
 
     # path('questionario/<int:diaabertoid>', views.relatorio_respostas_transporte_excel, name='relatorio_respostas_transporte_excel'),
     path('exportarcsv/', views.exportarCSV, name='exportarcsv'),
