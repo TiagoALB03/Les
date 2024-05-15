@@ -525,3 +525,66 @@ def publicarQuestionario(request, questionario_id):
         return HttpResponse("Questionário não encontrado.")
     except EstadosQuest.DoesNotExist:
         return HttpResponse("Estado não encontrado.")
+
+def validarQuestionario(request, questionario_id):
+    user_check_var = user_check(request=request, user_profile=[Administrador])
+    if not user_check_var.get('exists'):
+        return user_check_var.get('render')
+    try:
+        questionario = Questionario.objects.get(id=questionario_id)
+        questionario.estadoquestid = EstadosQuest.objects.get(nome='validado')
+        questionario.save()
+        return redirect('questionarios:consultar-questionarios-admin')
+    except Questionario.DoesNotExist:
+        return HttpResponse("Questionário não encontrado.")
+    except EstadosQuest.DoesNotExist:
+        return HttpResponse("Estado não encontrado.")
+
+def criarEstado(request):
+    mensagemErro = ''
+    if request.method == 'POST':
+        form = EstadoForm(request.POST)
+        if form.is_valid():
+            flagCor = EstadosQuest.objects.filter(cor=form.cleaned_data['cor']).exists()
+            flagNome = EstadosQuest.objects.filter(nome=form.cleaned_data['nome']).exists()
+            if flagCor and flagNome:
+                mensagemErro = 'O estado e a cor já existem. Escolhe outros.'
+            elif flagNome:
+                mensagemErro = "O estado já existe. Escolhe outro."
+            elif flagCor:
+                mensagemErro = "A cor já existe. Escolhe outra."
+            else:
+                form.save()
+                return redirect('questionarios:consultar-estados-admin')
+    else:
+        form = EstadoForm()
+
+    return render(request, 'questionario/criarEstado.html', {'form': form,
+                                                             'erroMensagem': mensagemErro})
+
+
+def criar_escala_resposta(request):
+    if request.method == 'POST':
+        form = EscalaRespostaForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('questionarios:consultar-tipo-resposta')  # Redirecionar após criar a escala
+    else:
+        form = EscalaRespostaForm()
+    return render(request, 'questionario/criarEscalaResposta.html', {'form': form})
+
+
+
+def listar_escala_resposta(request):
+    escalas = questionario_escalaresposta.objects.all()
+    return render(request, 'questionario/listarEscalaResposta.html', {'escalas': escalas})
+
+
+
+def editar_escala_resposta(request, id):
+    escala = get_object_or_404(questionario_escalaresposta, id=id)
+    form = EscalaRespostaForm(request.POST or None, instance=escala)
+    if form.is_valid():
+        form.save()
+        return redirect('questionarios:listar-escala-resposta')  # Substitua pela sua view de listagem
+    return render(request, 'questionario/editarEscalaResposta.html', {'form': form})

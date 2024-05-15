@@ -178,7 +178,6 @@ class EstadoTable(tables.Table):
                                 </span>
                             </a> 
                         """
-
         return format_html(f"""
                            {primeiro_botao}
                            {segundo_botao}
