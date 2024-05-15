@@ -34,24 +34,9 @@ class QuestionarioTable(django_tables.Table):
     #     return (queryset, True)
 
     def render_estado(self, record):
-        if (record.getQuestionarioEstado == 'pendente'):
-            estado = "Pendente"
-            cor = "is-warning"
-        elif (record.getQuestionarioEstado == 'validado'):
-            estado = "Validado"
-            cor = "is-success"
-        elif (record.getQuestionarioEstado == 'arquivado'):
-            estado = "Arquivado"
-            cor = "is-secondary"
-        elif (record.getQuestionarioEstado == 'publicado'):
-            estado = "Publicado"
-            cor = "is-info"
-        elif (record.getQuestionarioEstado == 'concluido'):
-            estado = "Concluido"
-            cor = "is-primary"
         return format_html(f"""
-                <span class="tag {cor}" style="font-size: small; min-width: 110px;">
-                    {estado}
+                 <span class="tag is-warning" style="background-color: {record.getQuestionarioCor}; font-size: small; min-width: 110px;">
+                    {record.getQuestionarioEstado}
                 </span>
                 """)
 

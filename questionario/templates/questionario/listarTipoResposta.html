@@ -49,7 +49,14 @@
                 <i class="mdi mdi-plus"></i>
             </span>
             <span>Criar tipo resposta</span>
-        </a>   
+        </a>
+
+          <a class="button is-success is-outlined" type="button" style="margin-bottom:0.5rem" href="{% url 'questionarios:criar-escala-resposta' %}">
+            <span class="icon is-small">
+                <i class="mdi mdi-plus"></i>
+            </span>
+            <span>Criar escala para escolhas múltiplas</span>
+        </a>
 
         {% render_table table %}
     </div>

@@ -54,6 +54,11 @@ class Questionario(models.Model):
     def getQuestionarioID(self):
         return self.id
 
+    @property
+    def getQuestionarioCor(self):
+        return self.estadoquestid.cor
+
+
     # @property
     # def getQuestionarioDateID(self):
     #     return self.dateid
@@ -146,3 +151,16 @@ class CodigoQuestionario(models.Model):
 
     def __str__(self):
         return str(self.codigo)
+
+
+
+class questionario_escalaresposta(models.Model):
+    nome = models.CharField(max_length=100)
+    valores = models.TextField()
+
+    def __str__(self):
+        return self.nome
+
+    class Meta:
+        db_table = 'questionario_escalaresposta'  # Garantir que o nome da tabela está correto
+

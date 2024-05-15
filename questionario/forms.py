@@ -1,7 +1,8 @@
 from django.forms import *
 from django import forms
 from atividades.models import Tema
-from questionario.models import Questionario, Pergunta, TemaPerg, TipoResposta, PergQuest
+from questionario.models import Questionario, Pergunta, TemaPerg, TipoResposta, PergQuest, EstadosQuest, \
+    questionario_escalaresposta
 
 
 # from questionario.models import Questionario, Pergunta, Resposta
@@ -66,3 +67,22 @@ class PergQuestForm(ModelForm):
         model = PergQuest
         exclude = ['id']
         widgets = {}
+
+class EstadoForm(ModelForm):
+    class Meta:
+        model = EstadosQuest
+        exclude = ['id']
+        widgets = {
+            'nome': TextInput(attrs={'class': 'input'}),
+            'cor': TextInput(attrs={'type': 'color', 'class': 'color-picker', 'id': 'colorpicker', 'onchange': 'displayHexColor()'}),
+        }
+
+
+class EscalaRespostaForm(ModelForm):
+    class Meta:
+        model = questionario_escalaresposta
+        fields = ['nome', 'valores']
+        widgets = {
+            'nome': TextInput(attrs={'class': 'input'}),
+            'valores': Textarea(attrs={'class': 'textarea', 'rows': 3}),
+        }

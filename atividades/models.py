@@ -96,7 +96,7 @@ class Atividade(models.Model):
     # Field name made lowercase.
     tema = models.ForeignKey('Tema', models.CASCADE,
                              db_column='Tema', blank=False, null=False)
-    roteiro = models.ForeignKey('roteiro.Roteiro', on_delete=models.SET_NULL, null=True, db_column='RoteiroID',
+    roteiro = models.ForeignKey('roteiro.Roteiro', on_delete=models.SET_NULL, null=True, db_column='Roteiro_ID',
                                 blank=True)
     class Meta:
         db_table = 'Atividade'
