@@ -214,7 +214,6 @@ class Sessao(models.Model):
         return self.horarioid.inicio.strftime('%H:%M') + str(seperator) + self.horarioid.fim.strftime('%H:%M')
 
 
-    
     class Meta:
         db_table = 'Sessao'
 
