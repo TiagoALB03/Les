@@ -39,5 +39,9 @@ urlpatterns = [
     path('estatisticasAlmoco/<int:diaabertoid>', views.estatisticasAlmocos,
          name='estatisticasAlmocos'),
     path('exportarcsv/<int:diaabertoid>', views.exportarcsv, name='exportarcsvAlmoco'),
+    path('inscricao_escolha', views.inscricao_escolha,
+         name='inscricao_escolha'),
+    path('criar_ultimaHora', views.CriarUltimaHora.as_view(),
+         name='criar-inscricao_ultimaHora'),
 
 ]
