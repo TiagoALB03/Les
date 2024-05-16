@@ -72,8 +72,10 @@ class AtividadesCoordenador(SingleTableMixin, FilterView):
         return super().dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
-        return Atividade.objects.filter(professoruniversitarioutilizadorid__faculdade=self.user_check_var.get('firstProfile').faculdade).order_by('-id').exclude(estado="nsub")
-    
+        return Atividade.objects.filter(
+            professoruniversitarioutilizadorid__faculdade=self.user_check_var.get('firstProfile').faculdade,
+            diaabertoid=4
+        ).order_by('-id').exclude(estado="nsub")
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         table = self.get_table(**self.get_table_kwargs())
@@ -98,15 +100,17 @@ class AtividadesAdmin(SingleTableMixin, FilterView):
 	}
     
     def dispatch(self, request, *args, **kwargs):
+        print(18)
+        print("request",request)
         user_check_var = user_check(request=request, user_profile=[Administrador])
         if not user_check_var.get('exists'): return user_check_var.get('render')
         self.user_check_var = user_check_var
         today= datetime.now(timezone.utc) - timedelta(hours=1, minutes=00)
-        Atividade.objects.filter(estado="nsub",datasubmissao__lte=today).delete()
+        Atividade.objects.filter(estado="9",datasubmissao__lte=today).delete()
         return super().dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
-        return Atividade.objects.all().order_by('-id').exclude(estado="nsub")
+        return Atividade.objects.all().order_by('-id')
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -118,6 +122,7 @@ class AtividadesAdmin(SingleTableMixin, FilterView):
         context["deps"] = list(map(lambda x: (x.id, x.nome), Departamento.objects.all()))
         context["uos"] = list(map(lambda x: (x.id, x.nome), Unidadeorganica.objects.all()))
         context["campus"] = list(map(lambda x: (x.id, x.nome), Campus.objects.all()))
+        context["diaAberto"] = list(map(lambda x: (x.id, x.ano), Diaaberto.objects.all().order_by('-ano')))
         #----------
     
         context[self.get_context_table_name(table)] = table
@@ -129,8 +134,8 @@ class AtividadesAdmin(SingleTableMixin, FilterView):
 
 
 def conflict_array():
-    sessoes=Sessao.objects.all().exclude(atividadeid__estado = 'nsub')
-    sessoes= sessoes.exclude(atividadeid__estado = 'Recusada')
+    sessoes=Sessao.objects.all().exclude(atividadeid__estado = '9')
+    sessoes= sessoes.exclude(atividadeid__estado = '4')
     conflito2= []
     for sessao1 in sessoes:
         for sessao2 in sessoes:

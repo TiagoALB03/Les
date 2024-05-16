@@ -134,21 +134,12 @@ class AdminAtividadesTable(tables.Table):
         self.columns.hide('tema')
         self.columns.hide('diaabertoid')
 
-    def render_estado(self,record):
-        fancy_box = ""
-        if record.estado == 'Aceite':
-            fancy_box = f"""
-            <span class="tag text is-success" style="width: 7rem;font-size: small;">Aceite</span>
-            """
-        elif record.estado == 'Pendente':
-            fancy_box = f"""
-            <span class="tag text is-warning" style="width: 7rem;font-size: small;">Pendente</span>
-            """
-        else:
-            fancy_box = f"""
-            <span class="tag text is-danger" style="width: 7rem;font-size: small;">Recusada</span>
-            """          
-        return format_html(fancy_box)
+    def render_estado(self, record):
+        return format_html(f"""
+                 <span class="tag is-warning" style="background-color: {record.getQAtividadeCor}; font-size: small; min-width: 110px;">
+                    {record.getAtividadeEstado}
+                </span>
+                """)
 
 
     def render_professoruniversitarioutilizadorid(self,record):

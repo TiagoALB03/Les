@@ -14,6 +14,7 @@ class RoteiroTable(django_tables.Table):
     coordenador = django_tables.Column('Coordenador', accessor='getRoteiroCoordenadorID', orderable=False)
     acoes = django_tables.Column('Ações', empty_values=(), orderable=False)
 
+
     class Meta:
         model = Roteiro
         sequence = ('nome','coordenador','ano','acoes')

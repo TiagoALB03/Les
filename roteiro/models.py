@@ -29,10 +29,13 @@ class Roteiro(models.Model):
     participantesmaximo = models.IntegerField(db_column='nrmaximodeparticipantes')
     duracaoesperada = models.IntegerField(db_column='duracaoEsperada')
     publicosalvo = (("Ciencias e Tecnologia", "CiÃªncias e Tecnologia"),
-                    ("Linguas e Humanidades", "Linguas e Humanidades"), ("Economia", "Economia"))
+                    ("Linguas e HumanidadesA", "Linguas e Humanidades"), ("Economia", "Economia"))
     publicoalvo = models.CharField(
         db_column='Publicoalvo', max_length=255, choices=publicosalvo, default='')
 
+    estado = models.ForeignKey('questionario.EstadosQuest', models.CASCADE, db_column='EstadoRoteiro', null=True)
+    tema = models.ForeignKey('atividades.Tema', models.CASCADE,
+                             db_column='Tema', blank=False, null=False)
     @property
     def getRoteiroID(self):
         return self.id

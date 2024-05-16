@@ -60,7 +60,7 @@ class AtividadesAPI(ListAPIView):
     ordering = 'nome'
     filter_backends = (SearchFilter,
                        OrderingFilter, DjangoFilterBackend)
-    queryset = Atividade.objects.filter(estado="Aceite")
+    queryset = Atividade.objects.filter(estado__nome="Aceite")
     serializer_class = AtividadeSerializer
     pagination_class = AtividadesPagination
     filterset_class = AtividadeFilter
