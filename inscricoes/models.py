@@ -204,3 +204,11 @@ class Inscricaotransporte(models.Model):
     class Meta:
         db_table = 'InscricaoTransporte'
         unique_together = (('inscricao', 'transporte'),)
+
+class registoGrupo(models.Model):
+    inscricao = models.ForeignKey(Inscricao, models.CASCADE)
+    status = models.BooleanField(null=True,default=False)
+    presentes = models.IntegerField(null=True)
+
+    class Meta:
+        db_table = 'registoGrupo'
