@@ -26,8 +26,8 @@ urlpatterns = [
     path('ajax/addPergRow', views.newPergRow, name='ajaxAddPergRow'),
     # path('ajax/addResRow', views.newResRow, name='ajaxAddResRow'),
 
-    path('estatisticas', views.estatisticas, name='estatisticas'),
-    path('estatisticas/<int:diaabertoid>', views.estatisticas, name='estatisticas'),
+    path('estatisticas', views.estatisticasTransport, name='estatisticas'),
+    path('estatisticas/<int:diaabertoid>', views.estatisticasTransport, name='estatisticas'),
     # path('test', views.test, name='test'),
     # path('ajax/getInc', views.simpIncrement, name='getInc'),
     path('ajax/getRespostas', views.getRespostas, name='getRespostas'),

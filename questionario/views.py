@@ -379,7 +379,7 @@ def criarTipoRespost(request):
                   context={'form': tipoespostaForm})
 
 
-def estatisticas(request, diaabertoid=None):
+def estatisticasTransport(request, diaabertoid=None):
     """ View que mostra as estatísticas do Dia Aberto """
     user_check_var = user_check(request=request, user_profile=[Administrador])
     if not user_check_var.get('exists'):
@@ -413,7 +413,7 @@ def estatisticas(request, diaabertoid=None):
                     professoruniversitarioutilizadorid__departamento__id=OuterRef(
                         'id'),
                     diaabertoid__id=diaabertoid,
-                    estado="Aceite",
+                    estado__nome="Aceite",
                 )
             )
         ),
