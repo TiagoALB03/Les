@@ -1,0 +1,49 @@
+{% extends "app.html" %}
+
+{% block content %}
+<style>
+    .card {
+        margin-bottom: 1rem; /* Adds space between cards */
+    }
+    .card-body {
+        padding: 1rem; /* Pads the inside of the card */
+    }
+
+    .button.Finalizar {
+        background-color: blue; /* Cor de fundo azul para os botões Próxima e Finalizar */
+        position: absolute;
+        color: white;
+        right: 0; /* Alinhar à direita dentro da .buttons-container */
+    }
+</style>
+
+<form method="post" class="form">
+    {% csrf_token %}
+    {{ formset.management_form }}
+    {% for form in formset %}
+        <div class="card">
+            <div class="card-body">
+                <div class="form-group">
+                     {{ form.id }}
+                </div>
+                <div class="form-group">
+                    Pergunta:{{ form.pergunta }}
+                </div>
+                <br>
+                <div class="form-group">
+                    Tema: {{ form.temaid }}
+                </div>
+                <br>
+                <div class="form-group">
+                    Tipo de resposta: {{ form.tiporespostaid }}
+                </div>
+                <br>
+                <div class="form-group form-check">
+                     Remover {{ form.DELETE }}
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    < <button type="submit" class="button Finalizar">Salvar alterações</button>
+</form>
+{% endblock %}
