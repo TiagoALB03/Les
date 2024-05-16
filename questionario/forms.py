@@ -2,7 +2,7 @@ from django.forms import *
 from django import forms
 from atividades.models import Tema
 from questionario.models import Questionario, Pergunta, TemaPerg, TipoResposta, PergQuest, EstadosQuest, \
-    questionario_escalaresposta
+    questionario_escalaresposta, Resposta
 
 
 # from questionario.models import Questionario, Pergunta, Resposta
@@ -42,6 +42,15 @@ class PerguntasForm(ModelForm):
             'pergunta': TextInput(attrs={'class': 'input'}),
         }
 
+
+class RespostaForm(ModelForm):
+    class Meta:
+        model = Resposta
+        fields = ['resposta']
+        widgets = {
+            'pergunta': HiddenInput(),
+            'questionario': HiddenInput(),
+        }
 
 class TemaFormPerg(ModelForm):
     class Meta:

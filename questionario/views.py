@@ -248,6 +248,51 @@ def newPergRow(request):
     return render(request=request, template_name='questionario/questionarioPerguntasRow.html', context=data)
 
 
+
+def responder_questionario(request, questionario_id):
+    user_check_var = user_check(request=request, user_profile=[Administrador])
+    if not user_check_var.get('exists'):
+        return user_check_var.get('render')
+
+    questionario = get_object_or_404(Questionario, id=questionario_id)
+    pergquest_ids = PergQuest.objects.filter(questionarioid=questionario).values_list('perguntaid', flat=True)
+    perguntas = Pergunta.objects.filter(id__in=pergquest_ids).order_by('id')
+
+    if request.method == 'POST':
+        for pergunta in perguntas:
+            resposta_data = request.POST.get(str(pergunta.id), '')
+            resposta, created = Resposta.objects.update_or_create(
+                perguntaID=pergunta,
+                idcodigo=request.user.codigoquestionario,
+                defaults={'resposta': resposta_data}
+            )
+        return redirect('questionarios:consultar-questionarios-admin')
+
+    return render(request, 'questionario/responderQuestionario.html', {
+        'questionario': questionario,
+        'perguntas': perguntas
+    })
+
+def editar_questionario(request, questionario_id):
+    questionario = get_object_or_404(Questionario, id=questionario_id)
+    PerguntaFormSet = modelformset_factory(Pergunta, form=PerguntasForm, extra=1, can_delete=True)
+    if request.method == 'POST':
+        formset = PerguntaFormSet(request.POST, request.FILES, queryset=Pergunta.objects.filter(pergquest__questionarioid=questionario))
+        if formset.is_valid():
+            perguntas = formset.save(commit=False)
+            for pergunta in perguntas:
+                PergQuest.objects.update_or_create(
+                    perguntaid=pergunta,
+                    defaults={'questionarioid': questionario}
+                )
+                pergunta.save()
+            formset.save_m2m()  # Salva as relações ManyToMany, se houver
+            return redirect('questionarios:consultar-questionarios-admin')  # Redireciona para a lista de questionários
+    else:
+        formset = PerguntaFormSet(queryset=Pergunta.objects.filter(pergquest__questionarioid=questionario))
+    return render(request, 'questionario/editar_questionario.html', {'formset': formset, 'questionario': questionario})
+
+
 class consultartema(SingleTableMixin, FilterView):
     table_class = TemaPergTable
     template_name = 'questionario/listarTema.html'
