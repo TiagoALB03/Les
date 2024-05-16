@@ -2,9 +2,13 @@
 {% load atividadestags %}
 
 {% block details_content %}
-
+    
 <table class="table has-mobile-cards is-fullwidth">
     <tbody>
+        <button type="button" class="button is-danger"
+                onclick="location.href='{% url 'atividades:atividade-pdf' row.record.pk %}';"><span class="icon is-small"><i
+                        class="mdi mdi-download"></i></span> <span> Obter PDF </span>
+            </button>
         <tr style="border-bottom: 1px solid #ddd">
             <th class="th-wrap">Data da ultima alteração:</th>
             <td  style="font-weight: normal;">
@@ -54,15 +58,22 @@
                 <span>{{row.record.nrcolaboradoresnecessario}}</span>
             </td>           
         </tr>
+                <tr style="border-bottom: 1px solid #ddd">
+            <th class="th-wrap">Número Total de Participantes:</th>
+            <td style="font-weight: normal;">
+                <span>{{ row.record.participantesmaximo }}</span>
+            </td>           
+        </tr>
         <tr style="border-bottom: 1px solid #ddd">
             <th class="th-wrap">Materiais Necessarios:</th>
             <td style="font-weight: normal;">
                 <span>{{row.record.get_material.nomematerial|material_none}}</span>
-            </td>           
+            </td>
         <tr style="border-bottom: 1px solid #ddd">
             <th class="th-wrap">Descrição:</th>
             <td></td>
         </tr>
+            
         <tr style="border-bottom: 1px solid #ddd">
             <td colspan="4">
                 <textarea class="textarea" disabled style="resize: none;">{{row.record.descricao}}</textarea>
@@ -115,3 +126,4 @@
         {% endfor %}
     </table>
 {% endblock details_content %}
+

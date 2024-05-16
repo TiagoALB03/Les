@@ -21,5 +21,8 @@ urlpatterns = [
     path('atividadesadmin',views.AtividadesAdmin.as_view(),name="atividadesAdmin"),
     path('verdeps',views.verdeps,name="verDepartamentos"),
     path('veruos',views.verfaculdades,name="verFaculdades"),
+    path('atividade/<int:atividade_id>/pdf/', views.atividade_pdf_report, name='atividade-pdf'),
+    path('roteiro/pdf/', views.roteiro_pdf_report, name='roteiro_pdf_report'),
+
 ]
 

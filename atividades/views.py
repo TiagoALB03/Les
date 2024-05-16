@@ -22,6 +22,11 @@ from atividades.filters import *
 from django_tables2 import SingleTableMixin, SingleTableView
 from django_filters.views import FilterView
 
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+from django.http import HttpResponse
+from reportlab.lib.utils import simpleSplit
+from reportlab.lib import colors
 
 class AtividadesProfessor(SingleTableMixin, FilterView):
     
@@ -744,3 +749,244 @@ def verfaculdades(request):
             } 
     return render(request=request,template_name='configuracao/dropdown.html',context={'options':uos, 'default': default})  
 
+
+def atividade_pdf_report(request, atividade_id):
+    # Criar uma resposta do tipo HttpResponse com o conteúdo adequado para PDFs
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="Atividade_{atividade_id}_Report.pdf"'
+
+    # Criar um objeto de canvas do ReportLab que "desenha" o PDF no objeto response
+    p = canvas.Canvas(response)
+    width, height = letter
+
+    # Obter a atividade pelo seu ID
+    try:
+        atividade = Atividade.objects.get(id=atividade_id)
+    except Atividade.DoesNotExist:
+        p.drawString(100, 100, "Atividade não encontrada.")
+        p.showPage()
+        p.save()
+        return response
+
+    # Adicionar o conteúdo ao PDF
+    # Definir uma função auxiliar para adicionar linhas de texto
+    def add_line(y, label, content):
+        p.drawString(100, y, f"{label}: {content}")
+
+    # Definir cores
+    p.setFillColor(colors.HexColor("#D9D9D9"))
+    p.setStrokeColor(colors.HexColor("#000000"))
+
+    p.setFont("Helvetica-Bold", 30)
+    p.drawString(30, height - 10, f"Dia aberto da univercidade do algarve")
+    # Desenhar um retângulo para o cabeçalho
+    p.rect(50, height - 100, width - 100, 60, fill=True)
+
+    # Título e informações do cabeçalho
+    p.setFillColor(colors.HexColor("#000000"))
+    p.setFont("Helvetica-Bold", 20)
+    p.drawString(60, height - 60, f"Relatorio sobre atividade")
+    p.setFont("Helvetica-Bold", 14)
+    p.drawString(60, height - 80, f"Nome da atividade: {atividade.nome}")
+    p.setFont("Helvetica", 12)
+    p.drawString(60, height - 95, f"Professor: {atividade.professoruniversitarioutilizadorid.full_name}")
+
+    # Posição inicial no eixo Y
+    y_position = height - 150
+
+    # Desenhar as informações da atividade
+    p.setFont("Helvetica-Bold", 12)
+    add_line(y_position, "Tipo", atividade.tipo)
+    y_position -= 20
+    add_line(y_position, "Data da última alteração", atividade.dataalteracao.strftime('%d de %B de %Y às %H:%M'))
+    y_position -= 20
+    add_line(y_position, "Local", atividade.get_sala_str())
+    y_position -= 20
+    add_line(y_position, "Tema", atividade.tema.tema)
+    y_position -= 20
+    add_line(y_position, "Público Alvo", atividade.publicoalvo)
+    y_position -= 20
+    add_line(y_position, "Departamento", atividade.get_departamento())
+    y_position -= 20
+    add_line(y_position, "Unidade Orgânica", atividade.get_uo())
+    y_position -= 20
+    add_line(y_position, "Coordenador Responsável", atividade.get_coord().full_name if atividade.get_coord() else "N/A")
+    y_position -= 20
+    add_line(y_position, "Número de Colaboradores", str(atividade.nrcolaboradoresnecessario))
+    y_position -= 20
+    #add_line(y_position, "Número Total de Participantes", str(atividade.participantesmaximo))
+    y_position -= 20
+    add_line(y_position, "Materiais Necessários", atividade.get_material().nomematerial if atividade.get_material() else "N/A")
+    y_position -= 40
+    p.setFont("Helvetica-Bold", 12)
+    p.drawString(100, y_position, "Descrição:")
+    y_position = draw_wrapped_text(p, atividade.descricao, 100, y_position - 20, 400, "Helvetica", 12)
+
+    # Verificar se é necessário espaço adicional ou uma nova página antes de continuar
+    if y_position < 100:  # Supondo que 100 seja o espaço necessário para o início do próximo conteúdo
+        p.showPage()  # Cria uma nova página se não houver espaço suficiente
+        y_position = height - 100  # Reinicia a posição Y para o topo da nova página
+    y_position -= 40  # Add a bit more space before the sessions section
+    p.setFont("Helvetica-Bold", 12)
+
+    p.drawString(100, y_position, "Dados das sessões:")
+    p.setFont("Helvetica", 12)
+
+    # Add session details
+    for sessao in atividade.sessao_set.all():
+        y_position -= 20  # Adjust position for each session
+        add_line(y_position, "Dia", sessao.dia.strftime('%d de %B de %Y'))
+        y_position -= 20
+        add_line(y_position, "Hora",
+                 f"{sessao.horarioid.inicio.strftime('%H:%M')} até {sessao.horarioid.fim.strftime('%H:%M')}")
+        y_position -= 20
+        add_line(y_position, "Numero maximo de marticipantes",
+                 f"{atividade.participantesmaximo}")  # Update with your method to get current inscritos
+        y_position -= 20
+        #add_line(y_position, "Número de inscritos", str(sessao.total_inscritos()))  # Adiciona o número de inscritos
+        # If you have a method to get the collaborators, add it here
+        y_position -= 40
+    # Finalizar o PDF
+    p.showPage()
+    p.save()
+
+    return response
+
+
+def draw_wrapped_text(canvas, text, x, y, max_width, font, size):
+    """
+    Desenha um texto que é automaticamente quebrado em várias linhas se exceder a largura máxima e retorna a posição Y final.
+
+    Args:
+        canvas (Canvas): O canvas do ReportLab.
+        text (str): O texto para desenhar.
+        x (int): A posição X inicial do texto.
+        y (int): A posição Y inicial do texto.
+        max_width (int): A largura máxima para o texto antes de quebrar em uma nova linha.
+        font (str): O nome da fonte a ser usada.
+        size (int): O tamanho da fonte.
+
+    Returns:
+        int: A posição Y final após o desenho do texto.
+    """
+    canvas.setFont(font, size)
+    lines = simpleSplit(text, font, size, max_width)
+    width, height = letter
+
+    for line in lines:
+        if y < 40:  # Considera 40 como margem inferior para criar uma nova página
+            canvas.showPage()
+            canvas.setFont(font, size)  # Reconfigura a fonte para a nova página
+            y = height - 40  # Reinicia a posição Y para o topo da nova página
+        canvas.drawString(x, y, line)
+        y -= size * 1.2  # Ajusta o espaçamento entre linhas; pode precisar de ajuste.
+
+    return y  # Retorna a posição Y final
+
+
+
+# Sua função roteiro_pdf_report modificada para usar atividade_pdf_report
+def roteiro_pdf_report(request):
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="Relatorio_do_Roteiro.pdf"'
+    p = canvas.Canvas(response, pagesize=letter)
+    width, height = letter
+
+    atividades = Atividade.objects.all()
+
+    def check_page(y):
+        if y < 100:  # Margem inferior antes de criar uma nova página
+            p.showPage()
+            return height - 60  # Espaço no topo para o cabeçalho
+        return y
+
+    def add_background(y, height):
+        p.setFillColor(colors.HexColor("#D9D9D9"))
+        p.rect(100, y - height, width - 150, height, stroke=0, fill=1)
+        p.setFillColor(colors.black)
+
+    def add_line(y, text, fontSize=12, bold=False):
+        p.setFont("Helvetica-Bold" if bold else "Helvetica", fontSize)
+        p.drawString(100, y, text)
+        return y - fontSize * 1.5
+
+
+
+    y = height - 100
+    y = add_line(y + 30, "Univercidade do Algarve", 30, bold=True)
+    y -= 10
+    y = add_line(y + 30, "Relatório do Roteiro", 25, bold=True)
+
+
+
+    for atividade in atividades:
+        y = height - 100
+
+        # Cabeçalho da atividade com fundo cinza
+        add_background(y, 80)
+
+
+        # Nome da atividade e professor
+        y -= 60  # Espaço antes do nome da atividade
+        y = add_line(y + 20, f"Atividade: {atividade.nome}", 14, bold=True)
+        y = add_line(y, f"Professor: {atividade.professoruniversitarioutilizadorid.full_name}", 12, bold=True)
+        y -= 10
+        p.line(100, y - 2, width - 50, y - 2)
+        y -= 30  # Espaço antes das informações da atividade
+
+        # Informações da atividade
+        y = add_line(y, f"Tipo: {atividade.tipo}")
+        y = add_line(y, f"Data da última alteração: {atividade.dataalteracao.strftime('%d de %B de %Y às %H:%M')}")
+        y = add_line(y, f"Local: {atividade.get_sala_str()}")
+        y = add_line(y, f"Tema: {atividade.tema.tema}")
+        y = add_line(y, f"Público Alvo: {atividade.publicoalvo}")
+        y = add_line(y, f"Departamento: {atividade.get_departamento()}")
+        y = add_line(y, f"Unidade Orgânica: {atividade.get_uo()}")
+        y = add_line(y, f"Coordenador Responsável: {atividade.get_coord().full_name if atividade.get_coord() else 'N/A'}")
+        y = add_line(y, f"Número de Colaboradores: {str(atividade.nrcolaboradoresnecessario)}")
+        #y = add_line(y, f"Número Total de Participantes: {str(atividade.participantesmaximo)}")
+        y = add_line(y, f"Materiais Necessários: {atividade.get_material().nomematerial if atividade.get_material() else 'N/A'}")
+
+        # Descrição da atividade
+        y -= 20
+        p.drawString(100, y, "Descrição:")
+        y -= 15
+        descriptions = simpleSplit(atividade.descricao, "Helvetica", 12, width - 200)
+        for desc in descriptions:
+            y = check_page(y)
+            p.drawString(100, y, desc)
+            y -= 14
+
+        # Dados das sessões
+        y -= 20
+        p.drawString(100, y, "Dados das sessões:")
+        y -= 15
+        for sessao in atividade.sessao_set.all():
+            y = check_page(y)
+            p.drawString(100, y, f"Dia: {sessao.dia.strftime('%d de %B de %Y')}")
+            y -= 14
+            p.drawString(100, y, f"Hora: {sessao.horarioid.inicio.strftime('%H:%M')} até {sessao.horarioid.fim.strftime('%H:%M')}")
+            y -= 14
+            p.drawString(100, y, f"Número máximo de participantes: {str(sessao.atividadeid.participantesmaximo)}")
+            y -= 14
+            #p.drawString(100, y, f"Número de inscritos: {str(sessao.total_inscritos())}")
+            y -= 20
+
+        p.showPage()
+
+    p.save()
+    return response
+
+
+def draw_wrapped_text2(canvas, text, x, y, max_width):
+    """Função auxiliar para desenhar texto quebrado em linhas."""
+    lines = simpleSplit(text, "Helvetica", 12, max_width)
+    width, height = letter
+    for line in lines:
+        if y < 40:  # Nova página se necessário
+            canvas.showPage()
+            canvas.setFont("Helvetica", 12)
+            y = height - 250
+        canvas.drawString(x, y, line)
+        y -= 14
+    return y
