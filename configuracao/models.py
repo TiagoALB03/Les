@@ -267,6 +267,7 @@ class Prato(models.Model):
     tipos = [
         ('Carne', "Carne"),
         ('Peixe', 'Peixe'),
+
         ('Vegetariano', 'Vegetariano'),
         ('Sobremesa', 'Sobremesa'),
     ]

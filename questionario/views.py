@@ -482,7 +482,7 @@ class consultar_estados(SingleTableMixin, FilterView):
     table_class = EstadoTable
     template_name = 'questionario/listarEstados.html'
     table_pagination = {
-        'per_page': 8
+        'per_page': 5
     }
     filterset_class = EstadosFilter
 
@@ -500,7 +500,6 @@ class consultar_estados(SingleTableMixin, FilterView):
         table.fixed = True
         context[self.get_context_table_name(table)] = table
         return context
-
 
 def eliminarEstado(request, estados_id):
     user_check_var = user_check(request=request, user_profile=[Administrador])
@@ -572,6 +571,20 @@ def publicarQuestionario(request, questionario_id):
     except EstadosQuest.DoesNotExist:
         return HttpResponse("Estado não encontrado.")
 
+def validarQuestionario(request, questionario_id):
+    user_check_var = user_check(request=request, user_profile=[Administrador])
+    if not user_check_var.get('exists'):
+        return user_check_var.get('render')
+    try:
+        questionario = Questionario.objects.get(id=questionario_id)
+        questionario.estadoquestid = EstadosQuest.objects.get(nome='validado')
+        questionario.save()
+        return redirect('questionarios:consultar-questionarios-admin')
+    except Questionario.DoesNotExist:
+        return HttpResponse("Questionário não encontrado.")
+    except EstadosQuest.DoesNotExist:
+        return HttpResponse("Estado não encontrado.")
+
 def criarEstado(request):
     mensagemErro = ''
     if request.method == 'POST':
@@ -593,8 +606,6 @@ def criarEstado(request):
 
     return render(request, 'questionario/criarEstado.html', {'form': form,
                                                              'erroMensagem': mensagemErro})
-
-
 
 
 def criar_escala_resposta(request):
@@ -622,4 +633,3 @@ def editar_escala_resposta(request, id):
         form.save()
         return redirect('questionarios:listar-escala-resposta')  # Substitua pela sua view de listagem
     return render(request, 'questionario/editarEscalaResposta.html', {'form': form})
-
