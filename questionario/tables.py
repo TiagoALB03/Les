@@ -35,7 +35,7 @@ class QuestionarioTable(django_tables.Table):
 
     def render_estado(self, record):
         return format_html(f"""
-                 <span class="tag is-warning" style="background-color: {record.getQuestionarioCor}; font-size: small; min-width: 110px;">
+                 <span class="tag is-warning" style="background-color: {record.getAtividadeCor}; font-size: small; min-width: 110px;">
                     {record.getQuestionarioEstado}
                 </span>
                 """)

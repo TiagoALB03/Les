@@ -33,7 +33,7 @@ class Roteiro(models.Model):
     publicoalvo = models.CharField(
         db_column='Publicoalvo', max_length=255, choices=publicosalvo, default='')
 
-    estado = models.ForeignKey('questionario.EstadosQuest', models.CASCADE, db_column='EstadoRoteiro', null=True)
+    estado = models.ForeignKey('questionario.EstadosQuest', models.CASCADE, db_column='EstadoRoteiroId', null=True)
     tema = models.ForeignKey('atividades.Tema', models.CASCADE,
                              db_column='Tema', blank=False, null=False)
     @property

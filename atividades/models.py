@@ -74,7 +74,7 @@ class Atividade(models.Model):
     tipo = models.CharField(db_column='Tipo', max_length=64,
                             choices=tipos, default='Palestra')
     # Field name made lowercase.
-    estado = models.CharField(db_column='Estado', max_length=64)
+    estado = models.ForeignKey('questionario.EstadosQuest', models.CASCADE, db_column='EstadoAtivId', null=True)
     professoruniversitarioutilizadorid = models.ForeignKey(
         'utilizadores.ProfessorUniversitario', models.CASCADE, db_column='ProfessorUniversitarioUtilizadorID')  # Field name made lowercase.
     # Field name made lowercase.
@@ -96,10 +96,18 @@ class Atividade(models.Model):
     # Field name made lowercase.
     tema = models.ForeignKey('Tema', models.CASCADE,
                              db_column='Tema', blank=False, null=False)
-    roteiro = models.ForeignKey('roteiro.Roteiro', on_delete=models.SET_NULL, null=True, db_column='Roteiro_ID',
+    roteiro = models.ForeignKey('roteiro.Roteiro', on_delete=models.SET_NULL, null=True, db_column='RoteiroID',
                                 blank=True)
     class Meta:
         db_table = 'Atividade'
+
+    @property
+    def getQuestionarioEstado(self):
+        return self.estado.nome
+
+    @property
+    def getAtividadeCor(self):
+        return self.estado.cor
 
     def get_fields(self):
         return [(field.name, field.value_to_string(self)) for field in Atividade._meta.fields]

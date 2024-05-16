@@ -136,8 +136,8 @@ class AdminAtividadesTable(tables.Table):
 
     def render_estado(self, record):
         return format_html(f"""
-                 <span class="tag is-warning" style="background-color: {record.getQAtividadeCor}; font-size: small; min-width: 110px;">
-                    {record.getAtividadeEstado}
+                 <span class="tag is-warning" style="background-color: {record.getAtividadeCor}; font-size: small; min-width: 110px;">
+                    {record.getQuestionarioEstado}
                 </span>
                 """)
 
