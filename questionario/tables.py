@@ -44,7 +44,8 @@ class QuestionarioTable(django_tables.Table):
         primeiro_botao = """<span class="icon"></span>"""
         segundo_botao = """<span class="icon"></span>"""
         terceiro_botao = """<span class="icon"></span>"""
-        if record.getQuestionarioEstado == "concluído":
+        t_botao = """<span class="icon"></span>"""
+        if record.getQuestionarioEstado == "concluido":
             primeiro_botao = f"""
                    <a data-tooltip="Arquivar" href="{reverse('questionarios:arquivar-questionario', args=[record.getQuestionarioID])}">
                        <span class="icon">
@@ -54,19 +55,26 @@ class QuestionarioTable(django_tables.Table):
                """
 
         if record.getQuestionarioEstado == "validado":
-            primeiro_botao = f"""
+            segundo_botao = f"""
                    <a data-tooltip="Publicar" href="{reverse('questionarios:publicar-questionario', args=[record.getQuestionarioID])}">
                        <span class="icon">
                             <i class="fas fa-upload" style="color:#DB2323"></i>
                        </span>
                    </a>
                """
+            primeiro_botao = f"""
+                               <a data-tooltip="editar" href="{reverse('questionarios:editar-questionario', args=[record.getQuestionarioID])}">
+                                 <span class="icon">
+                                      <i class="fas fa-pencil-alt aria-hidden="true" style="color: #F4B400"></i>
+                                 </span>
+                             </a>
+                         """
 
         if record.getQuestionarioEstado == "publicado":
             segundo_botao = f"""
                    <a data-tooltip="Responder" href="{reverse('questionarios:responder-questionario', args=[record.getQuestionarioID])}">
                        <span class="icon">
-                            <i class="fas fa-reply" aria-hidden="true" style="color: #F4B400"></i>
+                            <i class="fas fa-reply" aria-hidden="true" style="color: #3273DC"></i>
                        </span>
                    </a>
                """
@@ -75,33 +83,25 @@ class QuestionarioTable(django_tables.Table):
             segundo_botao = f"""
                    <a data-tooltip="Responder" href="{reverse('questionarios:responder-questionario', args=[record.getQuestionarioID])}">
                        <span class="icon">
-                            <i class="fas fa-reply" aria-hidden="true" style="color: #F4B400"></i>
+                            <i class="fas fa-reply" aria-hidden="true" style="color: #3273DC"></i>
                        </span>
                    </a>
                """
-
-        if record.getQuestionarioEstado == "pendente":
-            terceiro_botao = f"""
+            primeiro_botao = f"""
                           <a data-tooltip="editar" href="{reverse('questionarios:editar-questionario', args=[record.getQuestionarioID])}">
                               <span class="icon">
                                    <i class="fas fa-pencil-alt aria-hidden="true" style="color: #F4B400"></i>
                               </span>
                           </a>
                       """
-        if record.getQuestionarioEstado == "validado":
-            terceiro_botao = f"""
-                            <a data-tooltip="editar" href="{reverse('questionarios:editar-questionario', args=[record.getQuestionarioID])}">
-                              <span class="icon">
-                                   <i class="fas fa-pencil-alt aria-hidden="true" style="color: #F4B400"></i>
-                              </span>
-                          </a>
-                      """
+
 
         return format_html(f"""
                <div>
                    {primeiro_botao}
                    {segundo_botao}
                    {terceiro_botao}
+                   {t_botao}
                </div>    
            """)
 
