@@ -213,6 +213,7 @@ class Sessao(models.Model):
         'configuracao.Horario', models.DO_NOTHING, db_column='HorarioID')
     roteiro = models.ForeignKey('roteiro.Roteiro', on_delete=models.SET_NULL, null=True, db_column='RoteiroID',
                                 blank=True)
+    presentes = models.IntegerField(default=0)
 
     def get_colaboradores(self):
         tarefas = TarefaAuxiliar.objects.filter(sessao = self).exclude(tarefaid__estado="naoAtribuida")

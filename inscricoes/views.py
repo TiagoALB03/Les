@@ -728,5 +728,5 @@ def presençaInscricao(request,inscricao_id):
     return render(request=request,
                   template_name='inscricoes/consultarPresença.html',context={
                     'inscricao2': Inscricao.objects.get(id=inscricao_id),
-                    'sessoes': Inscricaosessao.objects.all().filter(id=inscricao_id),
+                    'inscricaosessoes': Inscricaosessao.objects.all().filter(inscricao=inscricao_id),
                   })
