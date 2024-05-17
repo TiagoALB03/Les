@@ -45,4 +45,9 @@ urlpatterns = [
     # path('questionario/<int:diaabertoid>', views.relatorio_respostas_transporte_excel, name='relatorio_respostas_transporte_excel'),
     path('exportarcsv/', views.exportarCSV, name='exportarcsv'),
 
+
+    path('estatisticasAtividadeRoteiro', views.estatisticasAtividadeRoteiro, name='estatisticasAtividadeRoteiro'),
+    path('estatisticasAtividadeRoteiro/<int:diaabertoid>', views.estatisticasAtividadeRoteiro, name='estatisticasAtividadeRoteiro'),
+    path('ajax/getRespostasAtividadeRoteiro', views.getRespostasAtividadeRoteiro, name='getRespostasAtividadeRoteiro'),
+
 ]

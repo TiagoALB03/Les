@@ -7,6 +7,7 @@ from django.urls import reverse
 
 import questionario
 from configuracao.forms import TemaForm
+from roteiro.models import Roteiro
 from utilizadores.views import user_check
 from .filters import QuestionarioFilter, TemaPergFilter, TipoRespostaFilter, EstadosFilter
 from .forms import *
@@ -633,3 +634,112 @@ def editar_escala_resposta(request, id):
         form.save()
         return redirect('questionarios:listar-escala-resposta')  # Substitua pela sua view de listagem
     return render(request, 'questionario/editarEscalaResposta.html', {'form': form})
+
+
+
+def estatisticasAtividadeRoteiro(request, diaabertoid=None):
+    """ View que mostra as estatísticas do Dia Aberto """
+    user_check_var = user_check(request=request, user_profile=[Administrador])
+    if not user_check_var.get('exists'):
+        return user_check_var.get('render')
+    if diaabertoid is None:
+        try:
+            return render(request, 'questionario/estatisticaVaziaAtividadeRoteiro.html', {
+                'diasabertos': Diaaberto.objects.all(),
+                'mensagem': ''
+            })
+        except:
+            return redirect('utilizadores:mensagem', 18)
+
+    diaaberto = get_object_or_404(Diaaberto, id=diaabertoid)
+    numdays = int((diaaberto.datadiaabertofim -
+                   diaaberto.datadiaabertoinicio).days)+1
+    dias = [(diaaberto.datadiaabertoinicio + timedelta(days=x)
+             ).strftime("%d/%m/%Y") for x in range(numdays)]
+
+
+    if request.method == 'GET':
+        subtemaid = request.GET.get('atividade_id')
+        print("Esta certo subtema ->", subtemaid)
+
+
+    respostas = Resposta.objects.all().filter(idcodigo__inscricaoID__inscricao__diaaberto=diaaberto)
+
+
+    if not respostas.exists():
+        try:
+            return render(request, 'questionario/estatisticaVaziaAtividadeRoteiro.html', {
+                'diasabertos': Diaaberto.objects.all(),
+                'mensagem': 'Não existe respostas no dia aberto ',
+                'diaaberto' : diaaberto,
+            })
+        except:
+            return redirect('utilizadores:mensagem', 18)
+    atividades = Atividade.objects.filter(diaabertoid=diaaberto.id)
+    roteiros = Roteiro.objects.filter(diaabertoid=diaaberto.id)
+    print("rot", roteiros)
+    print("ativ", atividades)
+    return render(request, 'questionario/estatisticasAtividadeRoteiro.html', {
+        'diaaberto': diaaberto,
+        'diasabertos': Diaaberto.objects.all(),
+        'departamentos': Departamento.objects.filter(
+            Exists(
+                Atividade.objects.filter(
+                    professoruniversitarioutilizadorid__departamento__id=OuterRef(
+                        'id'),
+                    diaabertoid__id=diaabertoid,
+                    estado__nome="Aceite",
+                )
+            )
+        ),
+        'dias': dias,
+        'meios': Inscricao.MEIO_TRANSPORTE_CHOICES,
+        'roteiros': Roteiro.objects.filter(diaabertoid=diaaberto.id),
+        'atividades': Atividade.objects.filter(diaabertoid=diaaberto.id),
+        'respostas': respostas,
+        'respostasRoteiros': respostas,
+        'subtemaid': subtemaid,
+        'counter2': respostas.filter(resposta="2").count(),
+        'counter3': respostas.filter(resposta="3").count(),
+        'counter4': respostas.filter(resposta="4").count(),
+        'counter5': respostas.filter(resposta="5").count(),
+        'sub': subtemaid,
+        'subtema': 2,
+    })
+
+
+
+def getRespostasAtividadeRoteiro(request):
+    if request.method == 'POST':
+        roteiro = request.POST.get('roteiroID')
+        tema = request.POST.get('temaID')
+        diaID = request.POST.get('diaaberto')
+        print("idDIA", diaID)
+        try:
+            roteiroID = int(roteiro)
+            temaID = int(tema)
+            print("ID ROTEIRO", roteiroID)
+            print("ID TEMA", temaID)
+            print("ID DIA", diaID)
+            if roteiroID != -1:
+                if temaID == -1:
+                    respostas = Resposta.objects.filter(idcodigo__inscricaoID__sessao__roteiro=roteiroID)
+                else:
+                    respostas = Resposta.objects.filter(idcodigo__inscricaoID__sessao__roteiro=roteiroID,
+                                                        subtemaid=temaID)
+                atividades = Atividade.objects.filter(roteiro=roteiroID)
+            else:
+                if temaID == -1:
+                    respostas = Resposta.objects.filter(perguntaID__questionarioid__dateid=diaID)
+                else:
+                    respostas = Resposta.objects.filter(subtemaid=temaID)
+                atividades = Atividade.objects.filter(roteiro__diaabertoid=diaID)
+            return JsonResponse({'subtema': roteiroID,
+                                 'respostas': list(respostas.values()),
+                                 'atividades': list(atividades.values()),})
+        except ValueError:
+            print("ERROR")
+            # Handle the case where counter is not a valid integer
+            counter = 0  # Set a default value or handle the error as appropriate
+            return JsonResponse({'subtema': counter,
+                                 'respostas': []})

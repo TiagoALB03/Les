@@ -196,13 +196,13 @@ def almocamgambelas(diaaberto):
 
 
 @register.filter
-def respostaComValor(respostas, valor):
+def respostaComValor1(respostas, valor):
 
     return respostas.filter(resposta=valor).count()
 
 
 @register.filter
-def respostaGostasteComValor(respostas, valor ):
+def respostaGostasteComValor1(respostas, valor ):
     return respostas.filter(resposta=valor, perguntaID__pergunta="Gostaste dos transporte?").count()
 
 
@@ -316,3 +316,40 @@ def RespostaComValorAlmoco5(pergunta,diaaberto):
         perguntaID=pergunta.id,resposta="5",perguntaID__pergquest__questionarioid=diaaberto.questionarioid
     ).count()
     return respostas
+
+
+@register.filter
+def respostaComValor(respostas, valor ):
+
+    return respostas.filter(resposta=valor).count()
+
+
+@register.filter
+def respostaGostasteComValor(respostas, valor ):
+    return respostas.filter(resposta=valor, perguntaID__pergunta="Gostaste da atividade?").count()
+
+
+@register.filter
+def respostaRetencaoComValor(respostas, valor ):
+    return respostas.filter(resposta=valor, perguntaID__pergunta="Qual o grau de retenção de conhecimento que mantiveste?").count()
+
+
+@register.filter
+def respostaRecomendacaoComValor(respostas, valor ):
+    return respostas.filter(resposta=valor, perguntaID__pergunta="Qual o grau de recomendação que dirias a outros colegas para experimentarem esta atividade?").count()
+
+@register.filter
+def respostaExpectativaComValor(respostas, valor ):
+    return respostas.filter(resposta=valor, perguntaID__pergunta="A atividade cumpriu as tuas expectativas?").count()
+
+@register.filter
+def respostaResponsavelComValor(respostas, valor ):
+    return respostas.filter(resposta=valor, perguntaID__pergunta="Qual a nota dás ao responsável da atividade?").count()
+
+@register.filter
+def respostaGostasteRoteiroComValor(respostas, valor ):
+    return respostas.filter(resposta=valor, perguntaID__pergunta="Gostaste do dia aberto?").count()
+
+@register.filter
+def respostaGostasteFuncionariosComValor(respostas, valor ):
+    return respostas.filter(resposta=valor, perguntaID__pergunta="Qual o grau de satisfação em relação aos funcionarios?").count()
