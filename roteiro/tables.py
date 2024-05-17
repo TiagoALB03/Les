@@ -40,7 +40,7 @@ class RoteiroTable(django_tables.Table):
                        """
         else:
             segundo_botao = f"""
-                                    <a href='{reverse("atividades:duplicar-atividade", args={record.pk})}'
+                                    <a href='{reverse("roteiros:duplicar-roteiro", args={record.pk})}'
                                         data-tooltip="Duplicar">
                                         <span class="mdi mdi-content-copy">
 
