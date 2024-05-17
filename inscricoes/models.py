@@ -50,10 +50,6 @@ class Inscricao(models.Model):
     local_chegada = models.CharField(max_length=200, blank=True, null=True)
     entrecampi = models.BooleanField(default=False)
 
-    def getPresença_(self):
-        #return registoGrupo.objects.filter(inscricao_id=self.id).get()
-        return registoGrupo.objects.filter(inscricao_id=self.id)
-
     class Meta:
         db_table = 'Inscricao'
 
@@ -209,10 +205,3 @@ class Inscricaotransporte(models.Model):
         db_table = 'InscricaoTransporte'
         unique_together = (('inscricao', 'transporte'),)
 
-class registoGrupo(models.Model):
-    inscricao = models.ForeignKey(Inscricao, models.CASCADE)
-    status = models.BooleanField(null=True,default=False)
-    presentes = models.IntegerField(null=True)
-
-    class Meta:
-        db_table = 'registoGrupo'

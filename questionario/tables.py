@@ -53,16 +53,23 @@ class QuestionarioTable(django_tables.Table):
                        </span>
                    </a>
                """
-
+            if record.getQuestionarioEstado == "validado":
+                terceiro_botao = f"""
+                       <a data-tooltip="Responder" href="{reverse('questionarios:responder-questionario', args=[record.getQuestionarioID])}">
+                           <span class="icon">
+                                <i class="fas fa-reply" aria-hidden="true" style="color: #3273DC"></i>
+                           </span>
+                       </a>
+                   """
         if record.getQuestionarioEstado == "validado":
-            segundo_botao = f"""
+            terceiro_botao = f"""
                    <a data-tooltip="Publicar" href="{reverse('questionarios:publicar-questionario', args=[record.getQuestionarioID])}">
                        <span class="icon">
                             <i class="fas fa-upload" style="color:#DB2323"></i>
                        </span>
                    </a>
                """
-            primeiro_botao = f"""
+            segundo_botao = f"""
                                <a data-tooltip="editar" href="{reverse('questionarios:editar-questionario', args=[record.getQuestionarioID])}">
                                  <span class="icon">
                                       <i class="fas fa-pencil-alt aria-hidden="true" style="color: #F4B400"></i>
@@ -78,6 +85,13 @@ class QuestionarioTable(django_tables.Table):
                        </span>
                    </a>
                """
+            terceiro_botao = f"""
+            <a data-tooltip="Validar" href="{reverse('questionarios:validar-questionario', args=[record.getQuestionarioID])}">
+                <span class="icon">
+                    <i class="fas fa-check" aria-hidden="true" style="color: #1EE232"></i>
+                </span>
+            </a>
+            """
 
         if record.getQuestionarioEstado == "pendente":
             segundo_botao = f"""
