@@ -36,6 +36,14 @@ class Roteiro(models.Model):
     estado = models.ForeignKey('questionario.EstadosQuest', models.CASCADE, db_column='EstadoRoteiroId', null=True)
     tema = models.ForeignKey('atividades.Tema', models.CASCADE,
                              db_column='Tema', blank=False, null=False)
+
+    @property
+    def getRoteiroEstado(self):
+        return self.estado.nome
+
+    @property
+    def getRoteiroCor(self):
+        return self.estado.cor
     @property
     def getRoteiroID(self):
         return self.id

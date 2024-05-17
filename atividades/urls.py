@@ -23,6 +23,8 @@ urlpatterns = [
     path('veruos',views.verfaculdades,name="verFaculdades"),
     path('atividade/<int:atividade_id>/pdf/', views.atividade_pdf_report, name='atividade-pdf'),
     path('roteiro/pdf/', views.roteiro_pdf_report, name='roteiro_pdf_report'),
-
+    path('duplicarAtividade/<int:id>', views.duplicarAtividadeDia,name='duplicar-atividade'),
+    path('duplicarAtividadeSessao/<int:id>', views.inserirsessaoDuplicarAtividade,name='duplicar-atividade-sessao'),
+    path('duplicarAtividadeResumo/<int:id>',views.duplicarAtividadeResumo,name='duplicar-atividade-resumo'),
 ]
 

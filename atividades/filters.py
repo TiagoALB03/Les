@@ -4,6 +4,8 @@ from django.db.models import Exists, OuterRef
 from datetime import datetime
 from django.forms.widgets import CheckboxSelectMultiple
 
+from configuracao.models import Diaaberto
+
 
 def filter_sessoes(queryset, name, value):
     dia_vagas_de_ate = value.split('_')
@@ -48,6 +50,9 @@ class CoordAtividadesFilter(django_filters.FilterSet):
     campus_id = django_filters.NumberFilter(
         field_name="espacoid__edificio__campus__id")
     sessoes = django_filters.CharFilter(method=filter_sessoes)
+
+    ano = django_filters.NumberFilter(
+        field_name="diaabertoid")
     estado = django_filters.MultipleChoiceFilter(field_name='estado', choices=[('Aceite','Aceite'),('Pendente','Pendente'),('Recusada','Recusada')], widget=CheckboxSelectMultiple())
 
     class Meta:

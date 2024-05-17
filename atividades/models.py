@@ -102,7 +102,7 @@ class Atividade(models.Model):
         db_table = 'Atividade'
 
     @property
-    def getQuestionarioEstado(self):
+    def getAtividadeEstado(self):
         return self.estado.nome
 
     @property
