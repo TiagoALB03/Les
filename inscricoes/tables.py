@@ -71,7 +71,7 @@ class InscricoesTable(tables.Table):
         if record.getQt != record.getPresentes:
             terceiro_botao = f"""
                 <a href='{reverse("inscricoes:presença-inscricao", kwargs={"inscricao_id": record.getIncricaoId})}'
-                    data-tooltip="Presenças">
+                    data-tooltip="Detalhe presenças">
                     <span class="icon">
                         <i class="mdi mdi-account-check-outline mdi-24px"></i>
                     </span>

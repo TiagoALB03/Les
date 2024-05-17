@@ -557,14 +557,14 @@ def estatisticasAlmocos(request, diaabertoid=None):
         'comidas': Prato.tipos,
         "incricao_comida": Inscricaoprato.npratosalunos,
         "pratos_numero": Inscricaoprato,
-        'respostas': Resposta.objects.all().filter(perguntaID__pergquest__questionarioid=diaaberto.questionarioid,perguntaID=147),
-        'pergunta':Pergunta.objects.get(id=147),
-        'respostas2': Resposta.objects.all().filter(perguntaID__pergquest__questionarioid=diaaberto.questionarioid,perguntaID=148),
-        'pergunta2': Pergunta.objects.get(id=148),
-        'respostas3': Resposta.objects.all().filter(perguntaID__pergquest__questionarioid=diaaberto.questionarioid,perguntaID=149),
-        'pergunta3': Pergunta.objects.get(id=149),
-        'respostas4': Resposta.objects.all().filter(perguntaID__pergquest__questionarioid=diaaberto.questionarioid,perguntaID=150),
-        'pergunta4': Pergunta.objects.get(id=150),
+        'respostas': Resposta.objects.all().filter(perguntaID=109),
+        'pergunta':Pergunta.objects.get(id=109),
+        'respostas2': Resposta.objects.all().filter(perguntaID=110),
+        'pergunta2': Pergunta.objects.get(id=110),
+        'respostas3': Resposta.objects.all().filter(perguntaID=111),
+        'pergunta3': Pergunta.objects.get(id=111),
+        #'respostas4': Resposta.objects.all().filter(perguntaID__pergquest__questionarioid=diaaberto.questionarioid,perguntaID=112),
+        #'pergunta4': Pergunta.objects.get(id=150),
     })
 
 def exportarcsv(request,diaabertoid=None):

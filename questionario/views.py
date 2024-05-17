@@ -534,10 +534,24 @@ def editarEstado(request, estados_id):
             flagCor=EstadosQuest.objects.filter(cor=novaCor).exists() and novaCor != estado.cor
             flagNome = EstadosQuest.objects.filter(nome=novoEstadoNome).exists() and novoEstadoNome != estado.nome
             flagQuest =Questionario.objects.filter(estadoquestid__nome=estado.nome).exists() and novoEstadoNome != estado.nome
+            flagRoteiroNome = Roteiro.objects.filter(estado__nome=estado.nome).exists() and novoEstadoNome != estado.nome
+            flagAtividadeNome = Atividade.objects.filter(estado__nome=estado.nome).exists() and novoEstadoNome != estado.nome
+
+
             if flagQuest and flagCor:
                 mensagemErro = 'Não podes mudar o nome de um estado que está em uso num questionário.A cor já existe,escolhe outra.'
             elif flagQuest:
                 mensagemErro = 'Não podes mudar o nome de um estado que está em uso num questionário.'
+            if flagRoteiroNome and flagCor:
+                mensagemErro = 'Não podes mudar o nome de um estado que está em uso num roteiro.A cor já existe,escolhe outra.'
+            elif flagRoteiroNome:
+                mensagemErro = 'Não podes mudar o nome de um estado que está em uso num roteiro.'
+            if flagAtividadeNome and flagCor:
+                mensagemErro = 'Não podes mudar o nome de um estado que está em uso num Atividade.A cor já existe,escolhe outra.'
+            elif flagAtividadeNome:
+                mensagemErro = 'Não podes mudar o nome de um estado que está em uso numa atividade.'
+
+
             elif flagCor and flagNome:
                 mensagemErro = 'O estado e a cor já existem. Escolhe outros.'
             elif flagNome:

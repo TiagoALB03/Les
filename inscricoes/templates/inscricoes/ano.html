@@ -1,51 +1,54 @@
-{% extends 'app2.html' %}
+{% extends 'app.html' %}
 {% load inscricoes_extras %}
 {% load static %}
 
 {% block title %}- Estatísticas{% endblock title %}
 
 {% block load %}
-    <link rel="stylesheet" href="{% static 'css/Chart.min.css' %}">
+<link rel="stylesheet" href="{% static 'css/Chart.min.css' %}">
 {% endblock load %}
 
 {% block scripts %}
-    <script src="{% static 'js/Chart.min.js' %}"></script>
-    <script>
+<script src="{% static 'js/Chart.min.js' %}"></script>
+<script>
 
-        function selectDiaAberto(selectObject) {
-            const value = selectObject.value;
-            location.href = "{% url 'inscricoes:estatisticasAlmocos' 12345 %}".replace(/12345/, value);
-        }
-    </script>
+    function selectDiaAberto(selectObject) {
+        const value = selectObject.value;
+        location.href = "{% url 'inscricoes:estatisticasAlmocos' 12345 %}".replace(/12345/, value);
+    }
 
+</script>
 {% endblock scripts %}
 
 {% block content %}
-    <nav class="breadcrumb" aria-label="breadcrumbs">
+<div>
+    <nav aria-label="breadcrumbs" class="breadcrumb">
         <ul>
             <li><a href="{% url 'home' %}">Início</a></li>
+            <li class="is-active"><a href="">Dados e Estatísticas</a></li>
         </ul>
     </nav>
 
-    <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem">Estatística Almoços</h2>
-
-    <hr>
-    <div class="field" style="margin-left: 35%">
-        <p>Queres aceder a estatisticas de que ano?</p>
-        <div class="field-body">
-            <div class="field">
-                <p class="control">
-                <div class="select">
-                    <select value="{{ diaaberto.id }}" onchange="selectDiaAberto(this)">
-                        {% for dia_aberto in diasabertos %}
-                            <option value="{{ dia_aberto.id }}"
-                                    {% if diaaberto.id == dia_aberto.id %}selected{% endif %}>{{ dia_aberto }}</option>
-                        {% endfor %}
-                    </select>
+        <div class="field is-horizontal">
+            <div class="field-label is-normal">
+                <label class="label">Dia Aberto</label>
+            </div>
+            <div class="field-body">
+                <div class="field">
+                    <p class="control">
+                        <div class="select">
+                            <select value="{{diaaberto.id}}" onchange="selectDiaAberto(this)">
+                            <option value="" style="display: none;" value="" disabled selected>------</option>
+                                {% for dia_aberto in diasabertos %}
+                                <option value="{{dia_aberto.id}}">{{dia_aberto}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </p>
                 </div>
-                </p>
             </div>
         </div>
+
     </div>
-    <hr>
+</div>
 {% endblock content %}

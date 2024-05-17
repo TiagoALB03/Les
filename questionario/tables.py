@@ -1,7 +1,8 @@
 import django_tables2 as django_tables
 
-from atividades.models import Tema
+from atividades.models import Tema, Atividade
 from configuracao.models import Diaaberto
+from roteiro.models import Roteiro
 from utilizadores.models import Administrador
 from django.db.models import Count
 from questionario.models import Questionario, TemaPerg, TipoResposta, EstadosQuest
@@ -224,6 +225,22 @@ class EstadoTable(tables.Table):
         if Questionario.objects.filter(estadoquestid=record.getEstadoId).exists():
             segundo_botao = f"""
                                         <a data-tooltip="eliminar" onclick="alert2.render('O estado está a ser utilizado num questionário.<strong>Não o pode apagar.</strong>','{reverse('questionarios:consultar-estados-admin')}')">
+                                            <span class="icon is-small">
+                                                <i class="mdi mdi-trash-can-outline mdi-24px" style="color: #ff0000"></i>
+                                            </span>
+                                        </a> 
+                                    """
+        elif Roteiro.objects.filter(estado__id=record.getEstadoId).exists():
+            segundo_botao = f"""
+                                        <a data-tooltip="eliminar" onclick="alert2.render('O estado está a ser utilizado num roteiro.<strong>Não o pode apagar.</strong>','{reverse('questionarios:consultar-estados-admin')}')">
+                                            <span class="icon is-small">
+                                                <i class="mdi mdi-trash-can-outline mdi-24px" style="color: #ff0000"></i>
+                                            </span>
+                                        </a> 
+                                    """
+        elif Atividade.objects.filter(estado__id=record.getEstadoId).exists():
+            segundo_botao = f"""
+                                        <a data-tooltip="eliminar" onclick="alert2.render('O estado está a ser utilizado numa atividade.<strong>Não o pode apagar.</strong>','{reverse('questionarios:consultar-estados-admin')}')">
                                             <span class="icon is-small">
                                                 <i class="mdi mdi-trash-can-outline mdi-24px" style="color: #ff0000"></i>
                                             </span>
