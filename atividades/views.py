@@ -21,7 +21,7 @@ from atividades.tables import *
 from atividades.filters import *
 from django_tables2 import SingleTableMixin, SingleTableView
 from django_filters.views import FilterView
-
+from questionario.models import EstadosQuest
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from django.http import HttpResponse
@@ -45,7 +45,7 @@ class AtividadesProfessor(SingleTableMixin, FilterView):
         return super().dispatch(request, *args, **kwargs)
         
     def get_queryset(self):
-        return Atividade.objects.filter(professoruniversitarioutilizadorid=self.user_check_var.get('firstProfile')).order_by('-id').exclude(estado="nsub")
+        return Atividade.objects.filter(professoruniversitarioutilizadorid=self.user_check_var.get('firstProfile')).order_by('-id')
     
 
 
@@ -67,15 +67,14 @@ class AtividadesCoordenador(SingleTableMixin, FilterView):
         user_check_var = user_check(request=request, user_profile=[Coordenador])
         if not user_check_var.get('exists'): return user_check_var.get('render')
         self.user_check_var = user_check_var
-        today= datetime.now(timezone.utc) - timedelta(hours=1, minutes=00)
-        Atividade.objects.filter(estado="nsub",datasubmissao__lte=today).delete()
+        today = datetime.now(timezone.utc) - timedelta(hours=1, minutes=00)
+        Atividade.objects.filter(estado=9,datasubmissao__lte=today).delete()
         return super().dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
         return Atividade.objects.filter(
-            professoruniversitarioutilizadorid__faculdade=self.user_check_var.get('firstProfile').faculdade,
-            diaabertoid=4
-        ).order_by('-id').exclude(estado="nsub")
+            professoruniversitarioutilizadorid__faculdade=self.user_check_var.get('firstProfile').faculdade
+        ).order_by('-id')
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         table = self.get_table(**self.get_table_kwargs())
@@ -348,11 +347,11 @@ def proporatividade(request):
         
         activity_object_form = AtividadeForm(request.POST)
         material_object_form= MateriaisForm(request.POST)
-
+        estado_instance = EstadosQuest.objects.get(id=2)
         espacoid=request.POST["espacoid"] 
         espaco=Espaco.objects.get(id=espacoid)  
         new_form = Atividade(professoruniversitarioutilizadorid = ProfessorUniversitario.objects.get(utilizador_ptr_id = request.user.id),
-                             estado = "nsub", diaabertoid = diaabertopropostas,espacoid= Espaco.objects.get(id=espaco.id),
+                             estado = estado_instance, diaabertoid = diaabertopropostas,espacoid= Espaco.objects.get(id=espaco.id),
                              tema=Tema.objects.get(id=request.POST['tema']))
         activity_object_form = AtividadeForm(request.POST, instance=new_form)
         if activity_object_form.is_valid():  
@@ -409,6 +408,7 @@ def inserirsessao(request,id):
         disp= []
         atividadeid=Atividade.objects.get(id=id)
         sessoes=Sessao.objects.all().filter(atividadeid=id)
+        estado_instance = EstadosQuest.objects.get(id=2)
         check= len(sessoes)
         if request.method == "POST":
             if 'new' in request.POST:
@@ -426,8 +426,8 @@ def inserirsessao(request,id):
                 else:
                     new_Horario= horario
                 new_Sessao= Sessao(vagas=Atividade.objects.get(id= id).participantesmaximo,ninscritos=0 ,horarioid=Horario.objects.get(id=new_Horario.id), atividadeid=Atividade.objects.get(id=id),dia=diasessao)
-                if atividadeid.estado != "nsub":
-                    atividadeid.estado= "Pendente"
+                if atividadeid.estado.nome != "nsub":
+                    atividadeid.estado= estado_instance
                 atividadeid.save()
                 new_Sessao.save()
                 return redirect('atividades:inserirSessao', id)
