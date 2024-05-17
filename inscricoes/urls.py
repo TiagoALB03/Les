@@ -43,4 +43,6 @@ urlpatterns = [
          name='inscricao_escolha'),
     path('criar_ultimaHora', views.CriarUltimaHora.as_view(),
          name='criar-inscricao_ultimaHora'),
+    path('<int:inscricao_id>/presença', views.presençaInscricao,
+         name='presença-inscricao'),
 ]

@@ -1,0 +1,28 @@
+{% extends 'app2.html' %}
+{% block content %}
+    {% load l10n %}
+    {% load configuracao_tags %}
+    {% load django_tables2 %}
+    <div class="columns">
+        <div class="column is-1">
+        </div>
+        <div class="column">
+            <nav class="breadcrumb" aria-label="breadcrumbs">
+                <ul>
+                    <li><a href="{% url 'home' %}">Início</a></li>
+                    <li><a href="{% url 'inscricoes:consultar-inscricoes-admin' %}">Incrições</a></li>
+                    <li>Consultar Presenças</li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+    <div>Sessões</div>
+    {{ inscricao2 }}
+    {% for se in sessoes %}
+        <p>{{ se.presentes }}</p>
+
+    {% endfor %}
+
+{% endblock content %}
+{% block scripts %}
+{% endblock scripts %}

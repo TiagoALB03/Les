@@ -716,3 +716,17 @@ class CriarUltimaHora(SessionWizardView):
         return render(self.request, 'inscricoes/consultar_inscricao_submissao.html', {
             'inscricao': inscricao,
         })
+
+def presençaInscricao(request,inscricao_id):
+    user_check_var = user_check(request=request, user_profile=[Administrador])
+    if user_check_var.get('exists') == False:
+        return user_check_var.get('render')
+    if inscricao_id is not None:
+        inscricao = Inscricao.objects.get(id=inscricao_id)
+        allowMore, allowDelete = False, False
+
+    return render(request=request,
+                  template_name='inscricoes/consultarPresença.html',context={
+                    'inscricao2': Inscricao.objects.get(id=inscricao_id),
+                    'sessoes': Inscricaosessao.objects.all().filter(id=inscricao_id),
+                  })
