@@ -1174,7 +1174,7 @@ def duplicarAtividadeResumo(request, id):
         print(nsub)
         if request.method == "POST":
             if 'anterior' in request.POST:
-                return redirect('atividades:inserirSessao', id)
+                return redirect('atividades:duplicar-atividade-sessao', id)
         sessions_activity = Sessao.objects.filter(atividadeid=atividade)
         return render(request=request,
                       template_name="atividades/duplicarAtividadeVerResumo.html",
