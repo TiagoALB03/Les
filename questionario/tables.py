@@ -17,7 +17,7 @@ class QuestionarioTable(django_tables.Table):
     # ano = django_tables.Column(accessor='getQuestionarioDateID')
     estado = django_tables.Column(accessor='getQuestionarioEstado', attrs={"th": {"width": "130"}})
     acoes = django_tables.Column('Ações', empty_values=(),
-                                 orderable=False, attrs={"th": {"width": "150"}})
+                                 orderable=False, attrs={"th": {"width": "200"}})
 
     class Meta:
         model = Questionario
@@ -44,6 +44,7 @@ class QuestionarioTable(django_tables.Table):
         primeiro_botao = """<span class="icon"></span>"""
         segundo_botao = """<span class="icon"></span>"""
         terceiro_botao = """<span class="icon"></span>"""
+        botao_apagar = """<span class="icon"></span>"""
         t_botao = """<span class="icon"></span>"""
         if record.getQuestionarioEstado == "concluido":
             primeiro_botao = f"""
@@ -109,13 +110,38 @@ class QuestionarioTable(django_tables.Table):
                           </a>
                       """
 
+        if record.getQuestionarioEstado != "publicado" and record.checkQuestionarioIsFromDiaAberto <= 0:
+            botao_apagar = f"""
+                                      <a data-tooltip="Eliminar" onclick="alert.render('Tem a certeza que pretende eliminar este questionário?','{reverse('questionarios:eliminarQuestionario', args=[record.getQuestionarioID])}')">
+                                          <span class="icon has-text-danger">
+                        <i class="mdi mdi-trash-can mdi-24px"></i>
+                    </span>
+                                      </a>
+                                  """
 
+        elif record.getQuestionarioEstado == "publicado":
+            botao_apagar = f"""
+                                                  <a data-tooltip="Eliminar" onclick = "alert2.render('O questionário não pode ser eliminado no estado <strong>publicado</strong>.','{reverse('questionarios:consultar-estados-admin')}')" >
+                                                      <span class="icon has-text-danger">
+                                    <i class="mdi mdi-trash-can mdi-24px"></i>
+                                </span>
+                                                  </a>
+                                              """
+        else:
+            botao_apagar = f"""
+                                                              <a data-tooltip="Eliminar" onclick = "alert2.render('O questionário não pode ser eliminado, porque pertence a um<strong> dia aberto</strong>.','{reverse('questionarios:consultar-estados-admin')}')" >
+                                                                  <span class="icon has-text-danger">
+                                                <i class="mdi mdi-trash-can mdi-24px"></i>
+                                            </span>
+                                                              </a>
+                                                          """
         return format_html(f"""
                <div>
                    {primeiro_botao}
                    {segundo_botao}
                    {terceiro_botao}
                    {t_botao}
+                    {botao_apagar}
                </div>    
            """)
 

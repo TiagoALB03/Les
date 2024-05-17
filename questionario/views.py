@@ -743,3 +743,12 @@ def getRespostasAtividadeRoteiro(request):
             counter = 0  # Set a default value or handle the error as appropriate
             return JsonResponse({'subtema': counter,
                                  'respostas': []})
+
+
+def eliminarQuestionario(request, questID):
+    user_check_var = user_check(request=request, user_profile=[Administrador])
+    if not user_check_var.get('exists'):
+        return user_check_var.get('render')
+    questionario = get_object_or_404(Questionario, id=questID)
+    questionario.delete()
+    return redirect('questionarios:consultar-questionarios-admin')

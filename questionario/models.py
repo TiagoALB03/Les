@@ -1,5 +1,7 @@
 from django.db import models
 
+from configuracao.models import Diaaberto
+
 
 # Create your models here.
 class EstadosQuest(models.Model):
@@ -58,6 +60,20 @@ class Questionario(models.Model):
     def getQuestionarioCor(self):
         return self.estadoquestid.cor
 
+    @property
+    def getQuestionarioAnswerCounter(self):
+        counter = 0
+        perguntas = PergQuest.objects.all().filter(questionarioid=self.id)
+        for perg in perguntas:
+            print(counter)
+            counter += Resposta.objects.all().filter(perguntaID=perg).count()
+            print(counter)
+        print(counter)
+        return counter
+
+    @property
+    def checkQuestionarioIsFromDiaAberto(self):
+        return Diaaberto.objects.all().filter(questionarioid=self.id).count()
 
     # @property
     # def getQuestionarioDateID(self):
