@@ -12,16 +12,15 @@ from inscricoes.models import Inscricaosessao
 class InscricoesTable(tables.Table):
     grupo = tables.Column('Grupo', accessor='id', attrs={"th": {"width": "65"}})
     horario = tables.Column(verbose_name='Horário')
-    nalunos = tables.Column(verbose_name='Qtd', attrs={
-                            "abbr": {"title": "Quantidade"}, "th": {"width": "48"}})
-    acoes = tables.Column('Ações', empty_values=(),
-                          orderable=False, attrs={"th": {"width": "110"}})
+    nalunos = tables.Column(verbose_name='Qtd', attrs={"th": {"width": "48"}})
+    acoes = tables.Column('Ações', empty_values=(), orderable=False, attrs={"th": {"width": "110"}})
     turma = tables.Column(empty_values=())
+    presentes = tables.Column(verbose_name='presentes', attrs={"th": {"width": "100"}})
 
     class Meta:
         model = Inscricao
         sequence = ('grupo', 'dia', 'horario', 'escola', 'areacientifica',
-                    'turma', 'nalunos', 'acoes')
+                    'turma', 'nalunos', 'presentes', 'acoes')
 
     def before_render(self, request):
         self.columns.hide('id')
@@ -50,24 +49,39 @@ class InscricoesTable(tables.Table):
         return format_html(f"{record.ano}º {value}, {record.areacientifica}")
 
     def render_acoes(self, record):
-        return format_html(f"""
-        <div>
+        primeiro_botao = f"""
             <a href='{reverse("inscricoes:consultar-inscricao", kwargs={"pk": record.pk})}'
                 data-tooltip="Editar">
                 <span class="icon">
                     <i class="mdi mdi-circle-edit-outline mdi-24px"></i>
                 </span>
             </a>
+        """
+
+        segundo_botao = f"""
             <a onclick="alert.render('Tem a certeza que pretende eliminar esta inscrição?','{reverse("inscricoes:apagar-inscricao", kwargs={"pk": record.pk})}')"
                 data-tooltip="Apagar">
                 <span class="icon has-text-danger">
                     <i class="mdi mdi-trash-can mdi-24px"></i>
                 </span>
             </a>
-             <a href='#' data-tooltip="Presenças">
-            <span class="icon has-text-success">
-                <i class="mdi mdi-account-check mdi-24px"></i>
-            </span>
-        </a>
-        </div>
+        """
+
+        terceiro_botao = ""
+        if record.getQt != record.getPresentes:
+            terceiro_botao = f"""
+                <a href='{reverse("inscricoes:presença-inscricao", kwargs={"inscricao_id": record.getIncricaoId})}'
+                    data-tooltip="Presenças">
+                    <span class="icon">
+                        <i class="mdi mdi-account-check-outline mdi-24px"></i>
+                    </span>
+                </a>
+            """
+
+        return format_html(f"""
+            <div>
+                {primeiro_botao}
+                {segundo_botao}
+                {terceiro_botao}
+            </div>
         """)

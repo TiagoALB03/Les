@@ -49,7 +49,20 @@ class Inscricao(models.Model):
     hora_chegada = models.TimeField(blank=True, null=True)
     local_chegada = models.CharField(max_length=200, blank=True, null=True)
     entrecampi = models.BooleanField(default=False)
+    presentes = models.IntegerField(default=0)
 
+
+    @property
+    def getIncricaoId(self):
+        return self.id
+
+    @property
+    def getQt(self):
+        return self.nalunos
+
+    @property
+    def getPresentes(self):
+        return self.presentes
     class Meta:
         db_table = 'Inscricao'
 
@@ -182,6 +195,9 @@ class Inscricaosessao(models.Model):
             validators.MaxValueValidator(100),
         ]
     )
+    presentes=models.IntegerField(default=0)
+
+
 
     class Meta:
         db_table = 'InscricaoSessao'
@@ -205,10 +221,3 @@ class Inscricaotransporte(models.Model):
         db_table = 'InscricaoTransporte'
         unique_together = (('inscricao', 'transporte'),)
 
-class registoGrupo(models.Model):
-    inscricao = models.ForeignKey(Inscricao, models.CASCADE)
-    status = models.BooleanField(null=True,default=False)
-    presentes = models.IntegerField(null=True)
-
-    class Meta:
-        db_table = 'registoGrupo'
