@@ -15,7 +15,7 @@ class InscricoesTable(tables.Table):
     nalunos = tables.Column(verbose_name='Qtd', attrs={
                             "abbr": {"title": "Quantidade"}, "th": {"width": "48"}})
     acoes = tables.Column('Ações', empty_values=(),
-                          orderable=False, attrs={"th": {"width": "110"}})
+                          orderable=False, attrs={"th": {"width": "85"}})
     turma = tables.Column(empty_values=())
 
     class Meta:
@@ -64,10 +64,5 @@ class InscricoesTable(tables.Table):
                     <i class="mdi mdi-trash-can mdi-24px"></i>
                 </span>
             </a>
-             <a href='#' data-tooltip="Presenças">
-            <span class="icon has-text-success">
-                <i class="mdi mdi-account-check mdi-24px"></i>
-            </span>
-        </a>
         </div>
         """)

@@ -43,5 +43,4 @@ urlpatterns = [
          name='inscricao_escolha'),
     path('criar_ultimaHora', views.CriarUltimaHora.as_view(),
          name='criar-inscricao_ultimaHora'),
-
 ]

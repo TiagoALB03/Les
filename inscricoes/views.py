@@ -401,7 +401,7 @@ def relatorio_almoco(request, diaabertoid=None):
                     professoruniversitarioutilizadorid__departamento__id=OuterRef(
                         'id'),
                     diaabertoid__id=diaabertoid,
-                    estado="Aceite",
+                    estado__nome="Aceite",
                 )
             )
         ),
@@ -475,7 +475,7 @@ def pdfalmocos(request, diaabertoid=None):
                            professoruniversitarioutilizadorid__departamento__id=OuterRef(
                                'id'),
                            diaabertoid__id=diaabertoid,
-                           estado="Aceite",
+                           estado__nome="Aceite",
                        )
                    )
                ),'dias': dias,
@@ -512,7 +512,7 @@ def estatisticasano(request, diaabertoid=None):
                     professoruniversitarioutilizadorid__departamento__id=OuterRef(
                         'id'),
                     diaabertoid__id=diaabertoid,
-                    estado="Aceite",
+                    estado__nome="Aceite",
                 )
             )
         ),
@@ -548,7 +548,7 @@ def estatisticasAlmocos(request, diaabertoid=None):
                     professoruniversitarioutilizadorid__departamento__id=OuterRef(
                         'id'),
                     diaabertoid__id=diaabertoid,
-                    estado="Aceite",
+                    estado__nome="Aceite",
                 )
             )
         ),

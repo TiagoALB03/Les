@@ -1,50 +1,74 @@
 {% extends 'bulma_table_details.html' %}
 
-
 {% block details_content %}
-
-<table>
-<tbody>
-<tr>
-    <td><strong>Responsável:<strong></td>
-    <td>{{row.record.responsavel_set.first.nome}}</td>
-</tr>
-<tr>
-    <td><strong>Meio de Transporte:<strong></td>
-    <td>{{row.record.get_meio_transporte_display}}</td>
-</tr>
-{% if row.record.meio_transporte != 'outro' %}
-<tr>
-    <td><strong>Hora de Chegada:<strong></td>
-    <td>{{row.record.hora_chegada}}</td>
-</tr>
-<tr>
-    <td><strong>Local de Chegada:<strong></td>
-    <td>{{row.record.local_chegada}}</td>
-</tr>
-{% endif %}
-{% if row.record.inscricaoprato_set.first %}
-<tr>
-    <td><strong>Almoço no Campus:<strong></td>
-    <td>{{row.record.inscricaoprato_set.first.campus}}</td>
-</tr>
-<tr>
-    <td><strong>Nº Pratos para Alunos:<strong></td>
-    <td>{{row.record.inscricaoprato_set.first.npratosalunos}}</td>
-</tr>
-<tr>
-    <td><strong>Nº Pratos para Outros:<strong></td>
-    <td>{{row.record.inscricaoprato_set.first.npratosdocentes}}</td>
-</tr>
-{% endif %}
-</tbody>
-</table>
-
-<br>
-
-<button type="button" class="button is-danger"
-    onclick="location.href='{% url 'inscricoes:inscricao-pdf' row.record.pk %}';"><span class="icon is-small"><i
-            class="mdi mdi-download"></i></span> <span> Obter PDF </span>
-</button>
-
+<div class="columns">
+    <div class="column">
+        <table class="table is-fullwidth">
+            <tbody>
+                <tr>
+                    <td><strong>Responsável:</strong></td>
+                    <td>{{ row.record.responsavel_set.first.nome }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Meio de Transporte:</strong></td>
+                    <td>{{ row.record.get_meio_transporte_display }}</td>
+                </tr>
+                {% if row.record.meio_transporte != 'outro' %}
+                    <tr>
+                        <td><strong>Hora de Chegada:</strong></td>
+                        <td>{{ row.record.hora_chegada }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Local de Chegada:</strong></td>
+                        <td>{{ row.record.local_chegada }}</td>
+                    </tr>
+                {% endif %}
+                {% if row.record.inscricaoprato_set.first %}
+                    <tr>
+                        <td><strong>Almoço no Campus:</strong></td>
+                        <td>{{ row.record.inscricaoprato_set.first.campus }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Nº Pratos para Alunos:</strong></td>
+                        <td>{{ row.record.inscricaoprato_set.first.npratosalunos }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Nº Pratos para Outros:</strong></td>
+                        <td>{{ row.record.inscricaoprato_set.first.npratosdocentes }}</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+        <br>
+        <button type="button" class="button is-danger"
+            onclick="location.href='{% url 'inscricoes:inscricao-pdf' row.record.pk %}';">
+            <span class="icon is-small"><i class="mdi mdi-download"></i></span> <span>Obter PDF</span>
+        </button>
+    </div>
+    <div class="column">
+        <div class="box">
+            <h3 class="title is-5">Presenças</h3>
+            <table class="table is-fullwidth">
+                <tbody>
+                    {% for presença in row.record.getPresença_ %}
+                        <tr>
+                            <td><strong>Estado da presença:</strong></td>
+                            <td>
+                                {% if presença.status == False %}
+                                    Ainda não chegaram
+                                {% else %}
+                                    Chegaram
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Quantos chegaram:</strong></td>
+                            <td>{{ presença.presentes }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 {% endblock details_content %}

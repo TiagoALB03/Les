@@ -50,6 +50,10 @@ class Inscricao(models.Model):
     local_chegada = models.CharField(max_length=200, blank=True, null=True)
     entrecampi = models.BooleanField(default=False)
 
+    def getPresença_(self):
+        #return registoGrupo.objects.filter(inscricao_id=self.id).get()
+        return registoGrupo.objects.filter(inscricao_id=self.id)
+
     class Meta:
         db_table = 'Inscricao'
 
