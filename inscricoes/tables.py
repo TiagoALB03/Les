@@ -15,7 +15,7 @@ class InscricoesTable(tables.Table):
     nalunos = tables.Column(verbose_name='Qtd', attrs={"th": {"width": "48"}})
     acoes = tables.Column('Ações', empty_values=(), orderable=False, attrs={"th": {"width": "110"}})
     turma = tables.Column(empty_values=())
-    presentes = tables.Column(verbose_name='presentes', attrs={"th": {"width": "100"}})
+    presentes = tables.Column(verbose_name='Presentes', attrs={"th": {"width": "100"}})
 
     class Meta:
         model = Inscricao
