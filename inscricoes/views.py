@@ -563,8 +563,8 @@ def estatisticasAlmocos(request, diaabertoid=None):
         'pergunta2': Pergunta.objects.get(id=110),
         'respostas3': Resposta.objects.all().filter(perguntaID=111),
         'pergunta3': Pergunta.objects.get(id=111),
-        #'respostas4': Resposta.objects.all().filter(perguntaID__pergquest__questionarioid=diaaberto.questionarioid,perguntaID=112),
-        #'pergunta4': Pergunta.objects.get(id=150),
+        'respostas4': Resposta.objects.all().filter(perguntaID=112),
+        'pergunta4': Pergunta.objects.get(id=112),
     })
 
 def exportarcsv(request,diaabertoid=None):
