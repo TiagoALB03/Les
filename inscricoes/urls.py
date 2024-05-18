@@ -47,4 +47,8 @@ urlpatterns = [
          name='presença-inscricao'),
     path('<int:pk>/editar_presencas/', views.editar_presencas,
          name='editar-presencas'),
+    path('<int:pk>/consultar_presencas/', views.consultar_presencas,
+         name='consultar-presencas'),
+
+
 ]

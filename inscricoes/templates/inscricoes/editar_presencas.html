@@ -98,6 +98,10 @@
         <form method="post">
           {% csrf_token %}
           <div class="form-group">
+            <label for="id_nalunos">Número de Participantes</label>
+            <input type="number" class="form-control" id="id_nalunos" value="{{ inscricao.nalunos }}" readonly>
+          </div>
+          <div class="form-group">
             <label for="id_presentes">Número de Presenças</label>
             <input type="number" name="presentes" class="form-control" id="id_presentes" value="{{ form.presentes.value }}">
           </div>

@@ -742,8 +742,23 @@ def editar_presencas(request, pk):
         form = EditarPresencasForm(request.POST, instance=inscricao)
         if form.is_valid():
             form.save()
-            return HttpResponseRedirect(reverse('inscricoes:consultar-inscricao', kwargs={'pk': pk}))
+            if inscricao.nalunos == form.cleaned_data['presentes']:
+                return HttpResponseRedirect(reverse('inscricoes:consultar-presencas', kwargs={'pk': pk}))
+            else:
+                return HttpResponseRedirect(reverse('inscricoes:alterar-inscricao', kwargs={'pk': pk, 'step': 1}))
     else:
         form = EditarPresencasForm(instance=inscricao)
 
     return render(request, 'inscricoes/editar_presencas.html', {'form': form, 'inscricao': inscricao})
+
+def consultar_presencas(request, pk):
+    inscricao = get_object_or_404(Inscricao, pk=pk)
+    inscricaosessoes = inscricao.inscricaosessao_set.all()
+
+    return render(request, 'inscricoes/consultarPresença.html', {
+        'inscricao': inscricao,
+        'inscricaosessoes': inscricaosessoes,
+    })
+
+
+

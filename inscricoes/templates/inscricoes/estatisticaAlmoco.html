@@ -5,28 +5,40 @@
 {% block title %}- Estatísticas{% endblock title %}
 
 {% block load %}
-<link rel="stylesheet" href="{% static 'css/Chart.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/Chart.min.css' %}">
 {% endblock load %}
 
 {% block scripts %}
-<script src="{% static 'js/Chart.min.js' %}"></script>
-<script>
+    <script src="{% static 'js/Chart.min.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"
+            integrity="sha512-JPcRR8yFa8mmCsfrw4TNte1ZvF1e3+1SdGMslZvmrzDYxS69J7J49vkFL8u6u8PlPJK+H3voElBtUCzaXj+6ig=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script
+            src="https://rawgit.com/chartjs/chartjs.github.io/master/dist/master/Chart.min.js"
+    ></script>
+    <script
+            src="https://cdn.jsdelivr.net/npm/chartjs-plugin-piechart-outlabels"
+    ></script>
+    <script>
 
-    function selectDiaAberto(selectObject) {
-        const value = selectObject.value;
-        location.href = "{% url 'inscricoes:estatisticasAlmocos' 12345 %}".replace(/12345/, value);
-    }
+        function selectDiaAberto(selectObject) {
+            const value = selectObject.value;
+            location.href = "{% url 'inscricoes:estatisticasAlmocos' 12345 %}".replace(/12345/, value);
+        }
 
-        const respostaGostasteComida1 = {{ pergunta|RespostaComValorAlmoco:diaaberto}};
-        const respostaGostasteComida2 = {{ pergunta|RespostaComValorAlmoco2:diaaberto }};
-        const respostaGostasteComida3 = {{ pergunta|RespostaComValorAlmoco3:diaaberto }};
-        const respostaGostasteComida4 = {{ pergunta|RespostaComValorAlmoco4:diaaberto }};
-        const respostaGostasteComida5 = {{ pergunta|RespostaComValorAlmoco5:diaaberto }};
-        const respostaGostasteComida = document.getElementById('respostaGostasteComida').getContext('2d');
-        const chart_respostaGostasteComida = new Chart(respostaGostasteComida, {
+        const resposta1GostasteDiaAberto = {{ pergunta|RespostaComValorAlmoco:diaaberto}};
+        const resposta2GostasteDiaAberto = {{ pergunta|RespostaComValorAlmoco2:diaaberto}};
+        const resposta3GostasteDiaAberto = {{ pergunta|RespostaComValorAlmoco3:diaaberto}};
+        const resposta4GostasteDiaAberto = {{ pergunta|RespostaComValorAlmoco4:diaaberto}};
+        const resposta5GostasteDiaAberto = {{ pergunta|RespostaComValorAlmoco5:diaaberto}};
+        const ctx_respostasGostasteDiaAbertoGrafico = document.getElementById('respostasGostasteDiaAbertoGrafico').getContext('2d');
+        const chart_respostasGostasteDiaAbertoGrafico = new Chart(ctx_respostasGostasteDiaAbertoGrafico, {
             type: 'pie',
             data: {
-                labels: ["resposta 1", "resposta 2", "resposta 3", "resposta 4", "resposta 5"],
+                labels: ["opção 1", "opção 2", "opção 3", "opção 4", "opção 5"],
                 datasets: [{
                     backgroundColor: [
                         "rgb(196,1,1)",
@@ -36,18 +48,77 @@
                         "rgba(9,134,0,0.6)",
                     ],
                     data: [
-                        respostaGostasteComida1,respostaGostasteComida2,respostaGostasteComida3,respostaGostasteComida4
-                        ,respostaGostasteComida5
+                        resposta1GostasteDiaAberto,
+                        resposta2GostasteDiaAberto,
+                        resposta3GostasteDiaAberto,
+                        resposta4GostasteDiaAberto,
+                        resposta5GostasteDiaAberto,
                     ],
                 }]
             },
             options: {
                 legend: {
                     position: 'left',
-                    labels: {
-                        fontSize: 16,
-                    },
                     onClick: function (e, legendItem, legend) {
+
+                    }
+                },
+                plugins: {
+                    outlabels: {
+                        text: '%p',
+                        color: 'white',
+                        stretch: 20,
+                        font: {
+                            resizable: false,
+                            minSize: 90,
+                            maxSize: 90,
+                        },
+                    },
+                },
+                tooltips: {enabled: false},
+                hover: {mode: null},
+                layout: {
+                    padding: {
+                        left: 30,
+                        right: 30,
+                        top: 30,
+                        bottom: 30
+                    }
+                },
+            },
+        });
+        const respostaGostasteAtendimento1 = {{ pergunta2|RespostaComValorAlmoco:diaaberto}};
+        const respostaGostasteAtendimento2 = {{ pergunta2|RespostaComValorAlmoco2:diaaberto}};
+        const respostaGostasteAtendimento3 = {{ pergunta2|RespostaComValorAlmoco3:diaaberto}};
+        const respostaGostasteAtendimento4 = {{ pergunta2|RespostaComValorAlmoco4:diaaberto}};
+        const respostaGostasteAtendimento5 = {{ pergunta2|RespostaComValorAlmoco5:diaaberto}};
+        const ctx_respostaGostasteAtendimento = document.getElementById('respostaGostasteAtendimento').getContext('2d');
+        const chart_respostaGostasteAtendimento = new Chart(ctx_respostaGostasteAtendimento, {
+            type: 'pie',
+            data: {
+                labels: ["opção 1", "opção 2", "opção 3", "opção 4", "opção 5"],
+                datasets: [{
+                    backgroundColor: [
+                        "rgb(196,1,1)",
+                        "rgb(197,81,0)",
+                        "rgb(206,169,2)",
+                        "rgb(126,169,0)",
+                        "rgba(9,134,0,0.6)",
+                    ],
+                    data: [
+                        respostaGostasteAtendimento1,
+                        respostaGostasteAtendimento2,
+                        respostaGostasteAtendimento3,
+                        respostaGostasteAtendimento4,
+                        respostaGostasteAtendimento5,
+                    ],
+                }]
+            },
+            options: {
+                legend: {
+                    position: 'left',
+                    onClick: function (e, legendItem, legend) {
+
                     }
                 },
                 plugins: {
@@ -75,16 +146,16 @@
             },
         });
 
-         const respostaGostasteAtendimento1 = {{ pergunta2|RespostaComValorAlmoco:diaaberto}};
-         const respostaGostasteAtendimento2 = {{ pergunta2|RespostaComValorAlmoco2:diaaberto}}
-         const respostaGostasteAtendimento3 = {{ pergunta2|RespostaComValorAlmoco3:diaaberto}}
-         const respostaGostasteAtendimento4 = {{ pergunta2|RespostaComValorAlmoco4:diaaberto}}
-         const respostaGostasteAtendimento5 =  {{ pergunta2|RespostaComValorAlmoco5:diaaberto}}
-          const ctx_resposta2 = document.getElementById('resposta2').getContext('2d');
-        const chart_resposta2 = new Chart(ctx_resposta2, {
+        const respostaVariedade1 = {{ pergunta3|RespostaComValorAlmoco:diaaberto}};
+        const respostaVariedade2 = {{ pergunta3|RespostaComValorAlmoco2:diaaberto}};
+        const respostaVariedade3 = {{ pergunta3|RespostaComValorAlmoco3:diaaberto}};
+        const respostaVariedade4 = {{ pergunta3|RespostaComValorAlmoco4:diaaberto}};
+        const respostaVariedade5 = {{ pergunta3|RespostaComValorAlmoco5:diaaberto}};
+        const ctx_respostaVariedade = document.getElementById('respostaVariedade').getContext('2d');
+        const chart_respostaVariedade = new Chart(ctx_respostaVariedade, {
             type: 'pie',
             data: {
-                labels: ["resposta 1", "resposta 2", "resposta 3", "resposta 4", "resposta 5"],
+                labels: ["opção 1", "opção 2", "opção 3", "opção 4", "opção 5"],
                 datasets: [{
                     backgroundColor: [
                         "rgb(196,1,1)",
@@ -94,75 +165,19 @@
                         "rgba(9,134,0,0.6)",
                     ],
                     data: [
-                       respostaGostasteAtendimento1,respostaGostasteAtendimento2,respostaGostasteAtendimento3
-                        ,respostaGostasteAtendimento4,respostaGostasteAtendimento5
+                        respostaVariedade1,
+                        respostaVariedade2,
+                        respostaVariedade3,
+                        respostaVariedade4,
+                        respostaVariedade5,
                     ],
                 }]
             },
             options: {
                 legend: {
                     position: 'left',
-                    labels: {
-                        fontSize: 16,
-                    },
                     onClick: function (e, legendItem, legend) {
-                    }
-                },
-                plugins: {
-                    outlabels: {
-                        text: '%p',
-                        color: 'white',
-                        stretch: 20,
-                        font: {
-                            resizable: false,
-                            minSize: 90,
-                            maxSize: 90,
-                        },
-                    },
-                },
-                tooltips: {enabled: false},
-                hover: {mode: null},
-                layout: {
-                    padding: {
-                        left: 30,
-                        right: 30,
-                        top: 30,
-                        bottom: 30
-                    }
-                },
-            },
-        });
 
-        const respostaVariedade1 = {{ pergunta3|RespostaComValorAlmoco:diaaberto}}
-        const respostaVariedade2 = {{ pergunta3|RespostaComValorAlmoco2:diaaberto}}
-        const respostaVariedade3 = {{ pergunta3|RespostaComValorAlmoco3:diaaberto}}
-        const respostaVariedade4 = {{ pergunta3|RespostaComValorAlmoco4:diaaberto}}
-        const respostaVariedade5 = {{ pergunta3|RespostaComValorAlmoco5:diaaberto}}
-        const ctx_resposta3 = document.getElementById('resposta3').getContext('2d');
-        const chart_resposta3 = new Chart(ctx_resposta3, {
-            type: 'pie',
-            data: {
-                labels: ["resposta 1", "resposta 2", "resposta 3", "resposta 4", "resposta 5"],
-                datasets: [{
-                    backgroundColor: [
-                        "rgb(196,1,1)",
-                        "rgb(197,81,0)",
-                        "rgb(206,169,2)",
-                        "rgb(126,169,0)",
-                        "rgba(9,134,0,0.6)",
-                    ],
-                    data: [
-                        respostaVariedade1,respostaVariedade2,respostaVariedade3,respostaVariedade4,respostaVariedade5
-                    ],
-                }]
-            },
-            options: {
-                legend: {
-                    position: 'left',
-                    labels: {
-                        fontSize: 16,
-                    },
-                    onClick: function (e, legendItem, legend) {
                     }
                 },
                 plugins: {
@@ -191,15 +206,15 @@
         });
 
         const respostaQuente1 = {{ pergunta4|RespostaComValorAlmoco:diaaberto}}
-        const respostaQuente2 = {{ pergunta4|RespostaComValorAlmoco2:diaaberto}}
-        const respostaQuente3 = {{ pergunta4|RespostaComValorAlmoco3:diaaberto}}
-        const respostaQuente4 = {{ pergunta4|RespostaComValorAlmoco4:diaaberto}}
-        const respostaQuente5 = {{ pergunta4|RespostaComValorAlmoco5:diaaberto}}
-        const ctx_resposta4 = document.getElementById('resposta4').getContext('2d');
-        const chart_resposta4 = new Chart(ctx_resposta4, {
+        const respostaQuente2 = {{ pergunta4|RespostaComValorAlmoco2:diaaberto}};
+        const respostaQuente3 = {{ pergunta4|RespostaComValorAlmoco3:diaaberto}};
+        const respostaQuente4 = {{ pergunta4|RespostaComValorAlmoco4:diaaberto}};
+        const respostaQuente5 = {{ pergunta4|RespostaComValorAlmoco5:diaaberto}};
+        const ctx_respostaQuente = document.getElementById('respostaQuente').getContext('2d');
+        const chart_respostaQuente = new Chart(ctx_respostaQuente, {
             type: 'pie',
             data: {
-                labels: ["resposta 1", "resposta 2", "resposta 3", "resposta 4", "resposta 5"],
+                labels: ["opção 1", "opção 2", "opção 3", "opção 4", "opção 5"],
                 datasets: [{
                     backgroundColor: [
                         "rgb(196,1,1)",
@@ -209,17 +224,19 @@
                         "rgba(9,134,0,0.6)",
                     ],
                     data: [
-                        respostaQuente1,respostaQuente2,respostaQuente3,respostaQuente4,respostaQuente5
+                        respostaQuente1,
+                        respostaQuente2,
+                        respostaQuente3,
+                        respostaQuente4,
+                        respostaQuente5,
                     ],
                 }]
             },
             options: {
                 legend: {
                     position: 'left',
-                    labels: {
-                        fontSize: 16,
-                    },
                     onClick: function (e, legendItem, legend) {
+
                     }
                 },
                 plugins: {
@@ -247,7 +264,12 @@
             },
         });
 
-    async function exportarPDF() {
+
+
+
+
+
+        async function exportarPDF() {
             // Criar uma instÃ¢ncia de jsPDF em orientaÃ§Ã£o retrato e tamanho A4
             const pdf = new jspdf.jsPDF();
 
@@ -282,10 +304,10 @@
             pdf.text("Estatisticas sobre os almoços", posXText, posYText);
 
             // Capturar os grÃ¡ficos como imagens
-            const grafico1 = document.getElementById('respostaGostasteComida').toDataURL();
-            const grafico2 = document.getElementById('resposta2').toDataURL();
-            const grafico3 = document.getElementById('resposta3').toDataURL();
-            const grafico4 = document.getElementById('resposta4').toDataURL();
+            const grafico1 = document.getElementById('respostasGostasteDiaAbertoGrafico').toDataURL();
+            const grafico2 = document.getElementById('respostaGostasteAtendimento').toDataURL();
+            const grafico3 = document.getElementById('respostaVariedade').toDataURL();
+            const grafico4 = document.getElementById('respostaQuente').toDataURL();
 
             // Largura e altura do documento PDF
             const pdfWidth = pdf.internal.pageSize.getWidth();
@@ -319,17 +341,16 @@
 
 
             // Salvar o PDF
-            pdf.save('graficos.pdf');
+            pdf.save('pdfAlmoco{{ diaaberto }}.pdf');
         }
 
-</script>
-   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
-
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
 
 {% endblock scripts %}
 
 {% block content %}
-    <nav aria-label="breadcrumbs" class="breadcrumb">
+   <nav aria-label="breadcrumbs" class="breadcrumb">
         <ul>
             <li><a href="{% url 'home' %}">Início</a></li>
             <li class="is-active"><a href="">Dados e Estatísticas</a></li>
@@ -369,21 +390,21 @@
 
             <div class="column">
                 <div style="margin-left: 35%"> {{ pergunta }}</div>
-                <canvas id="respostaGostasteComida"></canvas>
+                <canvas id="respostasGostasteDiaAbertoGrafico"></canvas>
             </div>
             <div class="column">
                 <div style="margin-left: 35%"> {{ pergunta2 }}</div>
-                <canvas id="resposta2"></canvas>
+                <canvas id="respostaGostasteAtendimento"></canvas>
             </div>
         </div>
         <div class="columns" style="margin-top: 50px">
             <div class="column">
                 <div style="margin-left: 35%"> {{ pergunta3 }}</div>
-                <canvas id="resposta3"></canvas>
+                <canvas id="respostaVariedade"></canvas>
             </div>
             <div class="column">
                 <div style="margin-left: 35%"> {{ pergunta4 }}</div>
-                <canvas id="resposta4"></canvas>
+                <canvas id="respostaQuente"></canvas>
             </div>
         </div>
         <hr>

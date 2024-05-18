@@ -1,3 +1,5 @@
+
+
 from . import models
 from django import forms
 from phonenumber_field.formfields import PhoneNumberField
@@ -12,6 +14,7 @@ import pytz
 from datetime import datetime
 from .models import Inscricao
 
+from formtools.wizard.views import SessionWizardView
 
 
 class InfoForm(forms.Form):
@@ -205,3 +208,4 @@ class EditarPresencasForm(forms.ModelForm):
     class Meta:
         model = Inscricao
         fields = ['presentes']
+

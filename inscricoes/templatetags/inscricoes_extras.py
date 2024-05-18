@@ -285,38 +285,42 @@ def RespostaComValorAlmoco(pergunta,diaaberto):
 @register.filter
 def RespostaComValorAlmoco(pergunta,diaaberto):
     respostas = Resposta.objects.filter(
-        perguntaID=pergunta.id,resposta="1",perguntaID__pergquest__questionarioid=diaaberto.questionarioid
+        #perguntaID=pergunta.id,resposta="1",perguntaID__pergquest__questionarioid=diaaberto.questionarioid
+        perguntaID = pergunta.id, resposta = "1", idcodigo__inscricaoID__inscricao__diaaberto = diaaberto
     ).count()
     return respostas
 
 @register.filter
 def RespostaComValorAlmoco2(pergunta,diaaberto):
     respostas = Resposta.objects.filter(
-        perguntaID=pergunta.id,resposta="2",perguntaID__pergquest__questionarioid=diaaberto.questionarioid
+        #perguntaID=pergunta.id,resposta="2",perguntaID__pergquest__questionarioid=diaaberto.questionarioid
+        perguntaID = pergunta.id, resposta = "2", idcodigo__inscricaoID__inscricao__diaaberto = diaaberto
     ).count()
     return respostas
 
 @register.filter
 def RespostaComValorAlmoco3(pergunta,diaaberto):
     respostas = Resposta.objects.filter(
-        perguntaID=pergunta.id,resposta="3",perguntaID__pergquest__questionarioid=diaaberto.questionarioid
+        perguntaID=pergunta.id, resposta="3", idcodigo__inscricaoID__inscricao__diaaberto=diaaberto
+        #perguntaID=pergunta.id,resposta="3",perguntaID__pergquest__questionarioid=diaaberto.questionarioid
     ).count()
     return respostas
 
 @register.filter
 def RespostaComValorAlmoco4(pergunta,diaaberto):
     respostas = Resposta.objects.filter(
-        perguntaID=pergunta.id,resposta="4",perguntaID__pergquest__questionarioid=diaaberto.questionarioid
+        #perguntaID=pergunta.id,resposta="4",perguntaID__pergquest__questionarioid=diaaberto.questionarioid
+        perguntaID=pergunta.id, resposta="4", idcodigo__inscricaoID__inscricao__diaaberto=diaaberto
     ).count()
     return respostas
 
 @register.filter
 def RespostaComValorAlmoco5(pergunta,diaaberto):
     respostas = Resposta.objects.filter(
-        perguntaID=pergunta.id,resposta="5",perguntaID__pergquest__questionarioid=diaaberto.questionarioid
+        #perguntaID=pergunta.id,resposta="5",perguntaID__pergquest__questionarioid=diaaberto.questionarioid
+        perguntaID=pergunta.id, resposta="5", idcodigo__inscricaoID__inscricao__diaaberto=diaaberto
     ).count()
     return respostas
-
 
 @register.filter
 def respostaComValor(respostas, valor ):
