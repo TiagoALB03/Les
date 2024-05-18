@@ -25,11 +25,11 @@
             location.href = "{% url 'questionarios:estatisticas' 12345 %}".replace(/12345/, value);
         }
 
-        const resposta1GostasteAtividade = {{ respostas|respostaGostasteComValor:"1" }};
-        const resposta2GostasteAtividade = {{ respostas|respostaGostasteComValor:"2" }};
-        const resposta3GostasteAtividade = {{ respostas|respostaGostasteComValor:"3" }};
-        const resposta4GostasteAtividade = {{ respostas|respostaGostasteComValor:"4" }};
-        const resposta5GostasteAtividade = {{ respostas|respostaGostasteComValor:"5" }};
+        const resposta1GostasteAtividade = {{ respostas|respostaGostasteComValor1:"1" }};
+        const resposta2GostasteAtividade = {{ respostas|respostaGostasteComValor1:"2" }};
+        const resposta3GostasteAtividade = {{ respostas|respostaGostasteComValor1:"3" }};
+        const resposta4GostasteAtividade = {{ respostas|respostaGostasteComValor1:"4" }};
+        const resposta5GostasteAtividade = {{ respostas|respostaGostasteComValor1:"5" }};
         const ctx_respostasGostasteAtividadeGrafico = document.getElementById('respostasGostasteTransporteGrafico').getContext('2d');
         const chart_respostasGostasteAtividadeGrafico = new Chart(ctx_respostasGostasteAtividadeGrafico, {
             type: 'pie',
