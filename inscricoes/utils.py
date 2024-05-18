@@ -86,7 +86,7 @@ def enviar_mail_confirmacao_inscricao(request, pk):
     message += 'Cumprimentos, Dia Aberto UAlg.'
     source = settings.EMAIL_HOST_USER
     recipient_list = [inscricao.responsavel_set.first().email, ]
-    pdf = render_pdf("inscricoes/pdf.html", context,
+    pdf = render_pdf("inscricoes/pdfTransporte.html", context,
                      f"dia_aberto_ualg_{ano}.pdf").content
     email = EmailMessage(subject, message, source, recipient_list, attachments=[
                          (f"dia_aberto_ualg_{ano}.pdf", pdf, 'application/pdf')])

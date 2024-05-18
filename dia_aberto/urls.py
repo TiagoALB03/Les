@@ -39,7 +39,7 @@ urlpatterns = [
     path('coordenadores/', include('coordenadores.urls')),
     path('questionario/', include('questionario.urls')),
     path('roteiro/', include('roteiro.urls')),
-
+    path('relatorio/', include('relatorio.urls')),
     path('', views.home, name='home'),
 
     path('utilizadores/password_reset/done/', auth_views.PasswordResetCompleteView.as_view(template_name='registration/password_reset_done.html'),

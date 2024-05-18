@@ -82,6 +82,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'questionario',
     'roteiro',
+    'relatorio'
 ]
 
 DJANGO_NOTIFICATIONS_CONFIG = { 'USE_JSONFIELD': True}

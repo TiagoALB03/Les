@@ -71,7 +71,7 @@ class TestInscricaoPDFView(TestCase):
         response = self.client.get(
             reverse('inscricoes:inscricao-pdf', kwargs={'pk': self.inscricao.pk}))
         self.assertEquals(response.status_code, 200)
-        self.assertTemplateUsed(response, 'inscricoes/pdf.html')
+        self.assertTemplateUsed(response, 'inscricoes/pdfTransporte.html')
         self.assertIsNotNone(response.context['request'])
         self.assertEquals(response.context['inscricao'], self.inscricao)
         self.assertEquals(

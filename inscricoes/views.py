@@ -47,7 +47,7 @@ def InscricaoPDF(request, pk):
         'inscricao': inscricao,
         'ano': ano,
     }
-    return render_pdf("inscricoes/pdf.html", context, f"dia_aberto_ualg_{ano}.pdf")
+    return render_pdf("inscricoes/pdfTransporte.html", context, f"dia_aberto_ualg_{ano}.pdf")
 
 
 class AtividadesAPI(ListAPIView):

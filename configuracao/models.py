@@ -63,6 +63,10 @@ class Transportehorario(models.Model):
     def get_identifier(self):
         return self.transporte.identificador
 
+
+
+
+
     @property
     def get_capacidade(self):
         return Transporteuniversitario.objects.get(transporte=self.transporte).capacidade
