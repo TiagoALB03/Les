@@ -13,10 +13,12 @@ class RoteiroTable(django_tables.Table):
     ano = django_tables.Column('Ano', accessor='getRoteiroDiaAbertoID', orderable=False)
     coordenador = django_tables.Column('Coordenador', accessor='getRoteiroCoordenadorID', orderable=False)
     acoes = django_tables.Column('Ações', empty_values=(), orderable=False)
+    estado = django_tables.Column('Estado')
+    tema = django_tables.Column('Tema')
 
     class Meta:
         model = Roteiro
-        sequence = ('nome', 'coordenador', 'ano', 'acoes')
+        sequence = ('nome', 'coordenador', 'ano','estado','tema','acoes')
 
     def before_render(self, request):
         self.columns.hide('id')
