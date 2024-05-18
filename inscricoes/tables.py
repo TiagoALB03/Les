@@ -13,7 +13,7 @@ class InscricoesTable(tables.Table):
     grupo = tables.Column('Grupo', accessor='id', attrs={"th": {"width": "65"}})
     horario = tables.Column(verbose_name='Horário')
     nalunos = tables.Column(verbose_name='Qtd', attrs={"th": {"width": "48"}})
-    acoes = tables.Column('Ações', empty_values=(), orderable=False, attrs={"th": {"width": "110"}})
+    acoes = tables.Column('Ações', empty_values=(), orderable=False, attrs={"th": {"width": "150"}})
     turma = tables.Column(empty_values=())
     presentes = tables.Column(verbose_name='Presentes', attrs={"th": {"width": "100"}})
 
@@ -78,10 +78,20 @@ class InscricoesTable(tables.Table):
                 </a>
             """
 
+        quarto_botao = f"""
+            <a href='{reverse("inscricoes:editar-presencas", kwargs={"pk": record.pk})}'
+                data-tooltip="Presenças">
+                <span class="icon">
+                    <i class="fas fa-check" aria-hidden="true" style="color: #1EE232"></i>
+                </span>
+            </a>
+        """
+
         return format_html(f"""
             <div>
                 {primeiro_botao}
                 {segundo_botao}
                 {terceiro_botao}
+                {quarto_botao}
             </div>
         """)

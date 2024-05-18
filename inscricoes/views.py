@@ -32,6 +32,9 @@ from configuracao.tests.test_models import create_open_day
 from _datetime import timedelta
 
 
+from .forms import EditarPresencasForm
+
+
 def InscricaoPDF(request, pk):
     """ View que gera um PDF com os detalhes da inscrição """
     inscricao = get_object_or_404(Inscricao, pk=pk)
@@ -730,3 +733,17 @@ def presençaInscricao(request,inscricao_id):
                     'inscricao2': Inscricao.objects.get(id=inscricao_id),
                     'inscricaosessoes': Inscricaosessao.objects.all().filter(inscricao=inscricao_id),
                   })
+
+
+def editar_presencas(request, pk):
+    inscricao = get_object_or_404(Inscricao, pk=pk)
+
+    if request.method == 'POST':
+        form = EditarPresencasForm(request.POST, instance=inscricao)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('inscricoes:consultar-inscricao', kwargs={'pk': pk}))
+    else:
+        form = EditarPresencasForm(instance=inscricao)
+
+    return render(request, 'inscricoes/editar_presencas.html', {'form': form, 'inscricao': inscricao})

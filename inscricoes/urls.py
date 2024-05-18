@@ -45,4 +45,6 @@ urlpatterns = [
          name='criar-inscricao_ultimaHora'),
     path('<int:inscricao_id>/presença', views.presençaInscricao,
          name='presença-inscricao'),
+    path('<int:pk>/editar_presencas/', views.editar_presencas,
+         name='editar-presencas'),
 ]

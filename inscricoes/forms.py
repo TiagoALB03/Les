@@ -10,6 +10,8 @@ from django.core.exceptions import ValidationError
 from _datetime import date
 import pytz
 from datetime import datetime
+from .models import Inscricao
+
 
 
 class InfoForm(forms.Form):
@@ -197,3 +199,9 @@ class SessoesForm(forms.Form):
                 _("Deve inscrever-se, no mínimo, em uma sessão."))
         verificar_vagas(cleaned_data['sessoes'],
                         cleaned_data.get('nalunos', 0), cleaned_data.get('dia'))
+
+
+class EditarPresencasForm(forms.ModelForm):
+    class Meta:
+        model = Inscricao
+        fields = ['presentes']
