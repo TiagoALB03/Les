@@ -61,6 +61,20 @@ class Questionario(models.Model):
         return self.estadoquestid.cor
 
     @property
+    def get_pertence_dia_aberto(value):
+        if Diaaberto.objects.all().filter(questionarioid=value):
+            return "Sim"
+        else:
+            return "Não"
+
+    @property
+    def get_responsavel(value):
+        if Diaaberto.objects.all().filter(questionarioid=value):
+            return Diaaberto.objects.get(questionarioid=value).administradorutilizadorid.full_name
+        else:
+            return "---------"
+
+    @property
     def getQuestionarioAnswerCounter(self):
         counter = 0
         perguntas = PergQuest.objects.all().filter(questionarioid=self.id)
@@ -86,7 +100,9 @@ class Questionario(models.Model):
     @property
     def getQuestionarioEstadoID(self):
         return self.estadoquestid.id
-
+    @property
+    def getQuestionarioPergutnas(self):
+        return PergQuest.objects.all().filter(questionarioid=self.id)
     class Meta:
         db_table = 'Questionario'
 
@@ -117,7 +133,6 @@ class PergQuest(models.Model):
 
     class Meta:
         db_table = 'PergQuest'
-
 
 
 class Pergunta(models.Model):

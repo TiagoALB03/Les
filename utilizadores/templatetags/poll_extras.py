@@ -1,4 +1,6 @@
 from django import template
+
+from configuracao.models import Diaaberto
 from utilizadores.models import Utilizador, ProfessorUniversitario, Participante, Colaborador, Coordenador, Administrador
 from django.contrib.auth.models import Group
 from django.contrib.auth.models import User
@@ -138,4 +140,21 @@ def apagar_admin(user,id):
 @register.filter(name='apagar_coordenador') 
 def apagar_coordenador(user,id):
     utilizadores = Coordenador.objects.filter(valido="True")
-    return len(utilizadores)>1    
+    return len(utilizadores)>1
+
+
+@register.filter(name='get_pertence_dia_aberto')
+def get_pertence_dia_aberto(value):
+    print("Entra aqui")
+    if Diaaberto.objects.all().filter(questionarioid=value):
+        return "Sim"
+    else:
+        return "Não"
+
+@register.filter(name='get_responsavel')
+def get_responsavel(value):
+    print("Entra aqui")
+    if Diaaberto.objects.all().filter(questionarioid=value):
+        return Diaaberto.objects.get(questionarioid=value).administradorutilizadorid.full_name
+    else:
+        return "---------"

@@ -51,6 +51,6 @@ urlpatterns = [
     path('ajax/getRespostasAtividadeRoteiro', views.getRespostasAtividadeRoteiro, name='getRespostasAtividadeRoteiro'),
 
     path('eliminarQuestionario/<int:questID>', views.eliminarQuestionario, name='eliminarQuestionario'),
-
+    path('consultarPerguntar/<int:questID>', views.consultarPerguntas, name='consultarPerguntas'),
 
 ]

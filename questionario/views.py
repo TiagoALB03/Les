@@ -790,3 +790,18 @@ def eliminarQuestionario(request, questID):
     questionario = get_object_or_404(Questionario, id=questID)
     questionario.delete()
     return redirect('questionarios:consultar-questionarios-admin')
+
+def consultarPerguntas(request, questID):
+    user_check_var = user_check(request=request, user_profile=[Administrador])
+    if not user_check_var.get('exists'):
+        return user_check_var.get('render')
+    questionario = get_object_or_404(Questionario, id=questID)
+    perguntas = PergQuest.objects.all().filter(questionarioid=questionario)
+    for perg in perguntas:
+        print(perg.perguntaid.pergunta, perg.perguntaid.tiporespostaid.type)
+    print("chegou aqui")
+    return render(request, 'questionario/consultar_questionarios_pergunta.html', {
+        'questionario': questionario,
+        'perguntas': perguntas,
+        'perguntasSize': perguntas.count()
+    })
