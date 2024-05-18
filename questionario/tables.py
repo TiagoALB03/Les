@@ -49,28 +49,28 @@ class QuestionarioTable(django_tables.Table):
         t_botao = """<span class="icon"></span>"""
         if record.getQuestionarioEstado == "concluido":
             primeiro_botao = f"""
-                   <a data-tooltip="Arquivar" href="{reverse('questionarios:arquivar-questionario', args=[record.getQuestionarioID])}">
-                       <span class="icon">
-                           <i class="fas fa-archive" aria-hidden="true" style="color: #F4B400"></i>
-                       </span>
-                   </a>
-               """
-            if record.getQuestionarioEstado == "validado":
-                terceiro_botao = f"""
-                       <a data-tooltip="Responder" href="{reverse('questionarios:responder-questionario', args=[record.getQuestionarioID])}">
-                           <span class="icon">
-                                <i class="fas fa-reply" aria-hidden="true" style="color: #3273DC"></i>
-                           </span>
-                       </a>
-                   """
+                               <a data-tooltip="Arquivar" href="{reverse('questionarios:arquivar-questionario', args=[record.getQuestionarioID])}">
+                                   <span class="icon">
+                                       <i class="fas fa-archive" aria-hidden="true" style="color: #F4B400"></i>
+                                   </span>
+                               </a>
+                           """
+        if record.getQuestionarioEstado == "validado":
+            primeiro_botao = f"""
+                               <a data-tooltip="Responder" href="{reverse('questionarios:responder-questionario', args=[record.getQuestionarioID])}">
+                                   <span class="icon">
+                                        <i class="fas fa-reply" aria-hidden="true" style="color: #3273DC"></i>
+                                   </span>
+                               </a>
+                           """
         if record.getQuestionarioEstado == "validado":
             terceiro_botao = f"""
-                   <a data-tooltip="Publicar" href="{reverse('questionarios:publicar-questionario', args=[record.getQuestionarioID])}">
-                       <span class="icon">
-                            <i class="fas fa-upload" style="color:#DB2323"></i>
-                       </span>
-                   </a>
-               """
+                               <a data-tooltip="Publicar" href="{reverse('questionarios:publicar-questionario', args=[record.getQuestionarioID])}">
+                                   <span class="icon">
+                                        <i class="fas fa-upload" style="color:#DB2323"></i>
+                                   </span>
+                               </a>
+                           """
             segundo_botao = f"""
                                <a data-tooltip="editar" href="{reverse('questionarios:editar-questionario', args=[record.getQuestionarioID])}">
                                  <span class="icon">
@@ -81,67 +81,66 @@ class QuestionarioTable(django_tables.Table):
 
         if record.getQuestionarioEstado == "publicado":
             segundo_botao = f"""
-                   <a data-tooltip="Responder" href="{reverse('questionarios:responder-questionario', args=[record.getQuestionarioID])}">
-                       <span class="icon">
-                            <i class="fas fa-reply" aria-hidden="true" style="color: #3273DC"></i>
-                       </span>
-                   </a>
-               """
+                               <a data-tooltip="Responder" href="{reverse('questionarios:responder-questionario', args=[record.getQuestionarioID])}">
+                                   <span class="icon">
+                                        <i class="fas fa-reply" aria-hidden="true" style="color: #3273DC"></i>
+                                   </span>
+                               </a>
+                           """
             terceiro_botao = f"""
-            <a data-tooltip="Validar" href="{reverse('questionarios:validar-questionario', args=[record.getQuestionarioID])}">
-                <span class="icon">
-                    <i class="fas fa-check" aria-hidden="true" style="color: #1EE232"></i>
-                </span>
-            </a>
-            """
+                                <a data-tooltip="Validar" href="{reverse('questionarios:validar-questionario', args=[record.getQuestionarioID])}">
+                                    <span class="icon">
+                                        <i class="fas fa-check" aria-hidden="true" style="color: #1EE232"></i>
+                                    </span>
+                                </a>
+                            """
 
         if record.getQuestionarioEstado == "pendente":
             segundo_botao = f"""
-                   <a data-tooltip="Responder" href="{reverse('questionarios:responder-questionario', args=[record.getQuestionarioID])}">
-                       <span class="icon">
-                            <i class="fas fa-reply" aria-hidden="true" style="color: #3273DC"></i>
-                       </span>
-                   </a>
-               """
+                               <a data-tooltip="Responder" href="{reverse('questionarios:responder-questionario', args=[record.getQuestionarioID])}">
+                                   <span class="icon">
+                                        <i class="fas fa-reply" aria-hidden="true" style="color: #3273DC"></i>
+                                   </span>
+                               </a>
+                           """
             primeiro_botao = f"""
-                          <a data-tooltip="editar" href="{reverse('questionarios:editar-questionario', args=[record.getQuestionarioID])}">
-                              <span class="icon">
-                                   <i class="fas fa-pencil-alt aria-hidden="true" style="color: #F4B400"></i>
-                              </span>
-                          </a>
-                      """
+                              <a data-tooltip="editar" href="{reverse('questionarios:editar-questionario', args=[record.getQuestionarioID])}">
+                                  <span class="icon">
+                                       <i class="fas fa-pencil-alt aria-hidden="true" style="color: #F4B400"></i>
+                                  </span>
+                              </a>
+                          """
 
         if record.getQuestionarioEstado != "publicado" and record.checkQuestionarioIsFromDiaAberto <= 0:
             botao_apagar = f"""
-                                      <a data-tooltip="Eliminar" onclick="alert.render('Tem a certeza que pretende eliminar este questionário?','{reverse('questionarios:eliminarQuestionario', args=[record.getQuestionarioID])}')">
-                                          <span class="icon has-text-danger">
-                        <i class="mdi mdi-trash-can mdi-24px"></i>
-                    </span>
-                                      </a>
-                                  """
+                              <a data-tooltip="Eliminar" onclick="alert.render('Tem a certeza que pretende eliminar este questionário?','{reverse('questionarios:eliminarQuestionario', args=[record.getQuestionarioID])}')">
+                                  <span class="icon has-text-danger">
+                                    <i class="mdi mdi-trash-can mdi-24px"></i>
+                                </span>
+                              </a>
+                          """
 
         elif record.getQuestionarioEstado == "publicado":
             botao_apagar = f"""
-                                                  <a data-tooltip="Eliminar" onclick = "alert2.render('O questionário não pode ser eliminado no estado <strong>publicado</strong>.','{reverse('questionarios:consultar-estados-admin')}')" >
-                                                      <span class="icon has-text-danger">
+                              <a data-tooltip="Eliminar" onclick = "alert2.render('O questionário não pode ser eliminado no estado <strong>publicado</strong>.','{reverse('questionarios:consultar-estados-admin')}')" >
+                                  <span class="icon has-text-danger">
                                     <i class="mdi mdi-trash-can mdi-24px"></i>
                                 </span>
-                                                  </a>
-                                              """
+                              </a>
+                          """
         else:
             botao_apagar = f"""
-                                                              <a data-tooltip="Eliminar" onclick = "alert2.render('O questionário não pode ser eliminado, porque pertence a um<strong> dia aberto</strong>.','{reverse('questionarios:consultar-estados-admin')}')" >
-                                                                  <span class="icon has-text-danger">
-                                                <i class="mdi mdi-trash-can mdi-24px"></i>
-                                            </span>
-                                                              </a>
-                                                          """
+                              <a data-tooltip="Eliminar" onclick = "alert2.render('O questionário não pode ser eliminado, porque pertence a um<strong> dia aberto</strong>.','{reverse('questionarios:consultar-estados-admin')}')" >
+                                  <span class="icon has-text-danger">
+                                    <i class="mdi mdi-trash-can mdi-24px"></i>
+                                  </span>
+                              </a>
+                          """
         return format_html(f"""
                <div>
                    {primeiro_botao}
                    {segundo_botao}
                    {terceiro_botao}
-                   {t_botao}
                     {botao_apagar}
                </div>    
            """)

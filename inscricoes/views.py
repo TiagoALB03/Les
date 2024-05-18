@@ -366,7 +366,7 @@ def estatisticas(request, diaabertoid=None):
                     professoruniversitarioutilizadorid__departamento__id=OuterRef(
                         'id'),
                     diaabertoid__id=diaabertoid,
-                    estado="Aceite",
+                    estado__nome="Aceite",
                 )
             )
         ),
