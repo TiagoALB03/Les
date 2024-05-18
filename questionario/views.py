@@ -274,23 +274,37 @@ def responder_questionario(request, questionario_id):
         'perguntas': perguntas
     })
 
+
 def editar_questionario(request, questionario_id):
     questionario = get_object_or_404(Questionario, id=questionario_id)
     PerguntaFormSet = modelformset_factory(Pergunta, form=PerguntasForm, extra=1, can_delete=True)
+
     if request.method == 'POST':
-        formset = PerguntaFormSet(request.POST, request.FILES, queryset=Pergunta.objects.filter(pergquest__questionarioid=questionario))
+        formset = PerguntaFormSet(request.POST, request.FILES,
+                                  queryset=Pergunta.objects.filter(pergquest__questionarioid=questionario))
+
         if formset.is_valid():
             perguntas = formset.save(commit=False)
+
             for pergunta in perguntas:
+                pergunta.save()  # Salva a pergunta primeiro
+
                 PergQuest.objects.update_or_create(
                     perguntaid=pergunta,
                     defaults={'questionarioid': questionario}
                 )
-                pergunta.save()
+
+            # Deleta as perguntas marcadas para remoção
+            for obj in formset.deleted_objects:
+                obj.delete()
+
             formset.save_m2m()  # Salva as relações ManyToMany, se houver
+
             return redirect('questionarios:consultar-questionarios-admin')  # Redireciona para a lista de questionários
+
     else:
         formset = PerguntaFormSet(queryset=Pergunta.objects.filter(pergquest__questionarioid=questionario))
+
     return render(request, 'questionario/editar_questionario.html', {'formset': formset, 'questionario': questionario})
 
 
