@@ -249,7 +249,6 @@ def newPergRow(request):
     return render(request=request, template_name='questionario/questionarioPerguntasRow.html', context=data)
 
 
-
 def responder_questionario(request, questionario_id):
     user_check_var = user_check(request=request, user_profile=[Administrador])
     if not user_check_var.get('exists'):
@@ -412,7 +411,7 @@ def estatisticasTransport(request, diaabertoid=None):
         return user_check_var.get('render')
     if diaabertoid is None:
         try:
-            return render(request, 'questionario/estatisticaVazia.html', {
+            return render(request, 'questionario/estatisticaVaziaTransport.html', {
                 'diasabertos': Diaaberto.objects.all()
             })
         except:
@@ -430,7 +429,7 @@ def estatisticasTransport(request, diaabertoid=None):
 
     # perguntaid__questionarioid__dateid   perguntaID__pergquest__questionarioid__dateid
     respostas = Resposta.objects.filter(perguntaID__pergquest__questionarioid=diaaberto.questionarioid)
-    return render(request, 'questionario/estatisticas.html', {
+    return render(request, 'questionario/estatisticasTransport.html', {
         'diaaberto': diaaberto,
         'diasabertos': Diaaberto.objects.all(),
         'departamentos': Departamento.objects.filter(
@@ -527,6 +526,7 @@ class consultar_estados(SingleTableMixin, FilterView):
         context[self.get_context_table_name(table)] = table
         return context
 
+
 def eliminarEstado(request, estados_id):
     user_check_var = user_check(request=request, user_profile=[Administrador])
     if not user_check_var.get('exists'):
@@ -534,6 +534,7 @@ def eliminarEstado(request, estados_id):
     estado = get_object_or_404(EstadosQuest, id=estados_id)
     estado.delete()
     return redirect('questionarios:consultar-estados-admin')
+
 
 def editarEstado(request, estados_id):
     user_check_var = user_check(request=request, user_profile=[Administrador])
@@ -556,13 +557,14 @@ def editarEstado(request, estados_id):
         if estadoForms.is_valid():
             novoEstadoNome = estadoForms.cleaned_data[0]['nome']
             novaCor = estadoForms.cleaned_data[0]['cor']
-            flagCor=EstadosQuest.objects.filter(cor=novaCor).exists() and novaCor != estado.cor
+            flagCor = EstadosQuest.objects.filter(cor=novaCor).exists() and novaCor != estado.cor
             flagNome = EstadosQuest.objects.filter(nome=novoEstadoNome).exists() and novoEstadoNome != estado.nome
-            flagQuest =Questionario.objects.filter(estadoquestid__nome=estado.nome).exists() and novoEstadoNome != estado.nome
-            flagRoteiroNome = Roteiro.objects.filter(estado__nome=estado.nome).exists() and novoEstadoNome != estado.nome
-            flagAtividadeNome = Atividade.objects.filter(estado__nome=estado.nome).exists() and novoEstadoNome != estado.nome
-
-
+            flagQuest = Questionario.objects.filter(
+                estadoquestid__nome=estado.nome).exists() and novoEstadoNome != estado.nome
+            flagRoteiroNome = Roteiro.objects.filter(
+                estado__nome=estado.nome).exists() and novoEstadoNome != estado.nome
+            flagAtividadeNome = Atividade.objects.filter(
+                estado__nome=estado.nome).exists() and novoEstadoNome != estado.nome
 
             if flagQuest and flagCor:
                 mensagemErro = 'Não podes mudar o nome de um estado que está em uso num questionário.A cor já existe,escolhe outra.'
@@ -596,6 +598,7 @@ def editarEstado(request, estados_id):
                            'erroMensagem': mensagemErro,
                            })
 
+
 def publicarQuestionario(request, questionario_id):
     user_check_var = user_check(request=request, user_profile=[Administrador])
     if not user_check_var.get('exists'):
@@ -610,6 +613,7 @@ def publicarQuestionario(request, questionario_id):
     except EstadosQuest.DoesNotExist:
         return HttpResponse("Estado não encontrado.")
 
+
 def validarQuestionario(request, questionario_id):
     user_check_var = user_check(request=request, user_profile=[Administrador])
     if not user_check_var.get('exists'):
@@ -623,6 +627,7 @@ def validarQuestionario(request, questionario_id):
         return HttpResponse("Questionário não encontrado.")
     except EstadosQuest.DoesNotExist:
         return HttpResponse("Estado não encontrado.")
+
 
 def criarEstado(request):
     mensagemErro = ''
@@ -658,11 +663,9 @@ def criar_escala_resposta(request):
     return render(request, 'questionario/criarEscalaResposta.html', {'form': form})
 
 
-
 def listar_escala_resposta(request):
     escalas = questionario_escalaresposta.objects.all()
     return render(request, 'questionario/listarEscalaResposta.html', {'escalas': escalas})
-
 
 
 def editar_escala_resposta(request, id):
@@ -672,7 +675,6 @@ def editar_escala_resposta(request, id):
         form.save()
         return redirect('questionarios:listar-escala-resposta')  # Substitua pela sua view de listagem
     return render(request, 'questionario/editarEscalaResposta.html', {'form': form})
-
 
 
 def estatisticasAtividadeRoteiro(request, diaabertoid=None):
@@ -691,25 +693,22 @@ def estatisticasAtividadeRoteiro(request, diaabertoid=None):
 
     diaaberto = get_object_or_404(Diaaberto, id=diaabertoid)
     numdays = int((diaaberto.datadiaabertofim -
-                   diaaberto.datadiaabertoinicio).days)+1
+                   diaaberto.datadiaabertoinicio).days) + 1
     dias = [(diaaberto.datadiaabertoinicio + timedelta(days=x)
              ).strftime("%d/%m/%Y") for x in range(numdays)]
-
 
     if request.method == 'GET':
         subtemaid = request.GET.get('atividade_id')
         print("Esta certo subtema ->", subtemaid)
 
-
     respostas = Resposta.objects.all().filter(idcodigo__inscricaoID__inscricao__diaaberto=diaaberto)
-
 
     if not respostas.exists():
         try:
             return render(request, 'questionario/estatisticaVaziaAtividadeRoteiro.html', {
                 'diasabertos': Diaaberto.objects.all(),
                 'mensagem': 'Não existe respostas no dia aberto ',
-                'diaaberto' : diaaberto,
+                'diaaberto': diaaberto,
             })
         except:
             return redirect('utilizadores:mensagem', 18)
@@ -746,7 +745,6 @@ def estatisticasAtividadeRoteiro(request, diaabertoid=None):
     })
 
 
-
 def getRespostasAtividadeRoteiro(request):
     if request.method == 'POST':
         roteiro = request.POST.get('roteiroID')
@@ -774,7 +772,7 @@ def getRespostasAtividadeRoteiro(request):
                 atividades = Atividade.objects.filter(roteiro__diaabertoid=diaID)
             return JsonResponse({'subtema': roteiroID,
                                  'respostas': list(respostas.values()),
-                                 'atividades': list(atividades.values()),})
+                                 'atividades': list(atividades.values()), })
         except ValueError:
             print("ERROR")
             # Handle the case where counter is not a valid integer
@@ -790,6 +788,7 @@ def eliminarQuestionario(request, questID):
     questionario = get_object_or_404(Questionario, id=questID)
     questionario.delete()
     return redirect('questionarios:consultar-questionarios-admin')
+
 
 def consultarPerguntas(request, questID):
     user_check_var = user_check(request=request, user_profile=[Administrador])

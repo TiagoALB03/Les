@@ -27,7 +27,7 @@ urlpatterns = [
     # path('ajax/addResRow', views.newResRow, name='ajaxAddResRow'),
 
     path('estatisticas', views.estatisticasTransport, name='estatisticas'),
-    path('estatisticas/<int:diaabertoid>', views.estatisticasTransport, name='estatisticas'),
+    path('estatisticas/<int:diaabertoid>', views.estatisticasTransport, name='estatisticasTransport'),
     # path('test', views.test, name='test'),
     # path('ajax/getInc', views.simpIncrement, name='getInc'),
     path('ajax/getRespostas', views.getRespostas, name='getRespostas'),

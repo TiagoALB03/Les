@@ -22,7 +22,7 @@
 
         function selectDiaAberto(selectObject) {
             const value = selectObject.value;
-            location.href = "{% url 'questionarios:estatisticas' 12345 %}".replace(/12345/, value);
+            location.href = "{% url 'questionarios:estatisticasTransport' 12345 %}".replace(/12345/, value);
         }
 
         const resposta1GostasteAtividade = {{ respostas|respostaGostasteComValor1:"1" }};
