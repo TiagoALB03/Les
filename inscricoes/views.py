@@ -420,9 +420,18 @@ def relatorio_almoco_excel(request, diaabertoid=None):
     diaaberto = get_object_or_404(Diaaberto, id=diaabertoid)
     numdays = int((diaaberto.datadiaabertofim - diaaberto.datadiaabertoinicio).days) + 1
     dias = [(diaaberto.datadiaabertoinicio + timedelta(days=x)).strftime("%d/%m/%Y") for x in range(numdays)]
+    mensagem = ''
 
     if not inscricoes.exists():
-        return HttpResponse("Não existem inscrições para o Dia Aberto do ano fornecido.", status=404)
+        try:
+            return render(request, 'inscricoes/escolherAnoRelatorioAlmoco.html', {
+                'diasabertos': Diaaberto.objects.all(),
+                'mensagem': 'Não existe respostas no dia aberto ',
+                'diaaberto': diaaberto,
+            })
+        except:
+            return redirect('utilizadores:mensagem', 18)
+
 
     try:
         dia_aberto = Diaaberto.objects.get(id=diaabertoid)
@@ -453,8 +462,6 @@ def relatorio_almoco_excel(request, diaabertoid=None):
 
 def pdfalmocos(request, diaabertoid=None):
     inscricoes = Inscricao.objects.filter(diaaberto_id=diaabertoid)
-    if not inscricoes.exists():
-        return HttpResponse("Não existem inscrições para o Dia Aberto do ano fornecido.", status=404)
     user_check_var = user_check(request=request, user_profile=[Administrador])
     if not user_check_var.get('exists'):
         return user_check_var.get('render')
@@ -465,6 +472,16 @@ def pdfalmocos(request, diaabertoid=None):
         except:
             return redirect('utilizadores:mensagem', 18)
     diaaberto = get_object_or_404(Diaaberto, id=diaabertoid)
+
+    if not inscricoes.exists():
+        try:
+            return render(request, 'inscricoes/relatorioVazioAlmoco.html', {
+                'diasabertos': Diaaberto.objects.all(),
+                'mensagem': 'Não existe respostas no dia aberto ',
+                'diaaberto': diaaberto,
+            })
+        except:
+            return redirect('utilizadores:mensagem', 18)
     numdays = int((diaaberto.datadiaabertofim -
                    diaaberto.datadiaabertoinicio).days) + 1
     dias = [(diaaberto.datadiaabertoinicio + timedelta(days=x)
@@ -501,7 +518,10 @@ def estatisticasano(request, diaabertoid=None):
                 ano__lte=datetime.now().year).order_by('-ano').first().id
         except:
             return redirect('utilizadores:mensagem', 18)
+
     diaaberto = get_object_or_404(Diaaberto, id=diaabertoid)
+
+
     numdays = int((diaaberto.datadiaabertofim -
                    diaaberto.datadiaabertoinicio).days)+1
     dias = [(diaaberto.datadiaabertoinicio + timedelta(days=x)
@@ -538,6 +558,18 @@ def estatisticasAlmocos(request, diaabertoid=None):
         except:
             return redirect('utilizadores:mensagem', 18)
     diaaberto = get_object_or_404(Diaaberto, id=diaabertoid)
+
+    respostas = Resposta.objects.all().filter(idcodigo__inscricaoID__inscricao__diaaberto=diaaberto)
+
+    if not respostas.exists():
+        try:
+            return render(request, 'inscricoes/estatisticaVaziaAlmocos.html', {
+                'diasabertos': Diaaberto.objects.all(),
+                'mensagem': 'Não existe respostas no dia aberto ',
+                'diaaberto': diaaberto,
+            })
+        except:
+            return redirect('utilizadores:mensagem', 18)
     numdays = int((diaaberto.datadiaabertofim -
                    diaaberto.datadiaabertoinicio).days)+1
     dias = [(diaaberto.datadiaabertoinicio + timedelta(days=x)
@@ -585,20 +617,20 @@ def exportarcsv(request,diaabertoid=None):
 
     response = HttpResponse(content_type='text/csv')
     writer = csv.writer(response)
-    writer.writerow(['ID', 'Qestionario', 'Estado'])
-    for questionario in Questionario.objects.all().values_list('id', 'titulo', 'estadoquestid'):
-        writer.writerow(questionario)
-    writer.writerow([])
 
+    writer.writerow(['Perguntas utilizadas no questionário sobre almoços'])
+    writer.writerow([])
     writer.writerow(['id', 'Pergunta', 'Tema', 'Tipo de Resposta'])
     for pergunta in Pergunta.objects.all().values_list('id','pergunta', 'temaid', 'tiporespostaid'):
-        writer.writerow(pergunta)
+        if pergunta[0] == 109 or pergunta[0] == 110 or pergunta[0] == 111 or pergunta[0] == 112:
+            writer.writerow(pergunta)
 
     writer.writerow([])
     writer.writerow(['PerguntaID', 'Resposta',])
 
-    for resposta in Resposta.objects.all().values_list('perguntaID', 'resposta'):
-        writer.writerow(resposta)
+    for resposta in Resposta.objects.all():
+        if resposta.perguntaID_id in [109, 110,111, 112]:
+            writer.writerow([resposta.perguntaID_id,resposta.resposta])
 
     response['Content-Disposition'] = f'attachment;filename="Refeições_dia_aberto{diaaberto}.csv"'
 
