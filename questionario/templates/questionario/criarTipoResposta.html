@@ -39,6 +39,11 @@
 										{{form.tiporesposta}}
 									</div>
 								</div>
+                                {% if tiporespostaExist %}
+                                    <div class="has-text-danger">
+                                        Este tipo de resposta já existe. Crie outro.
+                                    </div>
+                                {% endif %}
 							</div>
                             <div class="column is-half">
 								<strong>{{form.nome.errors}}</strong>

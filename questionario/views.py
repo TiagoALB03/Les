@@ -381,17 +381,28 @@ def criarTipoRespost(request):
     if user_check_var.get('exists') == False: return user_check_var.get('render')
 
     tiporesposta = TipoResposta()
-
+    tiporespostaExist = False
+    flag = 0
     tipoespostaForm = TipoRespostaForm(instance=tiporesposta)
     if request.method == 'POST':
         tipoespostaForm = TipoRespostaForm(data=request.POST, instance=tiporesposta)
         if tipoespostaForm.is_valid():
-            tema = tipoespostaForm.save()
-            return redirect('questionarios:consultar-tipo-resposta')
+            tiporesposta = tipoespostaForm.save(commit=False)
+
+            for obj in TipoResposta.objects.all():
+                if obj.tiporesposta == tiporesposta.tiporesposta:
+                    flag = 1
+                    tiporespostaExist = True
+                    break
+
+            if flag == 0:
+                tiporesposta = tipoespostaForm.save()
+                return redirect('questionarios:consultar-tipo-resposta')
 
     return render(request=request,
                   template_name='questionario/criarTipoResposta.html',
-                  context={'form': tipoespostaForm})
+                  context={'form': tipoespostaForm,
+                           'tiporespostaExist': tiporespostaExist})
 
 
 def estatisticasTransport(request, diaabertoid=None):
