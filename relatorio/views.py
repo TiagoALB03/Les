@@ -115,8 +115,6 @@ def transportecsvEstatistica(request, diaabertoid=None):
 
     return response
 
-
-
 def relatorio_Atividades(request, diaabertoid=None):
     """ View que mostra as estatísticas das Atividades """
     user_check_var = user_check(request=request, user_profile=[Administrador])

@@ -1,5 +1,5 @@
 from django.urls import path, include
-from .views import consultar_utilizadores
+from .views import consultar_utilizadores, mensagem2
 from .views import escolher_perfil
 from .views import criar_utilizador
 from .views import apagar_utilizador
@@ -33,6 +33,7 @@ urlpatterns = [
 
     path('concluirregisto/<int:id>', concluir_registo,name='concluir-registo'),
     path('mensagem/<int:id>', mensagem,name='mensagem'),
+    path('mensagem2/<int:id>', mensagem2,name='mensagem2'),
     path('validar/<str:nome>/<int:id>', views.enviar_email_validar,name='validar'),
     path('rejeitar/<str:nome>/<int:id>', views.enviar_email_rejeitar,name='rejeitar'),
     path("logout", logout_action, name="logout"), 

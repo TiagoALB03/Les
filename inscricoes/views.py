@@ -424,9 +424,9 @@ def relatorio_almoco_excel(request, diaabertoid=None):
 
     if not inscricoes.exists():
         try:
-            return redirect('utilizadores:mensagem', 19)
+            return redirect('utilizadores:mensagem2', 19)
         except:
-            return redirect('utilizadores:mensagem', 19)
+            return redirect('utilizadores:mensagem2', 19)
 
 
     try:
@@ -471,9 +471,9 @@ def pdfalmocos(request, diaabertoid=None):
 
     if not inscricoes.exists():
         try:
-            return redirect('utilizadores:mensagem', 19)
+            return redirect('utilizadores:mensagem2', 19)
         except:
-            return redirect('utilizadores:mensagem', 19)
+            return redirect('utilizadores:mensagem2', 19)
     numdays = int((diaaberto.datadiaabertofim -
                    diaaberto.datadiaabertoinicio).days) + 1
     dias = [(diaaberto.datadiaabertoinicio + timedelta(days=x)
