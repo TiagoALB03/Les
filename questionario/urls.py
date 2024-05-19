@@ -52,5 +52,6 @@ urlpatterns = [
 
     path('eliminarQuestionario/<int:questID>', views.eliminarQuestionario, name='eliminarQuestionario'),
     path('consultarPerguntar/<int:questID>', views.consultarPerguntas, name='consultarPerguntas'),
+    path('exportarAtividadeRoteiroCSV/<int:questID>', views.atividadeRoteirocsvEstatistica, name='transportecsvEstatistica'),
 
 ]

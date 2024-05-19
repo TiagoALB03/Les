@@ -807,3 +807,38 @@ def consultarPerguntas(request, questID):
         'perguntas': perguntas,
         'perguntasSize': perguntas.count()
     })
+
+
+def atividadeRoteirocsvEstatistica(request, questID=None):
+    respostas = Resposta.objects.all()
+    if not respostas.exists():
+        return HttpResponse("Não existem respostas de questionário para o Dia Aberto do ano fornecido.", status=404)
+
+    if questID is None:
+        try:
+            diaabertoid = Diaaberto.objects.filter(
+                ano__lte=datetime.now().year).order_by('-ano').first().id
+        except:
+            return redirect('utilizadores:mensagem', 18)
+    diaaberto = get_object_or_404(Diaaberto, id=questID)
+
+    response = HttpResponse(content_type='text/csv')
+    writer = csv.writer(response)
+
+    writer.writerow(['Perguntas utilizadas no questionário sobre almoços'])
+    writer.writerow([])
+    writer.writerow(['id', 'Pergunta', 'Tema', 'Tipo de Resposta'])
+    for pergunta in Pergunta.objects.all().values_list('id', 'pergunta', 'temaid', 'tiporespostaid'):
+        if pergunta[0] == 109 or pergunta[0] == 110 or pergunta[0] == 111 or pergunta[0] == 112:
+            writer.writerow(pergunta)
+
+    writer.writerow([])
+    writer.writerow(['PerguntaID', 'Resposta', ])
+
+    for resposta in Resposta.objects.all():
+        if resposta.perguntaID_id in [109, 110, 111, 112]:
+            writer.writerow([resposta.perguntaID_id, resposta.resposta])
+
+    response['Content-Disposition'] = f'attachment;filename="Transportes_dia_aberto{diaaberto}.csv"'
+
+    return response

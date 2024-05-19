@@ -74,46 +74,15 @@ def transportecsv(request, diaabertoid=None):
             'ocupado': espacoOcupado,
             'disponivel': espacoAtual
         })
+    for item, currentObj in zip(filterset_class, info_with_attributes):
         writer = csv.writer(response, delimiter=';')
-        writer.writerow(['Autocarro',])
+        writer.writerow([item.transporte.identificador])
         writer.writerow(['Origem:','Destino:','Hora Partida:','Hora chegada:','Lugares livres:','Lotação atual:','Lotação máxima:'])
-        writer.writerow([''])
+        writer.writerow([item.origem, item.chegada, item.horaPartida, item.horaChegada, currentObj['disponivel'], currentObj['ocupado'], item.get_capacidade])
         writer.writerow([''])
     return response
 
-def transportecsvEstatistica(request, diaabertoid=None):
-    respostas = Resposta.objects.all()
-    if not respostas.exists():
-        return HttpResponse("Não existem respostas de questionário para o Dia Aberto do ano fornecido.", status=404)
 
-    if diaabertoid is None:
-        try:
-            diaabertoid = Diaaberto.objects.filter(
-                ano__lte=datetime.now().year).order_by('-ano').first().id
-        except:
-            return redirect('utilizadores:mensagem', 18)
-    diaaberto = get_object_or_404(Diaaberto, id=diaabertoid)
-
-    response = HttpResponse(content_type='text/csv')
-    writer = csv.writer(response)
-
-    writer.writerow(['Perguntas utilizadas no questionário sobre almoços'])
-    writer.writerow([])
-    writer.writerow(['id', 'Pergunta', 'Tema', 'Tipo de Resposta'])
-    for pergunta in Pergunta.objects.all().values_list('id', 'pergunta', 'temaid', 'tiporespostaid'):
-        if pergunta[0] == 109 or pergunta[0] == 110 or pergunta[0] == 111 or pergunta[0] == 112:
-            writer.writerow(pergunta)
-
-    writer.writerow([])
-    writer.writerow(['PerguntaID', 'Resposta', ])
-
-    for resposta in Resposta.objects.all():
-        if resposta.perguntaID_id in [109, 110, 111, 112]:
-            writer.writerow([resposta.perguntaID_id, resposta.resposta])
-
-    response['Content-Disposition'] = f'attachment;filename="Refeições_dia_aberto{diaaberto}.csv"'
-
-    return response
 
 def relatorio_Atividades(request, diaabertoid=None):
     """ View que mostra as estatísticas das Atividades """

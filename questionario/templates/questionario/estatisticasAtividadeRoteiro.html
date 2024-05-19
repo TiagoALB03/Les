@@ -1180,9 +1180,10 @@
                 <span class="icon is-small"><i class="mdi mdi-download"></i></span>
                 <span> Exportar Gráficos para PDF </span>
             </button>
-            <p class="control">
-                <a class="button is-primary is-outlined" href="{% url 'relatorios:transportecsvEstatistica' diaaberto.id %}">Exportar para CSV</a>
-            </p>
+            <a href="{% url 'questionarios:transportecsvEstatistica' diaaberto.id %}" class="button is-danger" id="obterPdfButton">
+                <span class="icon is-small"><i class="mdi mdi-download"></i></span>
+                <span>Exportar Gráficos para CSV</span>
+            </a>
             <hr>
         </div>
 
