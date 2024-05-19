@@ -14,6 +14,9 @@ from roteiro.models import Roteiro
 from roteiro.tables import RoteiroTable
 from utilizadores.models import Administrador, Coordenador
 from utilizadores.views import user_check
+from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse
+from django.views.decorators.http import require_POST
 
 
 # Create your views here.
@@ -243,3 +246,10 @@ def eliminarSessao(request, id):
                           'tipo': 'error',
                           'm': 'Não tem permissões para esta ação!'
                       })
+
+
+@require_POST  # Importante para não permitir que a ação seja desencadeada por GET
+def eliminar_roteiro(request, id):
+    roteiro = get_object_or_404(Roteiro, pk=id)
+    roteiro.delete()
+    return redirect(reverse('roteiros:lista_roteiros'))
