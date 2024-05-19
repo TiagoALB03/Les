@@ -134,7 +134,7 @@ def conflict_array():
     conflito2 = []
     for sessao1 in sessoes:
         for sessao2 in sessoes:
-            if sessao1.id != sessao2.id and sessao1.atividadeid != sessao2.atividadeid and sessao1.atividadeid.espacoid == sessao2.atividadeid.espacoid and sessao1.dia == sessao2.dia:
+            if sessao1.id != sessao2.id and sessao1.atividadeid != sessao2.atividadeid and sessao1.atividadeid != None and sessao2.atividadeid != None and sessao1.atividadeid.espacoid == sessao2.atividadeid.espacoid and sessao1.dia == sessao2.dia:
                 hora1inicio = sessao1.horarioid.inicio.hour * 60 + sessao1.horarioid.inicio.minute
                 hora1fim = sessao1.horarioid.fim.hour * 60 + sessao1.horarioid.fim.minute
                 hora2inicio = sessao2.horarioid.inicio.hour * 60 + sessao2.horarioid.inicio.minute
