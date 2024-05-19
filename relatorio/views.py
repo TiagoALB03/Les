@@ -11,6 +11,10 @@ from utilizadores.models import Administrador
 from utilizadores.views import user_check
 
 
+from atividades.filters import *
+
+
+
 def relatorio_Transporte(request, diaabertoid=None):
     """ View que mostra as estatísticas do Dia Aberto """
     user_check_var = user_check(request=request, user_profile=[Administrador])
@@ -49,4 +53,42 @@ def InscricaoPDF(request, diaabertoid):
     checkRespostasAmmount = len(info_with_attributes)
     context = {'info': info_with_attributes, 'checkRespostasAmmount': checkRespostasAmmount, 'ano':ano}
     return render_pdf("relatorio/pdfTransporte.html", context, filename)
+
+
+
+
+def relatorio_Atividades(request, diaabertoid=None):
+    """ View que mostra as estatísticas das Atividades """
+    user_check_var = user_check(request=request, user_profile=[Administrador])
+    if not user_check_var.get('exists'):
+        return user_check_var.get('render')
+    if diaabertoid is None:
+        try:
+            diaabertoid = Diaaberto.objects.filter(
+                ano__lte=datetime.now().year).order_by('-ano').first().id
+        except:
+            return redirect('utilizadores:mensagem', 18)
+    diaaberto = get_object_or_404(Diaaberto, id=diaabertoid)
+    return render(request, 'relatorio/escolherAnoRelatorioAtividades.html', {
+        'diaaberto': diaaberto,
+        'diasabertos': Diaaberto.objects.all(),
+        'ultimo_dia_aberto': Diaaberto.objects.order_by('-datadiaabertofim').first(),
+    })
+
+def AtividadesPDF(request, diaabertoid):
+    atividades = Atividade.objects.filter(diaabertoid=diaabertoid)
+    info_with_attributes = []
+    for atividade in atividades:
+        sessoes = Sessao.objects.filter(atividadeid=atividade.id)
+        for sessao in sessoes:
+            info_with_attributes.append({
+                'atividade': atividade,
+                'sessao': sessao
+            })
+    ano = Diaaberto.objects.get(id=diaabertoid).ano
+    filename = f"relatorioAtividades{ano}.pdf"
+    checkRespostasAmmount = len(info_with_attributes)
+    context = {'info': info_with_attributes, 'checkRespostasAmmount': checkRespostasAmmount, 'ano':ano}
+    return render_pdf("relatorio/pdfAtividades.html", context, filename)
+
 
