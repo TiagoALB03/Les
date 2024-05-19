@@ -435,6 +435,7 @@ def relatorio_almoco_excel(request, diaabertoid=None):
         return HttpResponse("Não existe Dia Aberto para o ano fornecido.", status=404)
 
     response = HttpResponse(content_type='text/csv')
+    response.write('\ufeff'.encode('utf8'))
     response['Content-Disposition'] = f'attachment; filename="Refeições_dia_aberto{dia_aberto}.csv"'
 
     for dia in dias:
@@ -608,6 +609,7 @@ def exportarcsv(request,diaabertoid=None):
     diaaberto = get_object_or_404(Diaaberto, id=diaabertoid)
 
     response = HttpResponse(content_type='text/csv')
+    response.write('\ufeff'.encode('utf8'))
     writer = csv.writer(response)
 
     writer.writerow(['Perguntas utilizadas no questionário sobre almoços'])

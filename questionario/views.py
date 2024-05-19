@@ -823,6 +823,7 @@ def atividadeRoteirocsvEstatistica(request, questID=None):
     diaaberto = get_object_or_404(Diaaberto, id=questID)
 
     response = HttpResponse(content_type='text/csv')
+    response.write('\ufeff'.encode('utf8'))
     writer = csv.writer(response)
 
     writer.writerow(['Perguntas utilizadas no questionário sobre Atividades'])

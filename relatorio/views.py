@@ -62,6 +62,7 @@ def transportecsv(request, diaabertoid=None):
     info_with_attributes = []
     diaaberto = get_object_or_404(Diaaberto, id=diaabertoid)
     response = HttpResponse(content_type='text/csv')
+    response.write('\ufeff'.encode('utf8'))
     response['Content-Disposition'] = f'attachment; filename="Transporte_dia_aberto{diaaberto}.csv"'
     for item in filterset_class:
         espacoAtual = item.get_capacidade
