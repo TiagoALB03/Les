@@ -1180,11 +1180,14 @@
                 <span class="icon is-small"><i class="mdi mdi-download"></i></span>
                 <span> Exportar Gráficos para PDF </span>
             </button>
-            <a href="{% url 'questionarios:transportecsvEstatistica' diaaberto.id %}" class="button is-danger" id="obterPdfButton">
-                <span class="icon is-small"><i class="mdi mdi-download"></i></span>
+            <a href="{% url 'questionarios:transportecsvEstatistica' diaaberto.id %}" class="button is-primary" style="background-color: #22911A;" id="obterPdfButton">
+                <span class="icon">
+                    <i class="fas fa-file-excel"></i>
+                </span>
                 <span>Exportar Gráficos para CSV</span>
             </a>
             <hr>
+
         </div>
 
     </div>

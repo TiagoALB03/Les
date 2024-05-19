@@ -816,7 +816,7 @@ def atividadeRoteirocsvEstatistica(request, questID=None):
 
     if questID is None:
         try:
-            diaabertoid = Diaaberto.objects.filter(
+            questID = Diaaberto.objects.filter(
                 ano__lte=datetime.now().year).order_by('-ano').first().id
         except:
             return redirect('utilizadores:mensagem', 18)
@@ -825,20 +825,54 @@ def atividadeRoteirocsvEstatistica(request, questID=None):
     response = HttpResponse(content_type='text/csv')
     writer = csv.writer(response)
 
-    writer.writerow(['Perguntas utilizadas no questionário sobre almoços'])
+    writer.writerow(['Perguntas utilizadas no questionário sobre Atividades'])
     writer.writerow([])
-    writer.writerow(['id', 'Pergunta', 'Tema', 'Tipo de Resposta'])
-    for pergunta in Pergunta.objects.all().values_list('id', 'pergunta', 'temaid', 'tiporespostaid'):
-        if pergunta[0] == 109 or pergunta[0] == 110 or pergunta[0] == 111 or pergunta[0] == 112:
-            writer.writerow(pergunta)
-
+    writer.writerow(['id', 'Pergunta'])
+    for perg in Pergunta.objects.all():
+        if perg.pergunta in ['Gostaste da atividade?', 'A atividade cumpriu as tuas expectativas?', 'Qual o grau de retenção de conhecimento que mantiveste?', 'Qual o grau de recomendação que dirias a outros colegas para experimentarem esta atividade?', 'Qual o grau de satisfação em relação aos funcionarios?']:
+            writer.writerow([perg.id, perg.pergunta])
     writer.writerow([])
-    writer.writerow(['PerguntaID', 'Resposta', ])
 
-    for resposta in Resposta.objects.all():
-        if resposta.perguntaID_id in [109, 110, 111, 112]:
-            writer.writerow([resposta.perguntaID_id, resposta.resposta])
+    writer.writerow(['Atividades'])
+    writer.writerow([])
+    writer.writerow(['id', 'Atividade'])
+    for ativ in Atividade.objects.all():
+        writer.writerow([ativ.id, ativ.nome])
+    writer.writerow([])
 
-    response['Content-Disposition'] = f'attachment;filename="Transportes_dia_aberto{diaaberto}.csv"'
+    writer.writerow(['Respostas questionário atividades'])
+    writer.writerow([])
+    writer.writerow(['PerguntaID', 'TemaAtividade', 'Resposta'])
+    for resp in Resposta.objects.all():
+        if resp.perguntaID.pergunta in ['Gostaste da atividade?', 'A atividade cumpriu as tuas expectativas?', 'Qual o grau de retenção de conhecimento que mantiveste?', 'Qual o grau de recomendação que dirias a outros colegas para experimentarem esta atividade?', 'Qual o grau de satisfação em relação aos funcionarios?']:
+            writer.writerow([resp.perguntaID.id, resp.subtemaid, resp.resposta])
+
+
+
+
+    writer.writerow(['Perguntas utilizadas no questionário sobre Roteiros'])
+    writer.writerow([])
+    writer.writerow(['id', 'Roteiro'])
+    for perg in Pergunta.objects.all():
+        if perg.pergunta in ['Gostaste do dia aberto?', 'Qual a nota dás ao responsável da atividade?']:
+            writer.writerow([perg.id, perg.pergunta])
+    writer.writerow([])
+
+    writer.writerow(['Roteiros'])
+    writer.writerow([])
+    writer.writerow(['id', 'Roteiro'])
+    for rot in Roteiro.objects.all():
+        writer.writerow([rot.id, rot.nome])
+    writer.writerow([])
+
+    writer.writerow(['Respostas questionário atividades'])
+    writer.writerow([])
+    writer.writerow(['PerguntaID', 'TemaAtividade', 'Resposta'])
+    for resp in Resposta.objects.all():
+        if resp.perguntaID.pergunta in ['Gostaste do dia aberto?', 'Qual a nota dás ao responsável da atividade?']:
+            writer.writerow([resp.perguntaID.id, resp.subtemaid, resp.resposta])
+
+
+    response['Content-Disposition'] = f'attachment;filename="AtividadeRoteiro_dia_aberto{diaaberto}.csv"'
 
     return response
