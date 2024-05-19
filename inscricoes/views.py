@@ -424,13 +424,9 @@ def relatorio_almoco_excel(request, diaabertoid=None):
 
     if not inscricoes.exists():
         try:
-            return render(request, 'inscricoes/escolherAnoRelatorioAlmoco.html', {
-                'diasabertos': Diaaberto.objects.all(),
-                'mensagem': 'Não existe respostas no dia aberto ',
-                'diaaberto': diaaberto,
-            })
+            return redirect('utilizadores:mensagem', 19)
         except:
-            return redirect('utilizadores:mensagem', 18)
+            return redirect('utilizadores:mensagem', 19)
 
 
     try:
@@ -475,13 +471,9 @@ def pdfalmocos(request, diaabertoid=None):
 
     if not inscricoes.exists():
         try:
-            return render(request, 'inscricoes/relatorioVazioAlmoco.html', {
-                'diasabertos': Diaaberto.objects.all(),
-                'mensagem': 'Não existe respostas no dia aberto ',
-                'diaaberto': diaaberto,
-            })
+            return redirect('utilizadores:mensagem', 19)
         except:
-            return redirect('utilizadores:mensagem', 18)
+            return redirect('utilizadores:mensagem', 19)
     numdays = int((diaaberto.datadiaabertofim -
                    diaaberto.datadiaabertoinicio).days) + 1
     dias = [(diaaberto.datadiaabertoinicio + timedelta(days=x)
