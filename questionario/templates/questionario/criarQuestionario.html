@@ -53,13 +53,10 @@
 {#							</div>#}
 						</div>
                         {% if flagError %}
-                            <div class="has-text-danger">O dia aberto com este ano já tem um questionário associado.</div>
+                            <div class="has-text-danger">Por favor escolha outro nome para o questionário uma vez que já existe um com o mesmo nome..</div>
                         {% endif %}
                         {% if flagTituloEmpty %}
                             <div class="has-text-danger">Para criar um questionário é preciso inserir um título.</div>
-                        {% endif %}
-                        {% if flagDateEmpty %}
-                            <div class="has-text-danger">Para criar um questionário é preciso inserir um ano de um dia aberto.</div>
                         {% endif %}
 					</div>
 					<hr>

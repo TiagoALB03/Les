@@ -70,8 +70,10 @@ def criarquestionario(request, questionario_id=None):
         questionarioForm = QuestionarioForm(request.POST, request.FILES, instance=questionario)
         if questionarioForm.is_valid():
             questionario = questionarioForm.save(commit=False)
-            if questionario.titulo is not None:
-                print("Entraste no questionario")
+            for obj in Questionario.objects.all():
+                if obj.titulo == questionario.titulo:
+                    flagError = True
+            if questionario.titulo is not None and flagError == False:
                 questionario.estadoquestid = EstadosQuest.objects.get(id=2)
                 questionario.save()
                 return redirect('questionarios:criar-perguntas', questionario_id=questionario.id)
@@ -83,8 +85,7 @@ def criarquestionario(request, questionario_id=None):
                   template_name='questionario/criarQuestionario.html',
                   context={'form': questionarioForm,
                            'flagError': flagError,
-                           'flagTituloEmpty': flagTituloEmpty,
-                           'flagDateEmpty': flagDateEmpty})
+                           'flagTituloEmpty': flagTituloEmpty})
 
 
 # pode ter problemas por já não existir o ano associado ao questionário
@@ -830,7 +831,10 @@ def atividadeRoteirocsvEstatistica(request, questID=None):
     writer.writerow([])
     writer.writerow(['id', 'Pergunta'])
     for perg in Pergunta.objects.all():
-        if perg.pergunta in ['Gostaste da atividade?', 'A atividade cumpriu as tuas expectativas?', 'Qual o grau de retenção de conhecimento que mantiveste?', 'Qual o grau de recomendação que dirias a outros colegas para experimentarem esta atividade?', 'Qual o grau de satisfação em relação aos funcionarios?']:
+        if perg.pergunta in ['Gostaste da atividade?', 'A atividade cumpriu as tuas expectativas?',
+                             'Qual o grau de retenção de conhecimento que mantiveste?',
+                             'Qual o grau de recomendação que dirias a outros colegas para experimentarem esta atividade?',
+                             'Qual o grau de satisfação em relação aos funcionarios?']:
             writer.writerow([perg.id, perg.pergunta])
     writer.writerow([])
 
@@ -845,11 +849,11 @@ def atividadeRoteirocsvEstatistica(request, questID=None):
     writer.writerow([])
     writer.writerow(['PerguntaID', 'TemaAtividade', 'Resposta'])
     for resp in Resposta.objects.all():
-        if resp.perguntaID.pergunta in ['Gostaste da atividade?', 'A atividade cumpriu as tuas expectativas?', 'Qual o grau de retenção de conhecimento que mantiveste?', 'Qual o grau de recomendação que dirias a outros colegas para experimentarem esta atividade?', 'Qual o grau de satisfação em relação aos funcionarios?']:
+        if resp.perguntaID.pergunta in ['Gostaste da atividade?', 'A atividade cumpriu as tuas expectativas?',
+                                        'Qual o grau de retenção de conhecimento que mantiveste?',
+                                        'Qual o grau de recomendação que dirias a outros colegas para experimentarem esta atividade?',
+                                        'Qual o grau de satisfação em relação aos funcionarios?']:
             writer.writerow([resp.perguntaID.id, resp.subtemaid, resp.resposta])
-
-
-
 
     writer.writerow(['Perguntas utilizadas no questionário sobre Roteiros'])
     writer.writerow([])
@@ -872,7 +876,6 @@ def atividadeRoteirocsvEstatistica(request, questID=None):
     for resp in Resposta.objects.all():
         if resp.perguntaID.pergunta in ['Gostaste do dia aberto?', 'Qual a nota dás ao responsável da atividade?']:
             writer.writerow([resp.perguntaID.id, resp.subtemaid, resp.resposta])
-
 
     response['Content-Disposition'] = f'attachment;filename="AtividadeRoteiro_dia_aberto{diaaberto}.csv"'
 
