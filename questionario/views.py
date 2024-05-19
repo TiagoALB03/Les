@@ -480,16 +480,19 @@ def getRespostas(request):
                                  'respostas': []})
 
 
-def exportarCSV(request):
-    response = HttpResponse(content_type='text/csv')
+def exportarCSVTransporte(request):
+    response = HttpResponse(content_type='text/csv; charset=utf-8')
+    response['Content-Disposition'] = 'attachment; filename="Respostas.csv"'
+    response.write('\ufeff'.encode('utf8'))
+
     writer = csv.writer(response)
-    writer.writerow(['ID', 'Qestionario', 'Ano', 'Estado'])
-    for questionario in Questionario.objects.all().values_list('id', 'titulo', 'dateid', 'estadoquestid'):
+    writer.writerow(['ID', 'Qestionario', 'Estado'])
+    for questionario in Questionario.objects.all().values_list('id', 'titulo', 'estadoquestid'):
         writer.writerow(questionario)
     writer.writerow([])
 
     writer.writerow(['id', 'Pergunta', 'QuestionarioID', 'Tema', 'Tipo de Resposta'])
-    for pergunta in Pergunta.objects.all().values_list('pergunta', 'questionarioid', 'temaid', 'tiporespostaid'):
+    for pergunta in Pergunta.objects.all().values_list('pergunta', 'temaid', 'tiporespostaid'):
         writer.writerow(pergunta)
 
     writer.writerow([])
@@ -498,7 +501,7 @@ def exportarCSV(request):
     for resposta in Resposta.objects.all().values_list('perguntaID', 'resposta', 'subtemaid'):
         writer.writerow(resposta)
 
-    response['Content-Disposition'] = 'attachment; filename="Respostas.csv"'
+    # response['Content-Disposition'] = 'attachment; filename="Respostas.csv"'
 
     return response
 

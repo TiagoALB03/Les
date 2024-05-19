@@ -43,7 +43,7 @@ urlpatterns = [
     path('editarEscalaResposta/<int:id>/', views.editar_escala_resposta, name='editar-escala-resposta'),
 
     # path('questionario/<int:diaabertoid>', views.relatorio_respostas_transporte_excel, name='relatorio_respostas_transporte_excel'),
-    path('exportarcsv/', views.exportarCSV, name='exportarcsv'),
+    path('exportarcsv/', views.exportarCSVTransporte, name='exportarcsvTransporte'),
 
 
     path('estatisticasAtividadeRoteiro', views.estatisticasAtividadeRoteiro, name='estatisticasAtividadeRoteiro'),
