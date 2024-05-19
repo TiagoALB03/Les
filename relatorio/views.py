@@ -40,8 +40,6 @@ def InscricaoPDF(request, diaabertoid):
     filterset_class = Transportehorario.objects.filter(transporte__diaaberto=diaabertoid)
     info_with_attributes = []
     for item in filterset_class:
-        print("dados", item)
-    for item in filterset_class:
         espacoAtual = item.get_capacidade
         espacoOcupado = 0
         for object in Inscricaotransporte.objects.filter(transporte=item.id):
