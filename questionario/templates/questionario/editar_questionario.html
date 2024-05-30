@@ -8,7 +8,6 @@
     .card-body {
         padding: 1rem; /* Pads the inside of the card */
     }
-
     .button.Finalizar {
         background-color: blue; /* Cor de fundo azul para os botões Próxima e Finalizar */
         position: absolute;
@@ -17,34 +16,52 @@
     }
 </style>
 
-<form method="post" class="form">
-    {% csrf_token %}
-    {{ formset.management_form }}
-    {% for form in formset %}
-        <div class="card">
-            <div class="card-body">
-                <div class="form-group">
-                    {{ form.id }}
+<div class="container">
+    <div class="section">
+        <form method="post" class="form">
+            {% csrf_token %}
+            {{ formset.management_form }}
+            {% for form in formset %}
+                <div class="card">
+                    <div class="card-content">
+                        <div class="field">
+                            <label class="label">ID</label>
+                            <div class="control">
+                                {{ form.id }}
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label">Pergunta</label>
+                            <div class="control">
+                                {{ form.pergunta }}
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label">Tema</label>
+                            <div class="control">
+                                {{ form.temaid }}
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label">Tipo de resposta</label>
+                            <div class="control">
+                                {{ form.tiporespostaid }}
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="checkbox" for="{{ form.DELETE.id_for_label }}">
+                                {{ form.DELETE }} Remover
+                            </label>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    Pergunta: {{ form.pergunta }}
-                </div>
-                <br>
-                <div class="form-group">
-                    Tema: {{ form.temaid }}
-                </div>
-                <br>
-                <div class="form-group">
-                    Tipo de resposta: {{ form.tiporespostaid }}
-                </div>
-                <br>
-                <div class="form-group form-check">
-                    <label for="{{ form.DELETE.id_for_label }}">Remover</label>
-                    {{ form.DELETE }}
+            {% endfor %}
+            <div class="field is-grouped">
+                <div class="control">
+                    <button type="submit" class="button is-primary">Salvar alterações</button>
                 </div>
             </div>
-        </div>
-    {% endfor %}
-    <button type="submit" class="button Finalizar">Salvar alterações</button>
-</form>
+        </form>
+    </div>
+</div>
 {% endblock %}
