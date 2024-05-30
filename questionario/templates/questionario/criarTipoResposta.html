@@ -1,5 +1,6 @@
 
 {% extends 'app.html' %}
+{% load django_tables2 %}
 {% load static %}
 {% block content %}
 {% load configuracao_tags %}
@@ -31,7 +32,7 @@
 					<div style="padding: 1rem 2vw 0px">
 
 						<div class="columns">
-							<div class="column is-half">
+							<div class="column is-one-third">
 								<strong>{{form.nome.errors}}</strong>
 								<div class="field">
 									<label class="label">Tipo de resposta</label>
@@ -45,13 +46,24 @@
                                     </div>
                                 {% endif %}
 							</div>
-                            <div class="column is-half">
+{#                            <div class="column is-one-third">#}
+{#								<strong>{{form.nome.errors}}</strong>#}
+{#								<div class="field">#}
+{#									<label class="label">Tipo de dados</label>#}
+{#									<div class="control">#}
+{#                                        <span class="select is-fullwidth is-empty" required>#}
+{#                                          {{form.type}}#}
+{#                                        </span>#}
+{#									</div>#}
+{#								</div>#}
+{#							</div>#}
+                            <div class="column is-one-third">
 								<strong>{{form.nome.errors}}</strong>
 								<div class="field">
-									<label class="label">Tipo de dados</label>
+									<label class="label">Escalas</label>
 									<div class="control">
                                         <span class="select is-fullwidth is-empty" required>
-                                          {{form.type}}
+                                          {{form.escala}}
                                         </span>
 									</div>
 								</div>
@@ -59,6 +71,7 @@
 						</div>
 					</div>
 					<hr>
+                    {% render_table escalas %}
 					<div class="column is-8 is-offset-2">
 						<div class="level">
 							<div class="level-left">

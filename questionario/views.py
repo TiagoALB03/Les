@@ -25,7 +25,7 @@ from django_tables2 import SingleTableMixin, SingleTableView
 from django_filters.views import FilterView
 from configuracao.filters import CursoFilter, DepartamentoFilter, DiaAbertoFilter, EdificioFilter, MenuFilter, \
     TemaFilter, TransporteFilter, UOFilter
-from .tables import QuestionarioTable, TemaPergTable, TipoRespostaTable, DiaabertoTable, EstadoTable
+from .tables import QuestionarioTable, TemaPergTable, TipoRespostaTable, DiaabertoTable, EstadoTable, EscalasTable
 import csv
 from django_tables2 import RequestConfig
 
@@ -153,26 +153,6 @@ def associarAnoQuestionario(request, diaaberto_id):
             diaaberto.save()
             print(questionario_selecionado)
             return redirect('configuracao:diasAbertos')
-            # if Diaaberto.objects.get(ano=questionario.dateid.ano).questionarioid is None:
-            #     questionario_copia = Questionario.objects.create(titulo=questionario.titulo,
-            #                                                      dateid=questionario.dateid,
-            #                                                      estadoquestid=EstadosQuest.objects.get(id=2))
-            #
-            #     perguntas_originais = Pergunta.objects.filter(questionarioid=questionario)
-            #     for pergunta in perguntas_originais:
-            #         pergunta_copia = Pergunta.objects.create(
-            #             pergunta=pergunta.pergunta,
-            #             questionarioid=questionario_copia,
-            #             temaid=pergunta.temaid,
-            #             tiporespostaid=pergunta.tiporespostaid
-            #         )
-            #
-            #     diaaberto = Diaaberto.objects.get(ano=questionario_copia.dateid.ano)
-            #     diaaberto.questionarioid = questionario_copia
-            #     diaaberto.save()
-            #     return redirect('questionarios:consultar-questionarios-admin')
-            # else:
-            #     flagError = True
     else:
         quest = Questionario2Form()
     # 'form': questionarioForm,
@@ -384,6 +364,10 @@ def criarTipoRespost(request):
     tiporespostaExist = False
     flag = 0
     tipoespostaForm = TipoRespostaForm(instance=tiporesposta)
+
+    tabelaEscalas = EscalasTable(questionario_escalaresposta.objects.all())
+    RequestConfig(request).configure(tabelaEscalas)
+
     if request.method == 'POST':
         tipoespostaForm = TipoRespostaForm(data=request.POST, instance=tiporesposta)
         if tipoespostaForm.is_valid():
@@ -402,7 +386,8 @@ def criarTipoRespost(request):
     return render(request=request,
                   template_name='questionario/criarTipoResposta.html',
                   context={'form': tipoespostaForm,
-                           'tiporespostaExist': tiporespostaExist})
+                           'tiporespostaExist': tiporespostaExist,
+                           'escalas': tabelaEscalas})
 
 
 def estatisticasTransport(request, diaabertoid=None):

@@ -5,7 +5,7 @@ from configuracao.models import Diaaberto
 from roteiro.models import Roteiro
 from utilizadores.models import Administrador
 from django.db.models import Count
-from questionario.models import Questionario, TemaPerg, TipoResposta, EstadosQuest
+from questionario.models import Questionario, TemaPerg, TipoResposta, EstadosQuest, questionario_escalaresposta
 from django.utils.html import format_html
 from django.urls import reverse
 from django.db.models import F
@@ -191,6 +191,14 @@ class DiaabertoTable(django_tables.Table):
         model = Diaaberto
         fields = ('ano', 'questionarioid')  # Define as colunas a serem exibidas
 
+
+class EscalasTable(django_tables.Table):
+    nome = django_tables.Column('nome')
+    valores = django_tables.Column('valores')
+
+    class Meta:
+        model = questionario_escalaresposta
+        fields = ('nome', 'valores')
 
 class EstadoTable(tables.Table):
     cor = tables.Column('Cor', accessor='getEstadoCor', orderable=False)
