@@ -239,21 +239,39 @@ def responder_questionario(request, questionario_id):
     pergquest_ids = PergQuest.objects.filter(questionarioid=questionario).values_list('perguntaid', flat=True)
     perguntas = Pergunta.objects.filter(id__in=pergquest_ids).order_by('id')
 
+    # Definir um idcodigo padrão ou obter de uma lógica específica
+    codigo_questionario = CodigoQuestionario.objects.first()  # ou outra lógica para obter o codigo
+
     if request.method == 'POST':
         for pergunta in perguntas:
-            resposta_data = request.POST.get(str(pergunta.id), '')
-            resposta, created = Resposta.objects.update_or_create(
+            resposta_data = request.POST.getlist(str(pergunta.id))  # Obter lista de respostas para checkboxes
+            resposta_texto = ','.join(resposta_data)  # Combinar as respostas em uma string
+            Resposta.objects.update_or_create(
                 perguntaID=pergunta,
-                idcodigo=request.user.codigoquestionario,
-                defaults={'resposta': resposta_data}
+                idcodigo=codigo_questionario,  # Usar o codigo_questionario padrão
+                defaults={'resposta': resposta_texto}
             )
         return redirect('questionarios:consultar-questionarios-admin')
 
+    perguntas_com_tipos = []
+    for pergunta in perguntas:
+        tipo_resposta = pergunta.tiporespostaid
+        escala_valores = []
+        if tipo_resposta.escala_id and tipo_resposta.escala_id != 0:
+            escala = questionario_escalaresposta.objects.filter(id=tipo_resposta.escala_id).first()
+            if escala:
+                escala_valores = escala.valores.split(',')
+
+        perguntas_com_tipos.append({
+            'pergunta': pergunta,
+            'tipo_resposta': tipo_resposta,
+            'opcoes': escala_valores
+        })
+
     return render(request, 'questionario/responderQuestionario.html', {
         'questionario': questionario,
-        'perguntas': perguntas
+        'perguntas_com_tipos': perguntas_com_tipos
     })
-
 
 def editar_questionario(request, questionario_id):
     questionario = get_object_or_404(Questionario, id=questionario_id)

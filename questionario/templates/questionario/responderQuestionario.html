@@ -1,68 +1,42 @@
 {% extends 'app.html' %}
 
 {% block content %}
-<style>
-    .questionario {
-        font-size: 1.2em; /* Aumentar o tamanho do texto */
-        padding: 20px; /* Adicionar espaço interno */
-        position: relative; /* Contexto para posicionamento absoluto dos botões */
-    }
-    .questionario textarea, .questionario input[type="text"] {
-        width: 100%; /* Caixa de texto e inputs de texto com largura total */
-        box-sizing: border-box; /* A largura inclui padding e border */
-        min-height: 150px; /* Altura mínima para textarea */
-        resize: none; /* Impedir redimensionamento do textarea */
-    }
-    .questionario .button {
-        padding: 10px 15px; /* Padding confortável para os botões */
-        border: none; /* Remover borda dos botões */
-        cursor: pointer; /* Cursor de ponteiro para indicar ação */
-        font-weight: bold; /* Deixar o texto do botão em negrito */
-        color: white; /* Texto do botão em branco para contraste */
-    }
-    .questionario .button:hover {
-        opacity: 0.9; /* Efeito ao passar o mouse sobre o botão */
-    }
-    .questionario .button:active {
-        transform: scale(0.98); /* Efeito ao clicar no botão */
-    }
-    .buttons-container {
-        position: absolute; /* Posicionamento absoluto dentro da .questionario */
-        width: 100%; /* Largura total do contêiner dos botões */
-        bottom: 0; /* Alinhar na parte inferior do contêiner .questionario */
-        padding: 10px 0; /* Espaçamento superior e inferior dentro do contêiner */
-        box-sizing: border-box;
-    }
-    .button.Anterior {
-        background-color: red; /* Cor de fundo vermelha para o botão Anterior */
-        position: absolute;
-        left: 0; /* Alinhar à esquerda dentro da .buttons-container */
-    }
-    .button.Finalizar, .button.Proxima {
-        background-color: blue; /* Cor de fundo azul para os botões Próxima e Finalizar */
-        position: absolute;
-        right: 0; /* Alinhar à direita dentro da .buttons-container */
-    }
-</style>
-
-<div class="questionario">
-    <form method="post" action="{% url 'questionarios:responder-questionario' questionario_id=questionario.id %}">
-        {% csrf_token %}
-        {% for pergunta in perguntas %}
-            <div>
-                <label>Pergunta: {{ pergunta.pergunta }}</label>
-                <input type="text" name="{{ pergunta.id }}">
+<div class="container">
+    <div class="section">
+        <form method="post" action="{% url 'questionarios:responder-questionario' questionario_id=questionario.id %}">
+            {% csrf_token %}
+            <h2 class="title is-3">{{ questionario.titulo }}</h2> <!-- Título do questionário -->
+            {% for item in perguntas_com_tipos %}
+                <div class="box">
+                    <div class="field">
+                        <label class="label">Pergunta: {{ item.pergunta.pergunta }}</label>
+                        <div class="control">
+                            {% if item.tipo_resposta.tiporesposta == "Por extenso" or not item.opcoes %}
+                                <textarea class="textarea" name="{{ item.pergunta.id }}"></textarea>
+                            {% elif item.opcoes %}
+                                <div class="options-container">
+                                    {% for opcao in item.opcoes %}
+                                        <div class="field is-horizontal">
+                                            <div class="field-body">
+                                                <div class="field">
+                                                    <input class="is-checkradio" id="option_{{ item.pergunta.id }}_{{ forloop.counter }}" type="checkbox" name="{{ item.pergunta.id }}" value="{{ opcao }}">
+                                                    <label for="option_{{ item.pergunta.id }}_{{ forloop.counter }}">{{ opcao }}</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+            <div class="field is-grouped">
+                <div class="control">
+                    <button type="submit" class="button is-primary">Finalizar</button>
+                </div>
             </div>
-            <br>
-            <br>
-            <hr>
-            <br>
-        {% endfor %}
-
-
-        <div class="buttons">
-            <button type="submit" class="button Finalizar">Finalizar</button>
-        </div>
-    </form>
+        </form>
+    </div>
 </div>
 {% endblock %}
