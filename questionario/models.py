@@ -31,7 +31,7 @@ class TemaPerg(models.Model):
     # Field name made lowercase.
     id = models.AutoField(db_column='ID', primary_key=True)
     # Field name made lowercase.
-    tema = models.CharField(db_column='Tema', max_length=64, null=False, blank=False)
+    tema = models.CharField(db_column='Tema', max_length=64, null=True, blank=True)
 
     @property
     def get_num_perguntas(self):

@@ -317,10 +317,11 @@ def criarTema(request):
     tema = TemaPerg()
     flag = 0
     temaExist = False
-
+    flagTemaEmpty = False
     temaForm = TemaFormPerg(instance=tema)
+
     if request.method == 'POST':
-        temaForm = TemaFormPerg(data=request.POST, instance=tema)
+        temaForm = TemaFormPerg(request.POST, request.FILES, instance=tema)
         if temaForm.is_valid():
             tema = temaForm.save(commit=False)
 
@@ -330,15 +331,37 @@ def criarTema(request):
                     temaExist = True
                     break
 
-            if flag == 0:
+            if tema.tema is not None and flag == 0:
                 tema = temaForm.save()
                 return redirect('questionarios:consultar-tema')
+            else:
+                flagTemaEmpty = True
+                print("passaste pela flag do tema vazio")
 
     return render(request=request,
                   template_name='questionario/criarTema.html',
                   context={'form': temaForm,
-                           'temaExist': temaExist})
+                           'temaExist': temaExist,
+                           'flagTemaEmpty': flagTemaEmpty})
 
+# flagError = False
+    # flagTituloEmpty = False
+    # flagDateEmpty = False
+    #
+    # if request.method == 'POST':
+    #     questionarioForm = QuestionarioForm(request.POST, request.FILES, instance=questionario)
+    #     if questionarioForm.is_valid():
+    #         questionario = questionarioForm.save(commit=False)
+    #         for obj in Questionario.objects.all():
+    #             if obj.titulo == questionario.titulo:
+    #                 flagError = True
+    #         if questionario.titulo is not None and flagError == False:
+    #             questionario.estadoquestid = EstadosQuest.objects.get(id=2)
+    #             questionario.save()
+    #             return redirect('questionarios:criar-perguntas', questionario_id=questionario.id)
+    #         else:
+    #             flagTituloEmpty = True
+    #             print(flagTituloEmpty)
 
 class consultartiporesposta(SingleTableMixin, FilterView):
     table_class = TipoRespostaTable

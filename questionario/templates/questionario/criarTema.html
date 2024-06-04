@@ -11,7 +11,7 @@
 	</ul>
 </nav>
 <div style="padding: 3rem 2vw 1rem">
-	<form method="POST" action="">
+	<form method="POST" enctype="multipart/form-data" action="">
 		<div id="id_removed_rows" style="display:none;"></div>
 		{% csrf_token %}
     {% if form.non_field_errors %}
@@ -29,7 +29,6 @@
 			<section class="step-content">
 				<div class="step-item">
 					<div style="padding: 1rem 2vw 0px">
-
 						<div class="columns">
 							<div class="column is-half">
 								<strong>{{form.nome.errors}}</strong>
@@ -39,13 +38,16 @@
 										{{form.tema}}
 									</div>
 								</div>
-                                {% if temaExist %}
-                                    <div class="has-text-danger">
-                                        Este tema já existe. Crie outro.
-                                    </div>
-                                {% endif %}
 							</div>
 						</div>
+                        {% if temaExist %}
+                                <div class="has-text-danger">
+                                    Este tema já existe. Crie outro.
+                                </div>
+                            {% endif %}
+                            {% if flagTemaEmpty %}
+                                <div class="has-text-danger">Para criar um tema é preciso inserir um nome para o mesmo.</div>
+                            {% endif %}
 					</div>
 					<hr>
 					<div class="column is-8 is-offset-2">
@@ -80,5 +82,5 @@
 }
 </style>
 {% endblock content %}
-{% block scripts %}
-{% endblock scripts %}
+{#{% block scripts %}#}
+{#{% endblock scripts %}#}
