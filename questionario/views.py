@@ -404,13 +404,15 @@ def criarTipoRespost(request):
     tiporesposta = TipoResposta()
     tiporespostaExist = False
     flag = 0
+    flagTrespostaEmpty = False
+
     tipoespostaForm = TipoRespostaForm(instance=tiporesposta)
 
     tabelaEscalas = EscalasTable(questionario_escalaresposta.objects.all())
     RequestConfig(request).configure(tabelaEscalas)
 
     if request.method == 'POST':
-        tipoespostaForm = TipoRespostaForm(data=request.POST, instance=tiporesposta)
+        tipoespostaForm = TipoRespostaForm(request.POST, request.FILES,instance=tiporesposta)
         if tipoespostaForm.is_valid():
             tiporesposta = tipoespostaForm.save(commit=False)
 
@@ -420,15 +422,19 @@ def criarTipoRespost(request):
                     tiporespostaExist = True
                     break
 
-            if flag == 0:
+            if tiporesposta.tiporesposta is not None and flag == 0:
                 tiporesposta = tipoespostaForm.save()
                 return redirect('questionarios:consultar-tipo-resposta')
+            else:
+                flagTrespostaEmpty = True
+                print(flagTrespostaEmpty)
 
     return render(request=request,
                   template_name='questionario/criarTipoResposta.html',
                   context={'form': tipoespostaForm,
                            'tiporespostaExist': tiporespostaExist,
-                           'escalas': tabelaEscalas})
+                           'escalas': tabelaEscalas,
+                           'flagTrespostaEmpty': flagTrespostaEmpty})
 
 
 def estatisticasTransport(request, diaabertoid=None):

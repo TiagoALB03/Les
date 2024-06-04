@@ -112,7 +112,7 @@ class Questionario(models.Model):
 
 class TipoResposta(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)
-    tiporesposta = models.CharField(db_column='TipoResposta', default='', max_length=255)
+    tiporesposta = models.CharField(db_column='TipoResposta', default='', max_length=255, null=True, blank=True)
     escala = models.ForeignKey('questionario_escalaresposta', models.CASCADE, db_column='EscalaResposta', default=1, null=False, blank=False)
     class Meta:
         db_table = 'TipoResposta'
