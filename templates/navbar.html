@@ -56,11 +56,12 @@
                 <a href="{% url 'roteiros:roteiroCoordenador' %}" class="navbar-item">
                     Roteiros
                 </a>
-                 <a href="{% url 'inscricoes:inscricao_escolha' %}" class="navbar-item">
-                    Inscrições última hora
-                </a>
+
 
             {% elif request.user|has_group:'Administrador' %}
+                <a href="{% url 'inscricoes:inscricao_escolha' %}" class="navbar-item">
+                    Inscrições última hora
+                </a>
                 <div class="navbar-item has-dropdown is-hoverable">
                     <a class="navbar-link">
                         Configurações

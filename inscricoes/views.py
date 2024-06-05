@@ -632,7 +632,7 @@ def exportarcsv(request,diaabertoid=None):
 
 
 def inscricao_escolha(request):
-    user_check_var = user_check(request=request, user_profile=[Coordenador])
+    user_check_var = user_check(request=request, user_profile=[Administrador])
     if user_check_var.get('exists') == False:
         return user_check_var.get('render')
     context = {
@@ -652,10 +652,10 @@ class CriarUltimaHora(SessionWizardView):
     ]
 
     def dispatch(self, request, *args, **kwargs):
-        _user_check = user_check(request, [Coordenador])
+        _user_check = user_check(request, [Administrador])
         if _user_check['exists']:
             participante = _user_check['firstProfile']
-            #participante = User.objects.get(id=45)
+            # participante = User.objects.get(id=45)
             diaaberto = Diaaberto.current()
             if diaaberto is None:
                 return redirect('utilizadores:mensagem', 12)
@@ -745,6 +745,7 @@ class CriarUltimaHora(SessionWizardView):
         return render(self.request, 'inscricoes/consultar_inscricao_submissao.html', {
             'inscricao': inscricao,
         })
+
 
 def presençaInscricao(request,inscricao_id):
     user_check_var = user_check(request=request, user_profile=[Administrador])
