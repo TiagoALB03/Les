@@ -39,24 +39,32 @@ class RoteiroTable(django_tables.Table):
     def render_acoes(self, record):
         if record.estado.nome != "Aceite" or record.diaabertoid.ano == 2024:
             segundo_botao = f"""
-                       """
+            """
         else:
             segundo_botao = f"""
-                                    <a href='{reverse("roteiros:duplicar-roteiro", args={record.pk})}'
-                                        data-tooltip="Duplicar">
-                                        <span class="mdi mdi-content-copy">
-
-                                        </span>
-                                    </a>
-                                    """
+                <a href='{reverse("roteiros:duplicar-roteiro", args=[record.pk])}'
+                   data-tooltip="Duplicar">
+                   <span class="mdi mdi-content-copy">
+                   </span>
+                </a>
+            """
         primeiro_botao = f"""
-                           <a data-tooltip="Consultar detalhes" href="{reverse('roteiros:consultarRoteiro', kwargs={'roteiro_id': record.getRoteiroID})}">
-                               <span class="icon">
-                                   <i class="fas fa-eye" aria-hidden="true" style="color: #3A99E2"></i>
-                               </span>
-                           </a>
-                       """
+            <a data-tooltip="Consultar detalhes" href="{reverse('roteiros:consultarRoteiro', kwargs={'roteiro_id': record.getRoteiroID})}">
+                <span class="icon">
+                    <i class="fas fa-eye" aria-hidden="true" style="color: #3A99E2"></i>
+                </span>
+            </a>
+        """
+        terceiro_botao = f"""
+            <a data-tooltip="Eliminar" href="{reverse('roteiros:eliminar_roteiro', kwargs={'id': record.getRoteiroID})}" onclick="return confirm('Tem certeza que deseja eliminar este roteiro?');">
+                <span class="icon">
+                    <i class="fas fa-trash-alt" aria-hidden="true" style="color: #E74C3C"></i>
+                </span>
+            </a>
+        """
+
         return format_html(f"""
-                           {primeiro_botao}
-                           {segundo_botao}
-                   """)
+            {primeiro_botao}
+            {segundo_botao}
+            {terceiro_botao}
+        """)

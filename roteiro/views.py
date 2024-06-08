@@ -248,8 +248,32 @@ def eliminarSessao(request, id):
                       })
 
 
-@require_POST  # Importante para não permitir que a ação seja desencadeada por GET
 def eliminar_roteiro(request, id):
     roteiro = get_object_or_404(Roteiro, pk=id)
-    roteiro.delete()
-    return redirect(reverse('roteiros:lista_roteiros'))
+    if request.method == "POST":
+        choice = request.POST.get("choice")
+        if choice == "roteiro":
+            roteiro.delete()
+            return redirect(reverse('roteiros:roteiroCoordenador'))
+        elif choice == "sessoes":
+            sessoes = Sessao.objects.filter(roteiro=roteiro)
+            return render(request, 'roteiros/eliminar_sessoes.html', {'roteiro': roteiro, 'sessoes': sessoes})
+        elif choice == "atividades":
+            atividades = Atividade.objects.filter(roteiro=roteiro)
+            return render(request, 'roteiros/eliminar_atividades.html', {'roteiro': roteiro, 'atividades': atividades})
+
+    return render(request, 'roteiros/eliminar_opcoes.html', {'roteiro': roteiro})
+
+@require_POST
+def eliminar_sessoes(request, id):
+    roteiro = get_object_or_404(Roteiro, pk=id)
+    sessoes_ids = request.POST.getlist('sessoes')
+    Sessao.objects.filter(id__in=sessoes_ids, roteiro=roteiro).delete()
+    return redirect(reverse('roteiros:consultarRoteiro', args=[id]))
+
+@require_POST
+def eliminar_atividades(request, id):
+    roteiro = get_object_or_404(Roteiro, pk=id)
+    atividades_ids = request.POST.getlist('atividades')
+    Atividade.objects.filter(id__in=atividades_ids, roteiro=roteiro).delete()
+    return redirect(reverse('roteiros:consultarRoteiro', args=[id]))
