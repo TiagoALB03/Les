@@ -3,6 +3,7 @@ from django.conf.urls import url
 from django.urls import path
 from django.views.generic import RedirectView
 from . import views
+from .views import EditarInscricaoUltimaHoraListView, EditarInscricaoUltimaHoraWizardView
 
 app_name = 'inscricoes'
 
@@ -49,6 +50,9 @@ urlpatterns = [
          name='editar-presencas'),
     path('<int:pk>/consultar_presencas/', views.consultar_presencas,
          name='consultar-presencas'),
-
+    path('editar_inscricao_ultima_hora/', EditarInscricaoUltimaHoraListView.as_view(),
+         name='editar_inscricao_ultima_hora_list'),
+    path('editar_inscricao_ultima_hora/<int:pk>/', EditarInscricaoUltimaHoraWizardView.as_view(),
+         name='editar_inscricao_ultima_hora_detail'),
 
 ]

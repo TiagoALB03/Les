@@ -1,0 +1,35 @@
+{% extends "app.html" %}
+
+{% block content %}
+    <h1>Lista de Inscrições de Última Hora</h1>
+    <table class="table is-striped is-hoverable">
+        <thead>
+            <tr>
+                <th>Grupo</th>
+                <th>Dia</th>
+                <th>Horário</th>
+                <th>Escola</th>
+                <th>Turma</th>
+                <th>Qtd</th>
+                <th>Presentes</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for inscricao in inscricoes %}
+            <tr>
+                <td>{{ inscricao.id }}</td>
+                <td>{{ inscricao.diaaberto.datadiaabertoinicio|date:"d/m/Y" }}</td>
+                <td>--</td>
+                <td>--</td>
+                <td>{{ inscricao.turma }}</td>
+                <td>{{ inscricao.nalunos }}</td>
+                <td>{{ inscricao.presentes }}</td>
+                <td>
+                    <a href="{% url 'inscricoes:editar_inscricao_ultima_hora_detail' inscricao.pk %}" class="button is-small is-info">Editar</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

@@ -8,7 +8,8 @@ from inscricoes.utils import add_vagas_sessao, enviar_mail_confirmacao_inscricao
 from atividades.models import Atividade, Sessao
 from atividades.serializers import AtividadeSerializer
 from atividades.filters import AtividadeFilter
-from inscricoes.forms import AlmocoForm, InfoForm, InscricaoForm, ResponsavelForm, SessoesForm, TransporteForm
+from inscricoes.forms import AlmocoForm, InfoForm, InscricaoForm, ResponsavelForm, SessoesForm, TransporteForm, \
+    EmptyForm
 from questionario.models import Resposta, Pergunta, Questionario
 from utilizadores.models import Administrador, Coordenador, Participante
 from utilizadores.views import user_check
@@ -33,6 +34,14 @@ from _datetime import timedelta
 
 
 from .forms import EditarPresencasForm
+
+
+
+from django.views.generic import ListView
+from django.urls import reverse_lazy
+from .forms import (
+    InfoForm, ResponsavelForm, InscricaoUltimaHoraForm, SessoesForm
+)
 
 
 def InscricaoPDF(request, pk):
@@ -788,4 +797,33 @@ def consultar_presencas(request, pk):
     })
 
 
+class EditarInscricaoUltimaHoraListView(ListView):
+    model = Inscricao
+    template_name = "inscricoes/editar_inscricao_ultima_hora_list.html"
+    context_object_name = 'inscricoes'
 
+    def get_queryset(self):
+        return Inscricao.objects.all()
+
+
+class EditarInscricaoUltimaHoraWizardView(SessionWizardView):
+    form_list = [InfoForm, ResponsavelForm, InscricaoUltimaHoraForm, SessoesForm]
+    template_name = "inscricoes/editar_inscricao_ultima_hora.html"
+
+    def get_form_instance(self, step):
+        return self.instance_dict.get(step, None)
+
+    def get_context_data(self, form, **kwargs):
+        context = super().get_context_data(form=form, **kwargs)
+        context.update({'inscricao': self.get_inscricao()})
+        return context
+
+    def get_inscricao(self):
+        return Inscricao.objects.get(pk=self.kwargs['pk'])
+
+    def done(self, form_list, **kwargs):
+        inscricao = self.get_inscricao()
+        for form in form_list:
+            form.instance = inscricao
+            form.save()
+        return HttpResponseRedirect(reverse_lazy('inscricoes:consultar-inscricao', kwargs={'pk': inscricao.pk}))

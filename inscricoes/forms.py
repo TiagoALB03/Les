@@ -209,3 +209,55 @@ class EditarPresencasForm(forms.ModelForm):
         model = Inscricao
         fields = ['presentes']
 
+
+class EmptyForm(forms.Form):
+    pass
+
+
+
+
+
+class InscricaoUltimaHoraForm(forms.ModelForm):
+    nome_escola = forms.CharField(max_length=200)
+    local = forms.CharField(max_length=128)
+
+    class Meta:
+        model = Inscricao
+        exclude = ('escola', 'ninscricao', 'participante',
+                   'meio_transporte', 'hora_chegada', 'local_chegada', 'entrecampi', 'presentes')
+
+    def clean(self):
+        cleaned_data = super(InscricaoUltimaHoraForm, self).clean()
+        if cleaned_data.get('local', False):
+            cleaned_data['local'] = cleaned_data['local'].capitalize()
+
+        # Verificar se o dia escolhido faz parte do Dia Aberto
+        if not cleaned_data.get('diaaberto', ''):
+            prox_diaaberto = Diaaberto.current()
+            if prox_diaaberto:
+                raise forms.ValidationError(
+                    _(f"""A data que escolheu não faz parte do Dia Aberto. Próximo dia aberto: de {prox_diaaberto.datadiaabertoinicio.strftime("%d/%m/%Y às %H:%M")}, até {prox_diaaberto.datadiaabertofim.strftime("%d/%m/%Y às %H:%M")}."""))
+            else:
+                raise forms.ValidationError(
+                    _(f"A data que escolheu não faz parte do Dia Aberto."))
+
+        if not cleaned_data.get('individual', False) and (not cleaned_data.get('ano', False) or not cleaned_data.get('turma', False) or not cleaned_data.get('areacientifica', False)):
+            raise forms.ValidationError(
+                _("Por favor, introduza toda a informação da turma."))
+
+        if self.instance:
+            inscricaoprato = self.instance.inscricaoprato_set.first()
+            if inscricaoprato and inscricaoprato.npratosalunos + inscricaoprato.npratosdocentes > cleaned_data.get('nalunos', 0) + 5:
+                raise forms.ValidationError(
+                    _("As inscrições nos almoços excedem o número de participantes disponíveis."))
+
+            inscricoes_sessao = self.instance.inscricaosessao_set.all()
+            for inscricao_sessao in inscricoes_sessao:
+                if inscricao_sessao.nparticipantes > cleaned_data.get('nalunos', 0):
+                    raise forms.ValidationError(
+                        _("As inscrições nas sessões excedem o número de participantes disponíveis."))
+
+    def save(self, commit=True):
+        self.instance.escola = models.Escola.objects.get_or_create(
+            nome=self.cleaned_data['nome_escola'], local=self.cleaned_data['local'])[0]
+        return super(InscricaoUltimaHoraForm, self).save(commit=commit)
