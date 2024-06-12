@@ -45,6 +45,7 @@ from .forms import (
 
 
 def InscricaoPDF(request, pk):
+    print("KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK")
     """ View que gera um PDF com os detalhes da inscrição """
     inscricao = get_object_or_404(Inscricao, pk=pk)
     erro_permissoes = nao_tem_permissoes(request, inscricao)
@@ -56,7 +57,7 @@ def InscricaoPDF(request, pk):
         'inscricao': inscricao,
         'ano': ano,
     }
-    return render_pdf("inscricoes/pdfTransporte.html", context, f"dia_aberto_ualg_{ano}.pdf")
+    return render_pdf("inscricoes/pdf.html", context, f"dia_aberto_ualg_{ano}.pdf")
 
 
 class AtividadesAPI(ListAPIView):
@@ -127,6 +128,7 @@ class CriarInscricao(SessionWizardView):
         return context
 
     def get_template_names(self):
+        print(self.steps.current)
         return [f'inscricoes/inscricao_wizard_{self.steps.current}.html']
 
     def post(self, request, *args, **kwargs):

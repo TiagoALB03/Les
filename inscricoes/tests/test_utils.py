@@ -50,7 +50,7 @@ class TestUtils(TestCase):
             'inscricao': self.inscricao,
             'ano': self.inscricao.diaaberto.ano,
         }
-        pdf = render_pdf('inscricoes/pdfTransporte.html', context, 'dummy.pdf')
+        pdf = render_pdf('inscricoes/pdf.html', context, 'dummy.pdf')
         self.assertEquals(pdf.status_code, 200)
 
     def test_enviar_mail_confirmacao_inscricao(self):
