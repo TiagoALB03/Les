@@ -1,5 +1,8 @@
 import csv
 
+from MySQLdb import OperationalError
+# from django.db import OperationalError
+
 from django.db.models import OuterRef, Exists, Count
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, JsonResponse
@@ -29,6 +32,15 @@ from .tables import QuestionarioTable, TemaPergTable, TipoRespostaTable, Diaaber
 import csv
 from django_tables2 import RequestConfig
 
+def handle_db_errors(view_func):
+    def wrapper(request, args, **kwargs):
+        try:
+            response = view_func(request,args, **kwargs)
+            return response
+        except OperationalError as e:
+            print(f"Database error encountered: {e}")
+            return render(request, "db_error.html", status=503)
+    return wrapper
 
 # Create your views here.
 class consultar_questionarios(SingleTableMixin, FilterView):
@@ -51,7 +63,7 @@ class consultar_questionarios(SingleTableMixin, FilterView):
         context["facs"] = list(map(lambda x: (x.id, x.nome), EstadosQuest.objects.all()))
         return context
 
-
+@handle_db_errors
 def criarquestionario(request, questionario_id=None):
     user_check_var = user_check(request=request, user_profile=[Administrador])
     if user_check_var.get('exists') == False:
@@ -89,6 +101,7 @@ def criarquestionario(request, questionario_id=None):
 
 
 # pode ter problemas por já não existir o ano associado ao questionário
+@handle_db_errors
 def configurarQuestionario(request, questionario_id=None):  #server para alterar alguma informação no questionario
     user_check_var = user_check(request=request, user_profile=[Administrador])
     if user_check_var.get('exists') == False:
@@ -120,7 +133,7 @@ def configurarQuestionario(request, questionario_id=None):  #server para alterar
                            'allowDelete': allowDelete,
                            })
 
-
+@handle_db_errors
 def arquivarQuestionario(request, questionario_id):
     user_check_var = user_check(request=request, user_profile=[Administrador])
     if user_check_var.get('exists') == False:
@@ -131,7 +144,7 @@ def arquivarQuestionario(request, questionario_id):
     questionarioAAlterar.save()
     return redirect('questionarios:consultar-questionarios-admin')
 
-
+@handle_db_errors
 def associarAnoQuestionario(request, diaaberto_id):
     user_check_var = user_check(request=request, user_profile=[Administrador])
     if user_check_var.get('exists') == False:
@@ -164,7 +177,7 @@ def associarAnoQuestionario(request, diaaberto_id):
                       'flagError': flagError,
                       'diaabertotable': tabelaDiaAberto})
 
-
+@handle_db_errors
 def criarperguntas(request, questionario_id):
     global pergunta
     user_check_var = user_check(request=request, user_profile=[Administrador])
@@ -215,7 +228,7 @@ def criarperguntas(request, questionario_id):
                            'allowMore': allowMore,
                            'allowDelete': allowDelete})
 
-
+@handle_db_errors
 def newPergRow(request):
     value = int(request.POST.get('extra'))
     data = {
@@ -229,7 +242,7 @@ def newPergRow(request):
     print(data)
     return render(request=request, template_name='questionario/questionarioPerguntasRow.html', context=data)
 
-
+@handle_db_errors
 def responder_questionario(request, questionario_id):
     user_check_var = user_check(request=request, user_profile=[Administrador])
     if not user_check_var.get('exists'):
@@ -273,6 +286,7 @@ def responder_questionario(request, questionario_id):
         'perguntas_com_tipos': perguntas_com_tipos
     })
 
+@handle_db_errors
 def editar_questionario(request, questionario_id):
     questionario = get_object_or_404(Questionario, id=questionario_id)
     PerguntaFormSet = modelformset_factory(Pergunta, form=PerguntasForm, extra=1, can_delete=True)
@@ -328,6 +342,7 @@ class consultartema(SingleTableMixin, FilterView):
         return context
 
 
+@handle_db_errors
 def criarTema(request):
     user_check_var = user_check(request=request, user_profile=[Administrador])
     if user_check_var.get('exists') == False: return user_check_var.get('render')
@@ -397,6 +412,7 @@ class consultartiporesposta(SingleTableMixin, FilterView):
         return super().dispatch(request, *args, **kwargs)
 
 
+@handle_db_errors
 def criarTipoRespost(request):
     user_check_var = user_check(request=request, user_profile=[Administrador])
     if user_check_var.get('exists') == False: return user_check_var.get('render')
@@ -437,6 +453,7 @@ def criarTipoRespost(request):
                            'flagTrespostaEmpty': flagTrespostaEmpty})
 
 
+@handle_db_errors
 def estatisticasTransport(request, diaabertoid=None):
     """ View que mostra as estatísticas do Dia Aberto """
     user_check_var = user_check(request=request, user_profile=[Administrador])
@@ -490,6 +507,7 @@ def estatisticasTransport(request, diaabertoid=None):
     })
 
 
+@handle_db_errors
 def getRespostas(request):
     if request.method == 'POST':
         counter_str = request.POST.get('subtema')  # Default value if not provided
@@ -513,6 +531,7 @@ def getRespostas(request):
                                  'respostas': []})
 
 
+@handle_db_errors
 def exportarCSVTransporte(request):
     response = HttpResponse(content_type='text/csv; charset=utf-8')
     response['Content-Disposition'] = 'attachment; filename="Respostas.csv"'
@@ -563,6 +582,7 @@ class consultar_estados(SingleTableMixin, FilterView):
         return context
 
 
+@handle_db_errors
 def eliminarEstado(request, estados_id):
     user_check_var = user_check(request=request, user_profile=[Administrador])
     if not user_check_var.get('exists'):
@@ -572,6 +592,7 @@ def eliminarEstado(request, estados_id):
     return redirect('questionarios:consultar-estados-admin')
 
 
+@handle_db_errors
 def editarEstado(request, estados_id):
     user_check_var = user_check(request=request, user_profile=[Administrador])
     if user_check_var.get('exists') == False:
@@ -635,6 +656,7 @@ def editarEstado(request, estados_id):
                            })
 
 
+@handle_db_errors
 def publicarQuestionario(request, questionario_id):
     user_check_var = user_check(request=request, user_profile=[Administrador])
     if not user_check_var.get('exists'):
@@ -650,6 +672,7 @@ def publicarQuestionario(request, questionario_id):
         return HttpResponse("Estado não encontrado.")
 
 
+@handle_db_errors
 def validarQuestionario(request, questionario_id):
     user_check_var = user_check(request=request, user_profile=[Administrador])
     if not user_check_var.get('exists'):
@@ -665,6 +688,7 @@ def validarQuestionario(request, questionario_id):
         return HttpResponse("Estado não encontrado.")
 
 
+@handle_db_errors
 def criarEstado(request):
     mensagemErro = ''
     if request.method == 'POST':
@@ -688,6 +712,7 @@ def criarEstado(request):
                                                              'erroMensagem': mensagemErro})
 
 
+@handle_db_errors
 def criar_escala_resposta(request):
     if request.method == 'POST':
         form = EscalaRespostaForm(request.POST)
@@ -699,11 +724,13 @@ def criar_escala_resposta(request):
     return render(request, 'questionario/criarEscalaResposta.html', {'form': form})
 
 
+@handle_db_errors
 def listar_escala_resposta(request):
     escalas = questionario_escalaresposta.objects.all()
     return render(request, 'questionario/listarEscalaResposta.html', {'escalas': escalas})
 
 
+@handle_db_errors
 def editar_escala_resposta(request, id):
     escala = get_object_or_404(questionario_escalaresposta, id=id)
     form = EscalaRespostaForm(request.POST or None, instance=escala)
@@ -713,6 +740,7 @@ def editar_escala_resposta(request, id):
     return render(request, 'questionario/editarEscalaResposta.html', {'form': form})
 
 
+@handle_db_errors
 def estatisticasAtividadeRoteiro(request, diaabertoid=None):
     """ View que mostra as estatísticas do Dia Aberto """
     user_check_var = user_check(request=request, user_profile=[Administrador])
@@ -781,6 +809,7 @@ def estatisticasAtividadeRoteiro(request, diaabertoid=None):
     })
 
 
+@handle_db_errors
 def getRespostasAtividadeRoteiro(request):
     if request.method == 'POST':
         roteiro = request.POST.get('roteiroID')
@@ -817,6 +846,7 @@ def getRespostasAtividadeRoteiro(request):
                                  'respostas': []})
 
 
+@handle_db_errors
 def eliminarQuestionario(request, questID):
     user_check_var = user_check(request=request, user_profile=[Administrador])
     if not user_check_var.get('exists'):
@@ -826,6 +856,7 @@ def eliminarQuestionario(request, questID):
     return redirect('questionarios:consultar-questionarios-admin')
 
 
+@handle_db_errors
 def consultarPerguntas(request, questID):
     user_check_var = user_check(request=request, user_profile=[Administrador])
     if not user_check_var.get('exists'):
@@ -842,6 +873,7 @@ def consultarPerguntas(request, questID):
     })
 
 
+@handle_db_errors
 def atividadeRoteirocsvEstatistica(request, questID=None):
     respostas = Resposta.objects.all()
     if not respostas.exists():
