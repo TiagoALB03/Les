@@ -1,7 +1,8 @@
 import csv
 
-from MySQLdb import OperationalError
+# from MySQLdb import OperationalError
 # from django.db import OperationalError
+from django.db import OperationalError
 
 from django.db.models import OuterRef, Exists, Count
 from django.shortcuts import render, redirect, get_object_or_404
@@ -39,7 +40,7 @@ def handle_db_errors(view_func):
             return response
         except OperationalError as e:
             print(f"Database error encountered: {e}")
-            return render(request, "db_error.html", status=503)
+            return render(request, "questionario/db_error.html", status=503)
     return wrapper
 
 # Create your views here.
