@@ -36,7 +36,8 @@ def relatorio_Transporte(request, diaabertoid=None):
         'diasabertos': Diaaberto.objects.all(),
         'ultimo_dia_aberto': Diaaberto.objects.order_by('-datadiaabertofim').first(),
     })
-def InscricaoPDF(request, diaabertoid):
+def InscricaoPDF2(request, diaabertoid):
+    print("AIWJDAWIDJAWIDJAWIJDIAWJDAIWJDIAWDAIWDJA")
     filterset_class = Transportehorario.objects.filter(transporte__diaaberto=diaabertoid)
     info_with_attributes = []
     for item in filterset_class:

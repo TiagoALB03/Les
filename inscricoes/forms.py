@@ -152,7 +152,8 @@ def verificar_vagas(sessoes, nalunos, dia):
         except:
             raise forms.ValidationError(
                 _("Ocorreu um erro inesperado. Por favor, tente submeter uma nova inscrição."))
-        if sessao_obj.atividadeid.estado != "Aceite":
+        if sessao_obj.atividadeid.estado.nome != "Aceite":
+            print("não percebi",sessao_obj.atividadeid.estado.nome)
             raise forms.ValidationError(
                 _(f"A seguinte atividade não se encontra validada: \"{sessao_obj.atividadeid.nome}\"."))
         if sessao_obj.dia != dia:
