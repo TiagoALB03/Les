@@ -34,7 +34,7 @@ import csv
 from django_tables2 import RequestConfig
 
 def handle_db_errors(view_func):
-    def wrapper(request, args, **kwargs):
+    def wrapper(request, *args, **kwargs):
         try:
             response = view_func(request,args, **kwargs)
             return response
