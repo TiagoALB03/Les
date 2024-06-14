@@ -4,6 +4,7 @@
 {% load inscricoes_extras %}
 {% load notifications_tags %}
 
+
 <nav id="main-navbar" class="navbar" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
         <a class="navbar-item logo" href="{% url 'home' %}">
@@ -59,6 +60,7 @@
 
 
             {% elif request.user|has_group:'Administrador' %}
+
                 <a href="{% url 'inscricoes:inscricao_escolha' %}" class="navbar-item">
                     Inscrições última hora
                 </a>

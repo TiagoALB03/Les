@@ -290,6 +290,7 @@ def RespostaComValorAlmoco(pergunta,diaaberto):
     ).count()
     return respostas
 
+
 @register.filter
 def RespostaComValorAlmoco2(pergunta,diaaberto):
     respostas = Resposta.objects.filter(

@@ -665,7 +665,7 @@ class CriarUltimaHora(SessionWizardView):
     def dispatch(self, request, *args, **kwargs):
         _user_check = user_check(request, [Administrador])
         if _user_check['exists']:
-            participante = _user_check['firstProfile']
+            #participante = _user_check['firstProfile']
             # participante = User.objects.get(id=45)
             diaaberto = Diaaberto.current()
             if diaaberto is None:
@@ -676,7 +676,7 @@ class CriarUltimaHora(SessionWizardView):
                 return render(request=request,
                               template_name="mensagem.html", context={'m': m, 'tipo': 'error', 'continuar': 'on'})
             self.instance_dict = {
-                'responsaveis': Responsavel(email=participante.email, tel=participante.contacto)
+                'responsaveis': Responsavel()
             }
         else:
             return _user_check['render']
@@ -733,7 +733,7 @@ class CriarUltimaHora(SessionWizardView):
         almoco = form_dict['almoco'].save(commit=False)
         inscricao = form_dict['escola'].save(commit=False)
         inscricao.participante = Participante.objects.filter(
-            utilizador_ptr_id=self.request.user.id).first()
+            utilizador_ptr_id=33).first()
         inscricao.meio_transporte = form_dict['transporte'].cleaned_data['meio']
         if (form_dict['transporte'].cleaned_data['meio'] != 'outro'):
             inscricao.hora_chegada = form_dict['transporte'].cleaned_data['hora_chegada']
@@ -829,3 +829,106 @@ class EditarInscricaoUltimaHoraWizardView(SessionWizardView):
             form.instance = inscricao
             form.save()
         return HttpResponseRedirect(reverse_lazy('inscricoes:consultar-inscricao', kwargs={'pk': inscricao.pk}))
+
+class CriarUltimaHoraDia(SessionWizardView):
+    """ View que gera o formulário com passos para criar uma nova inscrição """
+    form_list = [
+        ('info', InfoForm),
+        ('responsaveis', ResponsavelForm),
+        ('escola', InscricaoForm),
+        #('transporte', TransporteForm),
+        #('almoco', AlmocoForm),
+        ('sessoes', SessoesForm),
+    ]
+
+    def dispatch(self, request, *args, **kwargs):
+        _user_check = user_check(request, [Administrador])
+        if _user_check['exists']:
+            #participante = _user_check['firstProfile']
+            # participante = User.objects.get(id=45)
+            diaaberto = Diaaberto.current()
+            if diaaberto is None:
+                return redirect('utilizadores:mensagem', 12)
+            if datetime.now(pytz.UTC) < diaaberto.datainscricaoatividadesinicio or datetime.now(
+                    pytz.UTC) > diaaberto.datainscricaoatividadesfim:
+                m = f"Período de abertura das inscrições: {diaaberto.datainscricaoatividadesinicio.strftime('%d/%m/%Y')} até {diaaberto.datainscricaoatividadesfim.strftime('%d/%m/%Y')}"
+                return render(request=request,
+                              template_name="mensagem.html", context={'m': m, 'tipo': 'error', 'continuar': 'on'})
+            self.instance_dict = {
+                'responsaveis': Responsavel()
+            }
+        else:
+            return _user_check['render']
+        return super(CriarUltimaHoraDia, self).dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, form, **kwargs):
+        context = super().get_context_data(form=form, **kwargs)
+        update_context(context, self.steps.current, self)
+        if self.steps.current != 'info':
+            context.update({
+                'individual': self.get_cleaned_data_for_step('info')['individual']
+            })
+        visited = []
+        for step in self.form_list:
+            cleaned_data = self.get_cleaned_data_for_step(step)
+            if cleaned_data:
+                visited.append(True)
+            else:
+                visited.append(False)
+        context.update({
+            'visited': visited
+        })
+        return context
+
+    def get_template_names(self):
+        return [f'inscricoes/inscricao_wizard_{self.steps.current}.html']
+
+    def post(self, request, *args, **kwargs):
+        # Envia a informação extra necessária para o formulário atual, após preenchê-lo.
+        # Necessário para algumas validações especiais de backend, como verificar o número de alunos
+        # inscritos para verificar inscritos nos almoços e nas sessões.
+        current_step = request.POST.get(
+            'criar_inscricao-current_step', self.steps.current)
+        update_post(current_step, request.POST, self)
+        go_to_step = self.request.POST.get(
+            'wizard_goto_step', None)  # get the step name
+        if go_to_step is not None:
+            form = self.get_form(data=self.request.POST,
+                                 files=self.request.FILES)
+
+            if self.get_cleaned_data_for_step(current_step):
+                if form.is_valid():
+                    self.storage.set_step_data(self.steps.current,
+                                               self.process_step(form))
+                    self.storage.set_step_files(self.steps.current,
+                                                self.process_step_files(form))
+                else:
+                    return self.render(form)
+        return super(CriarUltimaHoraDia, self).post(*args, **kwargs)
+
+    def done(self, form_list, form_dict, **kwargs):
+        # Guardar na Base de Dados
+        responsaveis = form_dict['responsaveis'].save(commit=False)
+        #almoco = form_dict['almoco'].save(commit=False)
+        inscricao = form_dict['escola'].save(commit=False)
+        inscricao.participante = Participante.objects.filter(
+            utilizador_ptr_id=33).first()
+        inscricao.meio_transporte = "outro"
+        inscricao.entrecampi = 1
+        inscricao.save()
+        sessoes = form_dict['sessoes'].cleaned_data['sessoes']
+        for sessaoid in sessoes:
+            if sessoes[sessaoid] > 0:
+                inscricao_sessao = Inscricaosessao(sessao=Sessao.objects.get(
+                    pk=sessaoid), nparticipantes=sessoes[sessaoid], inscricao=inscricao)
+                add_vagas_sessao(sessaoid, -sessoes[sessaoid])
+                inscricao_sessao.save()
+        responsaveis.inscricao = inscricao
+        responsaveis.save()
+        #if almoco is not None:
+        #    almoco.inscricao = inscricao
+        #    almoco.save()
+        enviar_mail_confirmacao_inscricao(self.request, inscricao.pk)
+        return render(self.request, 'inscricoes/consultar_inscricao_submissao.html', {
+            'inscricao': inscricao,
+        })

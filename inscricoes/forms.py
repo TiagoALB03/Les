@@ -1,5 +1,4 @@
-
-
+import atividades.models
 from . import models
 from django import forms
 from phonenumber_field.formfields import PhoneNumberField
@@ -153,7 +152,6 @@ def verificar_vagas(sessoes, nalunos, dia):
             raise forms.ValidationError(
                 _("Ocorreu um erro inesperado. Por favor, tente submeter uma nova inscrição."))
         if sessao_obj.atividadeid.estado.nome != "Aceite":
-            print("não percebi",sessao_obj.atividadeid.estado.nome)
             raise forms.ValidationError(
                 _(f"A seguinte atividade não se encontra validada: \"{sessao_obj.atividadeid.nome}\"."))
         if sessao_obj.dia != dia:
@@ -190,11 +188,15 @@ class SessoesForm(forms.Form):
             pattern = re.compile(
                 '\s*{\s*(\"\s*\d+\s*\"\s*:\s*\d+\s*,\s*)*\"\s*\d+\s*\"\s*:\s*\d+\s*}\s*|\s*{\s*}\s*')
             # JSON object like {"4":4}
+
             if re.match(pattern, cleaned_data.get('sessoes', '{}')) is None:
                 raise Exception()
             _sessoes = json.loads(cleaned_data.get('sessoes', '{}'))
+
             cleaned_data['sessoes'] = {sessao: _sessoes[sessao]
-                                       for sessao in _sessoes if _sessoes[sessao] > 0}
+                                       for sessao in _sessoes if _sessoes[sessao] > 0
+                                       }
+
         except:
             raise forms.ValidationError(
                 _("Ocorreu um erro inesperado. Por favor, tente submeter uma nova inscrição."))
@@ -203,7 +205,6 @@ class SessoesForm(forms.Form):
                 _("Deve inscrever-se, no mínimo, em uma sessão."))
         verificar_vagas(cleaned_data['sessoes'],
                         cleaned_data.get('nalunos', 0), cleaned_data.get('dia'))
-
 
 class EditarPresencasForm(forms.ModelForm):
     class Meta:

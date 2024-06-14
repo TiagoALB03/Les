@@ -6,6 +6,8 @@ from configuracao.models import Horario
 from django.db.models import Max, Min
 from collections import OrderedDict
 from coordenadores.models import TarefaAcompanhar
+from utilizadores.models import Participante
+
 
 class Escola(models.Model):
     nome = models.CharField(max_length=200)
