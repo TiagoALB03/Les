@@ -55,4 +55,9 @@ urlpatterns = [
     path('editar_inscricao_ultima_hora/<int:pk>/', EditarInscricaoUltimaHoraWizardView.as_view(),
          name='editar_inscricao_ultima_hora_detail'),
 
+    path('<int:pk>', views.EditarInscricaoUltimaHoraWizardView.as_view(),
+         name='editar_inscricao_ultima_hora'),
+    path('<int:pk>/<int:step>', views.EditarInscricaoUltimaHoraWizardView.as_view(),
+         name='editar_inscricao_ultima_hora'),
+
 ]

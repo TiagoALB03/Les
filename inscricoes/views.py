@@ -22,7 +22,7 @@ from rest_framework.generics import ListAPIView
 from rest_framework.pagination import PageNumberPagination
 from formtools.wizard.views import SessionWizardView
 from django.views import View
-from django_tables2 import SingleTableMixin
+from django_tables2 import SingleTableMixin, RequestConfig
 from django_filters.rest_framework.backends import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter, SearchFilter
 from django_filters.views import FilterView
@@ -808,24 +808,77 @@ class EditarInscricaoUltimaHoraListView(ListView):
         return Inscricao.objects.all()
 
 
-class EditarInscricaoUltimaHoraWizardView(SessionWizardView):
-    form_list = [InfoForm, ResponsavelForm, InscricaoUltimaHoraForm, SessoesForm]
-    template_name = "inscricoes/editar_inscricao_ultima_hora.html"
+class EditarInscricaoUltimaHoraWizardView(View):
+    template_name = "inscricoes/inscricao_UH_wizard.html"
+    step_names = [
+        'responsaveis',
+        'almoco',
+        'sessoes',
+        'submissao'
+    ]
 
-    def get_form_instance(self, step):
-        return self.instance_dict.get(step, None)
+    def get(self, request, pk, step=0, alterar=False):
+        inscricao = get_object_or_404(Inscricao, pk=pk)
+        erro_permissoes = nao_tem_permissoes(request, inscricao)
+        if erro_permissoes:
+            return erro_permissoes
+        if user_check(request, [Participante])['exists'] and datetime.now(
+                pytz.UTC) > inscricao.diaaberto.datainscricaoatividadesfim:
+            m = f"Não pode alterar a inscrição fora do período: {inscricao.diaaberto.datainscricaoatividadesinicio.strftime('%d/%m/%Y')} até {inscricao.diaaberto.datainscricaoatividadesfim.strftime('%d/%m/%Y')}"
+            return render(request=request, template_name="mensagem.html",
+                          context={'m': m, 'tipo': 'error', 'continuar': 'on'})
 
-    def get_context_data(self, form, **kwargs):
-        context = super().get_context_data(form=form, **kwargs)
-        context.update({'inscricao': self.get_inscricao()})
-        return context
+        form = InscricaoUltimaHoraForm(request.POST or None, instance=inscricao)
 
-    def get_inscricao(self):
-        return Inscricao.objects.get(pk=self.kwargs['pk'])
+        inscricoes = Inscricao.objects.all()
+        table = InscricoesTable(inscricoes)
+        RequestConfig(request).configure(table)
 
-    def done(self, form_list, **kwargs):
-        inscricao = self.get_inscricao()
-        for form in form_list:
-            form.instance = inscricao
-            form.save()
-        return HttpResponseRedirect(reverse_lazy('inscricoes:consultar-inscricao', kwargs={'pk': inscricao.pk}))
+        context = {
+            'alterar': alterar,
+            'pk': pk,
+            'step': step,
+            'individual': inscricao.individual,
+            'form': form,
+            'inscricao': inscricao,
+            'table': table,
+        }
+        update_context(context, self.step_names[step], inscricao=inscricao)
+        return render(request, self.template_name, context)
+
+    def post(self, request, pk, step=0, alterar=False):
+        inscricao = get_object_or_404(Inscricao, pk=pk)
+        erro_permissoes = nao_tem_permissoes(request, inscricao)
+        if erro_permissoes:
+            return erro_permissoes
+        context = {}
+        if alterar:
+            if request.user.groups.filter(name="Participante").exists() and datetime.now(
+                    pytz.UTC) > inscricao.diaaberto.datainscricaoatividadesfim:
+                m = f"Não pode alterar a inscrição fora do período: {inscricao.diaaberto.datainscricaoatividadesinicio.strftime('%d/%m/%Y')} até {inscricao.diaaberto.datainscricaoatividadesfim.strftime('%d/%m/%Y')}"
+                return render(request=request, template_name="mensagem.html",
+                              context={'m': m, 'tipo': 'error', 'continuar': 'on'})
+            update_post(self.step_names[step], request.POST, inscricao=inscricao)
+
+            form = InscricaoUltimaHoraForm(request.POST, instance=inscricao)
+
+            inscricoessessao = inscricao.inscricaosessao_set.all()
+            if self.step_names[step] == 'sessoes':
+                for inscricao_sessao in inscricoessessao:
+                    add_vagas_sessao(inscricao_sessao.sessao.id, inscricao_sessao.nparticipantes)
+            if form.is_valid():
+                save_form(request, self.step_names[step], form, inscricao)
+                return HttpResponseRedirect(reverse('inscricoes:editar_inscricao_ultima_hora', kwargs={'pk': pk, 'step': step}))
+            if self.step_names[step] == 'sessoes':
+                for inscricao_sessao in inscricoessessao:
+                    add_vagas_sessao(inscricao_sessao.sessao.id, -inscricao_sessao.nparticipantes)
+        context.update({
+            'alterar': alterar,
+            'pk': pk,
+            'step': step,
+            'individual': inscricao.individual,
+            'form': form,
+            'inscricao': inscricao,
+        })
+        update_context(context, self.step_names[step], inscricao=inscricao)
+        return render(request, self.template_name, context)
