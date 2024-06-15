@@ -442,7 +442,7 @@ def criarTipoRespost(request):
             if tiporesposta.tiporesposta is not None and flag == 0:
                 tiporesposta = tipoespostaForm.save()
                 return redirect('questionarios:consultar-tipo-resposta')
-            else:
+            if tiporesposta.tiporesposta is None and flag == 0:
                 flagTrespostaEmpty = True
                 print(flagTrespostaEmpty)
 
