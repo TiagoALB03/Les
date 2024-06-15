@@ -881,7 +881,7 @@ class CriarUltimaHoraDia(SessionWizardView):
         return context
 
     def get_template_names(self):
-        return [f'inscricoes/inscricao_wizard_{self.steps.current}.html']
+        return [f'inscricoes/inscricaoDia_wizard_{self.steps.current}.html']
 
     def post(self, request, *args, **kwargs):
         # Envia a informação extra necessária para o formulário atual, após preenchê-lo.
