@@ -44,6 +44,8 @@ urlpatterns = [
          name='inscricao_escolha'),
     path('criar_ultimaHora', views.CriarUltimaHora.as_view(),
          name='criar-inscricao_ultimaHora'),
+    path('criar_ultimaHoraDia', views.CriarUltimaHoraDia.as_view(),
+         name='criar-inscricao_ultimaHoraDia'),
     path('<int:inscricao_id>/presença', views.presençaInscricao,
          name='presença-inscricao'),
     path('<int:pk>/editar_presencas/', views.editar_presencas,
@@ -54,15 +56,5 @@ urlpatterns = [
          name='editar_inscricao_ultima_hora_list'),
     path('editar_inscricao_ultima_hora/<int:pk>/', EditarInscricaoUltimaHoraWizardView.as_view(),
          name='editar_inscricao_ultima_hora_detail'),
-
-    path('<int:pk>', views.EditarInscricaoUltimaHoraWizardView.as_view(),
-         name='editar_inscricao_ultima_hora'),
-    path('<int:pk>/<int:step>', views.EditarInscricaoUltimaHoraWizardView.as_view(),
-         name='editar_inscricao_ultima_hora'),
-    path('<int:pk>', views.EditarInscricaoUltimaHoraWizardView.as_view(),
-         name='editar_inscricao_ultima_hora'),
-    path('<int:pk>/<int:step>', views.EditarInscricaoUltimaHoraWizardView.as_view(),
-         name='editar_inscricao_ultima_hora'),
-
 
 ]
