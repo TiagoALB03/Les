@@ -275,20 +275,20 @@ class DiaAbertoTable(tables.Table):
     def render_acoes(self, record):
         quarto_botao = """<span class="icon"></span>"""
         terceiro_botao = f"""
-            <a id='questionarioAalterar', data-tooltip="Alteração de ano", href="{reverse('questionarios:associar-ano-questionario', args=[record.getDiaAbertoID])}">
+            <a id='questionarioAalterar', data-tooltip="Associar a questionário", href="{reverse('questionarios:associar-ano-questionario', args=[record.getDiaAbertoID])}">
                 <span class="icon is-small">
                     <i class="mdi mdi-calendar-blank mdi-24px" style="color: #3273DC"></i>
                 </span>
             </a>
         """
-        if record.getQuestionario is not None:
-            quarto_botao = f"""
-                            <a data-tooltip="Mudificação no questionário" href="">
-                                <span class="icon is-small">
-                                    <i class="mdi mdi-pencil mdi-24px" style="color: #F4B400"></i>
-                                </span>
-                            </a>
-                            """
+        # if record.getQuestionario is not None:
+        #     quarto_botao = f"""
+        #                     <a data-tooltip="Mudificação no questionário" href="">
+        #                         <span class="icon is-small">
+        #                             <i class="mdi mdi-pencil mdi-24px" style="color: #F4B400"></i>
+        #                         </span>
+        #                     </a>
+        #                     """
         return format_html(f"""
             <div>
                 <a id='edit' href="{reverse('configuracao:editarDia', kwargs={'id': record.pk})}">
