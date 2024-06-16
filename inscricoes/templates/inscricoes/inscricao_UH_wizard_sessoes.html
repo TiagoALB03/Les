@@ -27,7 +27,6 @@
 {% endblock %}
 
 {% block scripts %}
-
 <script src="{% static 'js/vue.js' %}"></script>
 <script src="{% static 'js/moment.js' %}"></script>
 <script src="{% static 'js/axios.js' %}"></script>
@@ -56,8 +55,8 @@
                 moment,
                 jQuery,
                 atividades: [],
-                inscritos: JSON.parse("{{form.sessoes.value|default_if_none:'{}'|escapejs}}"),
-                sessoesEscolhidas: JSON.parse("{{form.sessoes_info.value|default_if_none:'[]'|escapejs}}"),
+                inscritos: JSON.parse("{{ form.sessoes.value|default_if_none:'{}'|escapejs }}"),
+                sessoesEscolhidas: JSON.parse("{{ form.sessoes_info.value|default_if_none:'[]'|escapejs }}"),
                 total: 0,
                 loading: false,
                 sortField: 'dataalteracao',
@@ -78,12 +77,12 @@
                 sessao_vagas: 0,
                 sessao_de: null,
                 sessao_ate: null,
-                campus: JSON.parse("{{campus|escapejs}}"),
-                unidades_organicas: JSON.parse("{{unidades_organicas|escapejs}}"),
-                departamentos: JSON.parse("{{departamentos|escapejs}}"),
-                tipos: JSON.parse("{{tipos|escapejs}}"),
-                publicos_alvo: JSON.parse("{{publicos_alvo|escapejs}}"),
-                nalunos: parseInt("{{nalunos}}"),
+                campus: JSON.parse("{{ campus|escapejs }}"),
+                unidades_organicas: JSON.parse("{{ unidades_organicas|escapejs }}"),
+                departamentos: JSON.parse("{{ departamentos|escapejs }}"),
+                tipos: JSON.parse("{{ tipos|escapejs }}"),
+                publicos_alvo: JSON.parse("{{ publicos_alvo|escapejs }}"),
+                nalunos: parseInt("{{ nalunos }}"),
             }
         },
         methods: {
@@ -155,7 +154,6 @@
                 this.$refs.table.data.forEach(_row => {
                     if (row.id != _row.id) this.$refs.table.closeDetailRow(_row);
                 });
-                // await new Promise(r => setTimeout(r, 1));
                 this.$refs.table.openDetailRow(row);
             },
             mudarInscritos(atividade, sessao) {
@@ -228,8 +226,7 @@
     <nav aria-label="breadcrumbs" class="breadcrumb">
         <ul>
             <li><a href="{% url 'home' %}" class="router-link-active">Início</a></li>
-            <li class="is-active"><a href="" class="router-link-exact-active router-link-active">Criar
-                    Inscrição</a></li>
+            <li class="is-active"><a href="" class="router-link-exact-active router-link-active">Editar Inscrição</a></li>
         </ul>
     </nav>
     <div style="padding: 3rem 2vw 1rem;">
@@ -302,9 +299,7 @@
                 <input type="hidden" name="sessoes-sessoes" :value="JSON.stringify(inscritos)">
                 <input type="hidden" name="sessoes-sessoes_info" :value="JSON.stringify(sessoesEscolhidas)">
                 <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem">
-                    Sessões Disponíveis <abbr
-                        title="Pode consultar nesta tabela todas as atividades disponíveis para inscrição e os seus horários. Deve selecionar as atividades que deseja para ver detalhes e escolher quantos alunos quer inscrever na sessão."><span
-                            class="icon" style="font-size: 1rem"><i class="mdi mdi-help-circle"></i></span></abbr>
+                    Sessões Disponíveis <abbr title="Pode consultar nesta tabela todas as atividades disponíveis para inscrição e os seus horários. Deve selecionar as atividades que deseja para ver detalhes e escolher quantos alunos quer inscrever na sessão."><span class="icon" style="font-size: 1rem"><i class="mdi mdi-help-circle"></i></span></abbr>
                 </h2>
                 <div>
                     <div class="columns">
@@ -313,9 +308,7 @@
                             <b-menu style="margin-bottom: 1rem">
                                 <b-menu-list label="Filtros Atividade">
                                     <b-field>
-                                        <b-select id="campus" placeholder="Campus" expanded icon="magnify"
-                                            v-model="filtros_id['campus']"
-                                            @input="value => {if(value == 'Qualquer') { filtros_id['campus'] = ''; jQuery('select#campus').parent().addClass('is-empty'); } else jQuery('select#campus').parent().removeClass('is-empty'); this.loadAsyncData();}">
+                                        <b-select id="campus" placeholder="Campus" expanded icon="magnify" v-model="filtros_id['campus']" @input="value => {if(value == 'Qualquer') { filtros_id['campus'] = ''; jQuery('select#campus').parent().addClass('is-empty'); } else jQuery('select#campus').parent().removeClass('is-empty'); this.loadAsyncData();}">
                                             <option disabled="disabled" value="" hidden="hidden">
                                                 Campus
                                             </option>
@@ -326,23 +319,18 @@
                                         </b-select>
                                     </b-field>
                                     <b-field>
-                                        <b-select id="unidade-organica" placeholder="Unidade Orgânica" expanded
-                                            icon="magnify" v-model="filtros_id['unidade_organica']"
-                                            @input="value => {if(value == 'Qualquer') {filtros_id['unidade_organica'] = ''; jQuery('select#unidade-organica').parent().addClass('is-empty'); } else jQuery('select#unidade-organica').parent().removeClass('is-empty'); this.loadAsyncData();}">
+                                        <b-select id="unidade-organica" placeholder="Unidade Orgânica" expanded icon="magnify" v-model="filtros_id['unidade_organica']" @input="value => {if(value == 'Qualquer') {filtros_id['unidade_organica'] = ''; jQuery('select#unidade-organica').parent().addClass('is-empty'); } else jQuery('select#unidade-organica').parent().removeClass('is-empty'); this.loadAsyncData();}">
                                             <option disabled="disabled" value="" hidden="hidden">
                                                 Unidade Orgânica
                                             </option>
                                             <option>Qualquer</option>
-                                            <option v-for="(opcao, index) in unidades_organicas" :value="opcao"
-                                                :key="index">
+                                            <option v-for="(opcao, index) in unidades_organicas" :value="opcao" :key="index">
                                                 [[ opcao.nome ]]
                                             </option>
                                         </b-select>
                                     </b-field>
                                     <b-field>
-                                        <b-select id="departamento" placeholder="Departamento" expanded icon="magnify"
-                                            v-model="filtros_id['departamento']"
-                                            @input="value => {if(value == 'Qualquer') { filtros_id['departamento'] = ''; jQuery('select#departamento').parent().addClass('is-empty'); } else jQuery('select#departamento').parent().removeClass('is-empty'); this.loadAsyncData();}">
+                                        <b-select id="departamento" placeholder="Departamento" expanded icon="magnify" v-model="filtros_id['departamento']" @input="value => {if(value == 'Qualquer') { filtros_id['departamento'] = ''; jQuery('select#departamento').parent().addClass('is-empty'); } else jQuery('select#departamento').parent().removeClass('is-empty'); this.loadAsyncData();}">
                                             <option disabled="disabled" value="" hidden="hidden">
                                                 Departamento
                                             </option>
@@ -353,38 +341,29 @@
                                         </b-select>
                                     </b-field>
                                     <b-field>
-                                        <b-select id="tipo" placeholder="Tipo" expanded icon="magnify"
-                                            v-model="filtros['tipo']"
-                                            @input="value => {if(value == 'Qualquer') { filtros['tipo'] = ''; jQuery('select#tipo').parent().addClass('is-empty'); } else jQuery('select#tipo').parent().removeClass('is-empty'); this.loadAsyncData();}">
+                                        <b-select id="tipo" placeholder="Tipo" expanded icon="magnify" v-model="filtros['tipo']" @input="value => {if(value == 'Qualquer') { filtros['tipo'] = ''; jQuery('select#tipo').parent().addClass('is-empty'); } else jQuery('select#tipo').parent().removeClass('is-empty'); this.loadAsyncData();}">
                                             <option disabled="disabled" value="" hidden="hidden">
                                                 Tipo
                                             </option>
-                                            <option>
-                                                Qualquer
-                                            </option>
+                                            <option>Qualquer</option>
                                             <option v-for="(opcao, index) in tipos" :value="opcao" :key="index">
                                                 [[ opcao ]]
                                             </option>
                                         </b-select>
                                     </b-field>
                                     <b-field>
-                                        <b-select id="publicoalvo" placeholder="Público Alvo" expanded icon="magnify"
-                                            v-model="filtros['publicoalvo']"
-                                            @input="value => {if(value == 'Qualquer') { filtros['publicoalvo'] = ''; jQuery('select#publicoalvo').parent().addClass('is-empty'); } else jQuery('select#publicoalvo').parent().removeClass('is-empty'); this.loadAsyncData();}">
+                                        <b-select id="publicoalvo" placeholder="Público Alvo" expanded icon="magnify" v-model="filtros['publicoalvo']" @input="value => {if(value == 'Qualquer') { filtros['publicoalvo'] = ''; jQuery('select#publicoalvo').parent().addClass('is-empty'); } else jQuery('select#publicoalvo').parent().removeClass('is-empty'); this.loadAsyncData();}">
                                             <option disabled="disabled" value="" hidden="hidden">
                                                 Tipo
                                             </option>
-                                            <option>
-                                                Qualquer
-                                            </option>
+                                            <option>Qualquer</option>
                                             <option v-for="(opcao, index) in publicos_alvo" :value="opcao" :key="index">
                                                 [[ opcao ]]
                                             </option>
                                         </b-select>
                                     </b-field>
                                     <b-field>
-                                        <b-input placeholder="Nome da Atividade" icon="magnify"
-                                            v-model="filtros['nome']" @input="value => {this.loadAsyncData();}">
+                                        <b-input placeholder="Nome da Atividade" icon="magnify" v-model="filtros['nome']" @input="value => {this.loadAsyncData();}">
                                         </b-input>
                                     </b-field>
                                 </b-menu-list>
@@ -393,31 +372,23 @@
                                 <b-menu-list label="Filtros Sessão">
                                     <div class="columns" style="margin-bottom: 0">
                                         <b-field class="column" style="margin-bottom: 0">
-                                            <b-timepicker placeholder="De" icon="clock" editable v-model="sessao_de"
-                                                @input="value => {this.loadAsyncData();}" :increment-minutes="5">
+                                            <b-timepicker placeholder="De" icon="clock" editable v-model="sessao_de" @input="value => {this.loadAsyncData();}" :increment-minutes="5">
                                             </b-timepicker>
                                         </b-field>
                                         <b-field class="column">
-                                            <b-timepicker placeholder="Até" icon="clock" editable v-model="sessao_ate"
-                                                @input="value => {this.loadAsyncData();}" :increment-minutes="5">
+                                            <b-timepicker placeholder="Até" icon="clock" editable v-model="sessao_ate" @input="value => {this.loadAsyncData();}" :increment-minutes="5">
                                             </b-timepicker>
                                         </b-field>
                                     </div>
                                     <b-field label="Mínimo de vagas">
-                                        <b-numberinput v-model="sessao_vagas" @input="value => {this.loadAsyncData();}"
-                                            controls-position="compact" min="0" />
+                                        <b-numberinput v-model="sessao_vagas" @input="value => {this.loadAsyncData();}" controls-position="compact" min="0" />
                                     </b-field>
                                 </b-menu-list>
                             </b-menu>
                         </div>
                         <!-- TABELA DISPONÍVEIS -->
                         <div class="column">
-                            <b-table :data="atividades" :loading="loading" ref="table" hoverable detailed
-                                @click="toggleDetails" @page-change="onPageChange" @details-open="closeOtherDetails"
-                                backend-sorting :default-sort="[sortField, sortOrder]" @sort="onSort"
-                                sort-icon="menu-up" paginated backend-pagination :total="total" striped
-                                :per-page="perPage" aria-next-label="Next page" aria-previous-label="Previous page"
-                                aria-page-label="Page" aria-current-label="Current page">
+                            <b-table :data="atividades" :loading="loading" ref="table" hoverable detailed @click="toggleDetails" @page-change="onPageChange" @details-open="closeOtherDetails" backend-sorting :default-sort="[sortField, sortOrder]" @sort="onSort" sort-icon="menu-up" paginated backend-pagination :total="total" striped :per-page="perPage" aria-next-label="Next page" aria-previous-label="Previous page" aria-page-label="Page" aria-current-label="Current page">
                                 <template slot-scope="props">
                                     <b-table-column field="nome" label="Atividade" sortable>
                                         [[ props.row.nome ]]
@@ -436,29 +407,18 @@
                                     <div class="content">
                                         <div style="font-size: 15px">
                                             <p><strong>Descrição: </strong>[[ props.row.descricao ]]</p>
-                                            {% comment %} <p><strong>Responsável:</strong> [[ props.row.creator ]]</p>
-                                            {% endcomment %}
-                                            <b-table :data="sessaoFilter(props.row.sessao_set)" sort-icon="menu-up"
-                                                default-sort="horario.inicio">
+                                            {% comment %} <p><strong>Responsável:</strong> [[ props.row.creator ]]</p> {% endcomment %}
+                                            <b-table :data="sessaoFilter(props.row.sessao_set)" sort-icon="menu-up" default-sort="horario.inicio">
                                                 <template slot-scope="session_props">
                                                     <b-table-column field="horario.inicio" label="Horário" sortable>
-                                                        [[ moment(session_props.row.horario.inicio,
-                                                        "HH:mm:ss").format("HH:mm")
-                                                        ]] -
-                                                        [[ moment(session_props.row.horario.fim,
-                                                        "HH:mm:ss").format("HH:mm") ]]
+                                                        [[ moment(session_props.row.horario.inicio, "HH:mm:ss").format("HH:mm") ]] - [[ moment(session_props.row.horario.fim, "HH:mm:ss").format("HH:mm") ]]
                                                     </b-table-column>
                                                     <b-table-column field="vagas" label="Vagas">
                                                         [[ session_props.row.vagas ]]
                                                     </b-table-column>
                                                     <b-table-column label="Inscrever">
                                                         <b-field>
-                                                            <b-numberinput class="no-margin-bottom"
-                                                                style="width: 10rem; margin-bottom: 0"
-                                                                controls-position="compact" min="0"
-                                                                :max="Math.min(session_props.row.vagas, nalunos)"
-                                                                v-model="inscritos[session_props.row.id]"
-                                                                @input="mudarInscritos(props.row, session_props.row)" />
+                                                            <b-numberinput class="no-margin-bottom" style="width: 10rem; margin-bottom: 0" controls-position="compact" min="0" :max="Math.min(session_props.row.vagas, nalunos)" v-model="inscritos[session_props.row.id]" @input="mudarInscritos(props.row, session_props.row)" />
                                                         </b-field>
                                                     </b-table-column>
                                                 </template>
@@ -472,22 +432,17 @@
                 </div>
                 <hr />
                 <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem">
-                    Sessões Escolhidas <abbr
-                        title="Aqui pode consultar a lista das sessões que escolheu inscrever-se. Se pretender remover a inscrição clique na cruz vermelha à direita da sessão."><span
-                            class="icon" style="font-size: 1rem"><i class="mdi mdi-help-circle"></i></span></abbr>
+                    Sessões Escolhidas <abbr title="Aqui pode consultar a lista das sessões que escolheu inscrever-se. Se pretender remover a inscrição clique na cruz vermelha à direita da sessão."><span class="icon" style="font-size: 1rem"><i class="mdi mdi-help-circle"></i></span></abbr>
                 </h2>
                 <!-- TABELA ESCOLHIDAS -->
                 <b-table :data="sessoesEscolhidas" sort-icon="menu-up" default-sort="sessao.horario.inicio">
                     <template slot-scope="props">
                         <b-table-column field="sessao.horario.inicio" label="Horário" sortable>
-                            [[ moment(props.row.sessao.horario.inicio, "HH:mm:ss").format("HH:mm") ]] -
-                            [[ moment(props.row.sessao.horario.fim, "HH:mm:ss").format("HH:mm") ]]</b-table-column>
+                            [[ moment(props.row.sessao.horario.inicio, "HH:mm:ss").format("HH:mm") ]] - [[ moment(props.row.sessao.horario.fim, "HH:mm:ss").format("HH:mm") ]]
+                        </b-table-column>
                         <b-table-column label="Inscritos">
                             <b-field>
-                                <b-numberinput v-model="inscritos[props.row.sessao.id]" min="0"
-                                    :max="Math.min(props.row.sessao.vagas, nalunos)" style="width: 10rem"
-                                    controls-position="compact"
-                                    @blur="mudarInscritos(props.row.atividade, props.row.sessao)" />
+                                <b-numberinput v-model="inscritos[props.row.sessao.id]" min="0" :max="Math.min(props.row.sessao.vagas, nalunos)" style="width: 10rem" controls-position="compact" @blur="mudarInscritos(props.row.atividade, props.row.sessao)" />
                             </b-field>
                         </b-table-column>
                         <b-table-column field="atividade.nome" label="Atividade">
@@ -497,8 +452,7 @@
                             <span v-html="props.row.atividade.sala"></span>
                         </b-table-column>
                         <b-table-column label="Ações" centered>
-                            <a
-                                @click="inscritos[props.row.sessao.id] = 0; mudarInscritos(props.row.atividade, props.row.sessao)">
+                            <a @click="inscritos[props.row.sessao.id] = 0; mudarInscritos(props.row.atividade, props.row.sessao)">
                                 <b-icon icon="close-box" type="is-danger" /></a>
                         </b-table-column>
                     </template>
@@ -520,8 +474,7 @@
                     <div class="level">
                         <div class="level-left">
                             {% if wizard.steps.prev %}
-                            <button class="button is-outlined" formnovalidate="formnovalidate" name="wizard_goto_step"
-                                value="{{ wizard.steps.prev }}">
+                            <button class="button is-outlined" formnovalidate="formnovalidate" name="wizard_goto_step" value="{{ wizard.steps.prev }}">
                                 <span class=" icon is-small"><i class="mdi mdi-chevron-left"></i></span>
                                 <span>Anterior</span>
                             </button>

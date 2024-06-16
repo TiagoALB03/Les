@@ -30,8 +30,8 @@
             }
         },
         computed: {
-            nresponsaveis: () => {
-                const individual = "{{ individual }}" == "True";
+            nresponsaveis() {
+                const individual = "{{ individual }}" === "True";
                 let nresponsaveis = 0;
                 if (individual)
                     nresponsaveis = parseInt("{{ nalunos|default_if_none:'0' }}");

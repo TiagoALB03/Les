@@ -8,7 +8,6 @@
 {% endblock load %}
 
 {% block scripts %}
-
 <script src="{% static 'js/encoding.js' %}"></script>
 <script src="{% static 'js/vue.js' %}"></script>
 <script src="{% static 'js/axios.js' %}"></script>
@@ -42,17 +41,17 @@
             }
         },
         computed: {
-            dia: () => {
+            dia() {
                 let result = moment("{{ form.dia.value|default_if_none:'null' }}", "DD/MM/YYYY").toDate()
                 if (isNaN(result)) return null;
                 return result;
             },
-            inicio: () => {
+            inicio() {
                 let result = moment("{{ inicio|default_if_none:'null' }}", "DD/MM/YYYY").toDate()
                 if (isNaN(result)) return null;
                 return result;
             },
-            fim: () => {
+            fim() {
                 let result = moment("{{ fim|default_if_none:'null' }}", "DD/MM/YYYY").toDate()
                 if (isNaN(result)) return null;
                 return result;
@@ -60,8 +59,7 @@
         },
         methods: {
             filterEscolas(input) {
-                this.escolas = this.all_escolas.filter(escola => escola.toLowerCase().includes(input
-                    .toLowerCase())).slice(0, 30);
+                this.escolas = this.all_escolas.filter(escola => escola.toLowerCase().includes(input.toLowerCase())).slice(0, 30);
             },
         }
     });
@@ -94,8 +92,7 @@
     <nav aria-label="breadcrumbs" class="breadcrumb">
         <ul>
             <li><a href="{% url 'home' %}" class="router-link-active">Início</a></li>
-            <li class="is-active"><a href="" class="router-link-exact-active router-link-active">Criar
-                    Inscrição</a></li>
+            <li class="is-active"><a href="" class="router-link-exact-active router-link-active">Editar Inscrição</a></li>
         </ul>
     </nav>
     <div style="padding: 3rem 2vw 1rem;">
@@ -159,17 +156,12 @@
             {{ wizard.management_form }}
             <div id="vue-app">
                 <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem">
-                    Informação da Inscrição <abbr
-                        title="Deve selecionar o dia da visita e o número de alunos que vão participar. Se pretender visitar vários dias, deve criar uma inscrição para cada dia"><span
-                            class="icon" style="font-size: 1rem"><i class="mdi mdi-help-circle"></i></span></abbr>
+                    Informação da Inscrição <abbr title="Deve selecionar o dia da visita e o número de alunos que vão participar. Se pretender visitar vários dias, deve editar uma inscrição para cada dia"><span class="icon" style="font-size: 1rem"><i class="mdi mdi-help-circle"></i></span></abbr>
                 </h2>
                 <div class="columns">
                     <div class="column">
                         <b-field label="Dia da Visita">
-                            <b-datepicker v-model="dia" :date-formatter="(d) => moment(d).format('DD/MM/YYYY')"
-                                :date-parser="(date) => moment(date, 'DD/MM/YYYY').toDate()" editable
-                                placeholder="Clique para selecionar..." required name="escola-dia" :min-date="inicio"
-                                :max-date="fim" :focused-date="inicio" icon="calendar-today" :mobile-native="false">
+                            <b-datepicker v-model="dia" :date-formatter="(d) => moment(d).format('DD/MM/YYYY')" :date-parser="(date) => moment(date, 'DD/MM/YYYY').toDate()" editable placeholder="Clique para selecionar..." required name="escola-dia" :min-date="inicio" :max-date="fim" :focused-date="inicio" icon="calendar-today" :mobile-native="false">
                             </b-datepicker>
                         </b-field>
                         {{ form.dia.errors }}
@@ -185,16 +177,14 @@
                 </div>
                 <hr />
                 <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem">
-                    Informação da Escola <abbr title="Deve fornecer o nome e a localidade da sua escola"><span
-                            class="icon" style="font-size: 1rem"><i class="mdi mdi-help-circle"></i></span></abbr>
+                    Informação da Escola <abbr title="Deve fornecer o nome e a localidade da sua escola"><span class="icon" style="font-size: 1rem"><i class="mdi mdi-help-circle"></i></span></abbr>
                 </h2>
                 <div class="columns">
                     <div class="column">
                         <div class="field">
                             <label for="{{ form.nome_escola.id_for_label }}" class="label">Nome da Escola</label>
                             <div class="controlis-clearfix">
-                                <b-autocomplete v-model="escola" :data="escolas" field="nome" @typing="filterEscolas"
-                                    required name="escola-nome_escola">
+                                <b-autocomplete v-model="escola" :data="escolas" field="nome" @typing="filterEscolas" required name="escola-nome_escola">
                                 </b-autocomplete>
                             </div>
                             {{ form.nome_escola.errors }}
@@ -203,7 +193,7 @@
                     <div class="column">
                         <div class="field">
                             <label for="{{ form.local.id_for_label }}" class="label">Localidade</label>
-                            <div class="control is-clearfix">{{form.local}}</div>
+                            <div class="control is-clearfix">{{ form.local }}</div>
                             {{ form.local.errors }}
                         </div>
                     </div>
@@ -211,9 +201,7 @@
                 {% if not individual %}
                 <hr />
                 <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem">
-                    Informação da Turma <abbr
-                        title="Deve fornecer o ano, turma e área cientifica dos participantes"><span class="icon"
-                            style="font-size: 1rem"><i class="mdi mdi-help-circle"></i></span></abbr>
+                    Informação da Turma <abbr title="Deve fornecer o ano, turma e área cientifica dos participantes"><span class="icon" style="font-size: 1rem"><i class="mdi mdi-help-circle"></i></span></abbr>
                 </h2>
                 <div class="columns">
                     <div class="column is-half">
@@ -221,14 +209,14 @@
                             <div class="column">
                                 <div class="field">
                                     <label for="{{ form.ano.id_for_label }}" class="label">Ano</label>
-                                    <div class="control is-clearfix">{{form.ano}}</div>
+                                    <div class="control is-clearfix">{{ form.ano }}</div>
                                     {{ form.ano.errors }}
                                 </div>
                             </div>
                             <div class="column">
                                 <div class="field">
                                     <label for="{{ form.turma.id_for_label }}" class="label">Turma</label>
-                                    <div class="control is-clearfix">{{form.turma}}</div>
+                                    <div class="control is-clearfix">{{ form.turma }}</div>
                                     {{ form.turma.errors }}
                                 </div>
                             </div>
@@ -237,10 +225,9 @@
                     <div class="column">
                         <div class="field">
                             <label for="{{ form.areacientifica.id_for_label }}" class="label">Área Científica</label>
-                            <div class="control is-clearfix">{{form.areacientifica}}</div>
+                            <div class="control is-clearfix">{{ form.areacientifica }}</div>
                             {{ form.areacientifica.errors }}
                         </div>
-
                     </div>
                 </div>
                 {% endif %}
@@ -258,8 +245,7 @@
                     <div class="level">
                         <div class="level-left">
                             {% if wizard.steps.prev %}
-                            <button class="button is-outlined" formnovalidate="formnovalidate" name="wizard_goto_step"
-                                value="{{ wizard.steps.prev }}">
+                            <button class="button is-outlined" formnovalidate="formnovalidate" name="wizard_goto_step" value="{{ wizard.steps.prev }}">
                                 <span class=" icon is-small"><i class="mdi mdi-chevron-left"></i></span>
                                 <span>Anterior</span>
                             </button>
