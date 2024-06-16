@@ -864,8 +864,6 @@ def consultarPerguntas(request, questID):
         return user_check_var.get('render')
     questionario = get_object_or_404(Questionario, id=questID)
     perguntas = PergQuest.objects.all().filter(questionarioid=questionario)
-    for perg in perguntas:
-        print(perg.perguntaid.pergunta, perg.perguntaid.tiporespostaid.type)
     print("chegou aqui")
     return render(request, 'questionario/consultar_questionarios_pergunta.html', {
         'questionario': questionario,

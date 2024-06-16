@@ -56,5 +56,9 @@ urlpatterns = [
          name='editar_inscricao_ultima_hora_list'),
     path('editar_inscricao_ultima_hora/<int:inscricao_id>/', EditarInscricaoUltimaHoraWizardView.as_view(),
          name='editar_inscricao_ultima_hora_detail'),
+    path('<int:pk>/cancelar_sessao/', views.cancelar_sessao_pagina,
+         name='cancelar-sessao-pagina'),
+    path('<int:pk>/<int:pk2>/cancelar_sessao/', views.cancelar_sessao,
+             name='cancelar-sessao-eliminar'),
 
 ]

@@ -767,7 +767,7 @@ def presençaInscricao(request,inscricao_id):
         allowMore, allowDelete = False, False
 
     return render(request=request,
-                  template_name='inscricoes/consultarPresença.html',context={
+                  template_name='inscricoes/cancelarSessao.html', context={
                     'inscricao2': Inscricao.objects.get(id=inscricao_id),
                     'inscricaosessoes': Inscricaosessao.objects.all().filter(inscricao=inscricao_id),
                   })
@@ -793,7 +793,7 @@ def consultar_presencas(request, pk):
     inscricao = get_object_or_404(Inscricao, pk=pk)
     inscricaosessoes = inscricao.inscricaosessao_set.all()
 
-    return render(request, 'inscricoes/consultarPresença.html', {
+    return render(request, 'inscricoes/cancelarSessao.html', {
         'inscricao': inscricao,
         'inscricaosessoes': inscricaosessoes,
     })
@@ -1031,3 +1031,19 @@ class CriarUltimaHoraDia(SessionWizardView):
         return render(self.request, 'inscricoes/consultar_inscricaoDia_submissao.html', {
             'inscricao': inscricao,
         })
+
+def cancelar_sessao_pagina(request, pk):
+    print("ENTROUUUUUUUUU")
+    inscricao = get_object_or_404(Inscricao, pk=pk)
+    inscricaosessoes = inscricao.inscricaosessao_set.all()
+    return render(request, 'inscricoes/cancelarSessao.html', {
+        'inscricao': inscricao,
+        'inscricaosessoes': inscricaosessoes,
+        'pk': pk,
+    })
+
+def cancelar_sessao(request, pk, pk2):
+    sessao = get_object_or_404(Inscricaosessao, id=pk)
+    sessao.delete()
+
+    return redirect(reverse('inscricoes:cancelar-sessao-pagina', args=[pk2]))

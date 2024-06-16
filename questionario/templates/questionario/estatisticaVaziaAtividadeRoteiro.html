@@ -38,6 +38,7 @@
                         <p class="control">
                         <div class="select">
                             <select value="{{ diaaberto.id }}" onchange="selectDiaAberto(this)">
+                            <option value="" style="display: none;" value="" disabled selected>------</option>
                                 {% for dia_aberto in diasabertos %}
                                     <option value="{{ dia_aberto.id }}"
                                             {% if diaaberto.id == dia_aberto.id %}selected{% endif %}>{{ dia_aberto }}</option>
