@@ -55,13 +55,23 @@ class RoteiroTable(django_tables.Table):
                 </span>
             </a>
         """
-        terceiro_botao = f"""
-            <a data-tooltip="Eliminar" href="{reverse('roteiros:eliminar_roteiro', kwargs={'id': record.getRoteiroID})}" onclick="return confirm('Tem certeza que deseja eliminar este roteiro?');">
-                <span class="icon">
-                    <i class="fas fa-trash-alt" aria-hidden="true" style="color: #E74C3C"></i>
-                </span>
-            </a>
-        """
+
+        if record.estado.nome == "publicado":
+            terceiro_botao = f"""
+                        <a data-tooltip="Eliminar" onclick="alert2.render('O estado está a ser utilizado num questionário.<strong>Não o pode apagar.</strong>');">
+                            <span class="icon">
+                                <i class="fas fa-trash-alt" aria-hidden="true" style="color: #E74C3C"></i>
+                            </span>
+                        </a>
+                    """
+        else:
+            terceiro_botao = f"""
+                        <a data-tooltip="Eliminar" href="{reverse('roteiros:eliminar_roteiro', kwargs={'id': record.getRoteiroID})}">
+                            <span class="icon">
+                                <i class="fas fa-trash-alt" aria-hidden="true" style="color: #E74C3C"></i>
+                            </span>
+                        </a>
+                    """
 
         return format_html(f"""
             {primeiro_botao}
