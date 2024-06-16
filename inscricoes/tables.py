@@ -77,7 +77,14 @@ class InscricoesTable(tables.Table):
                     </span>
                 </a>
             """
-
+        else:
+            terceiro_botao =   f"""
+    <a data-tooltip="Detalhe presenças" onclick="alert2.render('O numero de presentes é o esperado.','{reverse('questionarios:consultar-estados-admin')}')">
+        <span class="icon">
+            <i class="mdi mdi-account-check-outline mdi-24px"></i>
+        </span>
+    </a> 
+"""
         quarto_botao = f"""
             <a href='{reverse("inscricoes:editar-presencas", kwargs={"pk": record.pk})}'
                 data-tooltip="Presenças">

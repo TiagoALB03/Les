@@ -58,12 +58,12 @@
                     Roteiros
                 </a>
 
-
             {% elif request.user|has_group:'Administrador' %}
 
-                <a href="{% url 'inscricoes:inscricao_escolha' %}" class="navbar-item">
-                    Inscrições última hora
-                </a>
+                    <a href="{% url 'inscricoes:inscricao_escolha' %}" class="navbar-item">
+                        Inscrições última hora
+                    </a>
+
                 <a href="{% url 'inscricoes:editar_inscricao_ultima_hora_list' %}" class="navbar-item">
                     Editar Inscrições Última Hora
                 </a>

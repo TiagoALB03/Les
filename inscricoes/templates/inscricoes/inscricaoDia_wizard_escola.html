@@ -120,7 +120,17 @@
                     <p class="step-title">{% if individual %}Inscrição{% else %}Escola{% endif %}</p>
                 </div>
             </div>
-
+            <div class="step-item is-success {% if visited.3 %}is-completed{% endif %}"
+                {% if visited.3 %}onclick="navigate_step('almoco')" {% endif %}>
+                <div class="step-marker">
+                    <span class="icon">
+                        <i class="mdi mdi-food-apple"></i>
+                    </span>
+                </div>
+                <div class="step-details">
+                    <p class="step-title">Almoço</p>
+                </div>
+            </div>
             <div class="step-item is-success {% if visited.4 %}is-completed{% endif %}"
                 {% if visited.4 %}onclick="navigate_step('sessoes')" {% endif %}>
                 <div class="step-marker">
