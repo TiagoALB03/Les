@@ -15,13 +15,13 @@ cd ~/Documentos/Universidade/LES
 2. Clonar o projeto do github
 
 ```SH
-git clone https://github.com/6135/dia-aberto-new.git
+git clone https://github.com/TiagoALB03/Les.git
 ```
 
 3. Entrar na pasta do projeto
 
 ```SH
-cd dia-aberto-new
+cd grupo1_6
 ```
 
 4. Criar o ambiente do projeto (venv)
@@ -122,6 +122,9 @@ python manage.py makemigrations inscricoes
 python manage.py makemigrations notifications
 python manage.py makemigrations auth
 python manage.py makemigrations utilizadores
+python manage.py makemigrations questionario
+python manage.py makemigrations roteiro
+python manage.py makemigrations relatorio
 ```
 
 12. Gerar as tabelas da DB
