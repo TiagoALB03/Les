@@ -894,7 +894,7 @@ class CriarUltimaHoraDia(SessionWizardView):
         ('responsaveis', ResponsavelForm),
         ('escola', InscricaoForm),
         #('transporte', TransporteForm),
-        #('almoco', AlmocoForm),
+        ('almoco', AlmocoForm),
         ('sessoes', SessoesForm),
     ]
 
@@ -966,7 +966,7 @@ class CriarUltimaHoraDia(SessionWizardView):
     def done(self, form_list, form_dict, **kwargs):
         # Guardar na Base de Dados
         responsaveis = form_dict['responsaveis'].save(commit=False)
-        #almoco = form_dict['almoco'].save(commit=False)
+        almoco = form_dict['almoco'].save(commit=False)
         inscricao = form_dict['escola'].save(commit=False)
         inscricao.participante = Participante.objects.filter(
             utilizador_ptr_id=33).first()
@@ -982,9 +982,9 @@ class CriarUltimaHoraDia(SessionWizardView):
                 inscricao_sessao.save()
         responsaveis.inscricao = inscricao
         responsaveis.save()
-        #if almoco is not None:
-        #    almoco.inscricao = inscricao
-        #    almoco.save()
+        if almoco is not None:
+            almoco.inscricao = inscricao
+            almoco.save()
         enviar_mail_confirmacao_inscricao(self.request, inscricao.pk)
         return render(self.request, 'inscricoes/consultar_inscricaoDia_submissao.html', {
             'inscricao': inscricao,

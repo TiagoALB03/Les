@@ -51,6 +51,17 @@
                     <p class="step-title">{% if individual %}Inscrição{% else %}Escola{% endif %}</p>
                 </div>
             </div>
+            <div class="step-item is-success{% if step == 3 %} is-active{% else %} is-completed{% endif %}"
+                onclick="navigate_step(3)">
+                <div class="step-marker">
+                    <span class="icon">
+                        <i class="mdi mdi-food-apple"></i>
+                    </span>
+                </div>
+                <div class="step-details">
+                    <p class="step-title">Almoço</p>
+                </div>
+            </div>
             <div class="step-item is-success{% if step == 4 %} is-active{% else %} is-completed{% endif %}"
                 onclick="navigate_step(4)">
                 <div class="step-marker">
