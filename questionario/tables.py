@@ -127,7 +127,7 @@ class QuestionarioTable(django_tables.Table):
                             """
 
         if record.getQuestionarioEstado == "pendente":
-            segundo_botao = f"""
+            botao_responder = f"""
                                <a data-tooltip="Responder" href="{reverse('questionarios:responder-questionario', args=[record.getQuestionarioID])}">
                                    <span class="icon">
                                         <i class="fas fa-reply" aria-hidden="true" style="color: #3273DC"></i>
