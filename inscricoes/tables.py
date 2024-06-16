@@ -13,7 +13,7 @@ class InscricoesTable(tables.Table):
     grupo = tables.Column('Grupo', accessor='id', attrs={"th": {"width": "65"}})
     horario = tables.Column(verbose_name='Horário')
     nalunos = tables.Column(verbose_name='Qtd', attrs={"th": {"width": "48"}})
-    acoes = tables.Column('Ações', empty_values=(), orderable=False, attrs={"th": {"width": "150"}})
+    acoes = tables.Column('Ações', empty_values=(), orderable=False, attrs={"th": {"width": "170"}})
     turma = tables.Column(empty_values=())
     presentes = tables.Column(verbose_name='Presentes', attrs={"th": {"width": "100"}})
 
@@ -66,7 +66,14 @@ class InscricoesTable(tables.Table):
                 </span>
             </a>
         """
-
+        true_terceiro_botao = f"""
+            <a href='{reverse("inscricoes:cancelar-sessao-pagina", kwargs={"pk": record.pk})}'
+                data-tooltip="Cancelar inscrinção sessão">
+                <span class="icon">
+                    <i class="mdi mdi-trash-can mdi-24px"></i>
+                </span>
+            </a>
+        """
         terceiro_botao = ""
         if record.getQt != record.getPresentes:
             terceiro_botao = f"""
@@ -98,6 +105,7 @@ class InscricoesTable(tables.Table):
             <div>
                 {primeiro_botao}
                 {segundo_botao}
+                {true_terceiro_botao}
                 {terceiro_botao}
                 {quarto_botao}
             </div>
