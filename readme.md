@@ -18,7 +18,7 @@ cd ~/Documentos/Universidade/LES
 git clone https://github.com/TiagoALB03/Les.git
 ```
 
-3. Entrar na pasta do projeto
+3. Entrar na pasta do projeto (pode variar o nome da pasta)
 
 ```SH
 cd grupo1_6
@@ -74,7 +74,7 @@ env\Scripts\activate
 
 A extensão padrão de Python do VSCode tem a opção de ativar automaticamente o ambiente em novos terminais. Para ativar a funcionalidade, há que abrir a **Palete de Comandos (F1)**,  **Python: Selecionar Interpretador** e escolher a opção cuja localização comece com `./env` ou `.\env`.
 
-6. Atualizar as dependências iniciais do ambiente
+6. Atualizar as dependências iniciais do ambiente (Pode ser necessário ter de executar duas vezes o pip)
 
 ```SH
 pip install --upgrade pip setuptools
