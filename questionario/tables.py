@@ -127,13 +127,13 @@ class QuestionarioTable(django_tables.Table):
                             """
 
         if record.getQuestionarioEstado == "pendente":
-            # segundo_botao = f"""
-            #                    <a data-tooltip="Responder" href="{reverse('questionarios:responder-questionario', args=[record.getQuestionarioID])}">
-            #                        <span class="icon">
-            #                             <i class="fas fa-reply" aria-hidden="true" style="color: #3273DC"></i>
-            #                        </span>
-            #                    </a>
-            #                """
+            segundo_botao = f"""
+                               <a data-tooltip="Responder" href="{reverse('questionarios:responder-questionario', args=[record.getQuestionarioID])}">
+                                   <span class="icon">
+                                        <i class="fas fa-reply" aria-hidden="true" style="color: #3273DC"></i>
+                                   </span>
+                               </a>
+                           """
             botao_editar = f"""
                               <a data-tooltip="editar" href="{reverse('questionarios:editar-questionario', args=[record.getQuestionarioID])}">
                                   <span class="icon">
