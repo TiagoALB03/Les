@@ -326,11 +326,11 @@
             pdf.addImage(grafico2, 'PNG', posX2, posY, larguraGrafico, alturaGrafico);
             posY += alturaGrafico + 30; // Atualizar a posiÃ§Ã£o y para o prÃ³ximo grÃ¡fico, com espaÃ§amento de 10 mm
 
-            pdf.text("Existe variedade suficiente de refeições para escolher?", posX, posY-5);
+            pdf.text("Existe variedade suficiente de refeições para escolher?", posX, posY - 5);
             pdf.addImage(grafico3, 'PNG', posX, posY, larguraGrafico, alturaGrafico);
             {#posY += alturaGrafico + 30; // Atualizar a posiÃ§Ã£o y para o prÃ³ximo grÃ¡fico, com espaÃ§amento de 10 mm#}
 
-            pdf.text("A comida está quente o suficiente?", posX2, posY-5);
+            pdf.text("A comida está quente o suficiente?", posX2, posY - 5);
             pdf.addImage(grafico4, 'PNG', posX2, posY, larguraGrafico, alturaGrafico);
 
 
@@ -344,63 +344,80 @@
 {% endblock scripts %}
 
 {% block content %}
-   <nav aria-label="breadcrumbs" class="breadcrumb">
+    <nav aria-label="breadcrumbs" class="breadcrumb">
         <ul>
             <li><a href="{% url 'home' %}">Início</a></li>
             <li class="is-active"><a href="">Dados e Estatísticas</a></li>
         </ul>
     </nav>
     <div class="field is-horizontal">
-    <div class="field-label is-normal">
-        <label class="label">Dia Aberto</label>
-    </div>
-    <div class="field-body">
-        <div class="field">
-            <p class="control">
+        <div class="field-label is-normal">
+            <label class="label">Dia Aberto</label>
+        </div>
+        <div class="field-body">
+            <div class="field">
+                <p class="control">
                 <div class="select">
                     <select value="{{ diaaberto.id }}" onchange="selectDiaAberto(this)">
                         {% for dia_aberto in diasabertos %}
-                        <option value="{{ dia_aberto.id }}" {% if diaaberto.id == dia_aberto.id %}selected{% endif %}>{{ dia_aberto }}</option>
+                            <option value="{{ dia_aberto.id }}"
+                                    {% if diaaberto.id == dia_aberto.id %}selected{% endif %}>{{ dia_aberto }}</option>
                         {% endfor %}
                     </select>
                 </div>
-            </p>
-        </div>
-        <div class="field is-grouped">
-            <p class="control">
-                <a class="button is-primary is-outlined" href="{% url 'inscricoes:exportarcsvAlmoco' diaaberto.id %}">Exportar para CSV</a>
-            </p>
-            <p class="control">
-                <button class="button is-primary is-outlined" onclick="exportarPDF()">Exportar Gráficos para PDF</button>
-            </p>
+                </p>
+            </div>
+
+            <!--<div class="field is-grouped">
+                <p class="control">
+                    <a class="button is-primary is-outlined"
+                       href="{% url 'inscricoes:exportarcsvAlmoco' diaaberto.id %}">Exportar para CSV</a>
+                </p>
+                <p class="control">
+                    <button class="button is-primary is-outlined" onclick="exportarPDF()">Exportar Gráficos para PDF
+                    </button>
+                </p>
+                -->
+            </div>
         </div>
     </div>
-</div>
     <hr>
-<h2 class="title has-text-grey is-uppercase has-text-centered" style="font-size: 0.9rem">
-            Estatistica almoços {{diaaberto.ano}}
-        </h2>
-        <div class="columns" style="margin-top: 50px">
+    <h2 class="title has-text-grey is-uppercase has-text-centered" style="font-size: 0.9rem">
+        Estatistica almoços {{ diaaberto.ano }}
+    </h2>
+    <div class="columns" style="margin-top: 50px">
 
-            <div class="column">
-                <div style="margin-left: 35%"> {{ pergunta }}</div>
-                <canvas id="respostasGostasteDiaAbertoGrafico"></canvas>
-            </div>
-            <div class="column">
-                <div style="margin-left: 35%"> {{ pergunta2 }}</div>
-                <canvas id="respostaGostasteAtendimento"></canvas>
-            </div>
+        <div class="column">
+            <div style="margin-left: 35%"> {{ pergunta }}</div>
+            <canvas id="respostasGostasteDiaAbertoGrafico"></canvas>
         </div>
-        <div class="columns" style="margin-top: 50px">
-            <div class="column">
-                <div style="margin-left: 35%"> {{ pergunta3 }}</div>
-                <canvas id="respostaVariedade"></canvas>
-            </div>
-            <div class="column">
-                <div style="margin-left: 35%"> {{ pergunta4 }}</div>
-                <canvas id="respostaQuente"></canvas>
-            </div>
+        <div class="column">
+            <div style="margin-left: 35%"> {{ pergunta2 }}</div>
+            <canvas id="respostaGostasteAtendimento"></canvas>
         </div>
-        <hr>
-</div>
+    </div>
+    <div class="columns" style="margin-top: 50px">
+        <div class="column">
+            <div style="margin-left: 35%"> {{ pergunta3 }}</div>
+            <canvas id="respostaVariedade"></canvas>
+        </div>
+        <div class="column">
+            <div style="margin-left: 35%"> {{ pergunta4 }}</div>
+            <canvas id="respostaQuente"></canvas>
+        </div>
+    </div>
+    <button style="margin-left:4.5%" type="button" id="obterPdfButton" class="button is-danger" onclick="exportarPDF()">
+        <span class="icon is-small"><i class="mdi mdi-download"></i></span>
+        <span> Exportar Gráficos para PDF </span>
+    </button>
+    <a  href="{% url 'inscricoes:exportarcsvAlmoco' diaaberto.id %}" class="button is-primary"
+       style="background-color: #22911A;" id="obterPdfButton">
+                <span class="icon">
+                    <i class="fas fa-file-excel"></i>
+                </span>
+        <span>Exportar Gráficos para CSV</span>
+    </a>
+    <hr>
+
+    </div>
 {% endblock content %}
