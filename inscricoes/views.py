@@ -801,90 +801,132 @@ def consultar_presencas(request, pk):
 
 class EditarInscricaoUltimaHoraListView(ListView):
     model = Inscricao
-    template_name = "inscricoes/editar_inscricao_ultima_hora_list.html"
+    template_name = "inscricoes/editar_inscricao_ultima_hora_list2.html"
     context_object_name = 'inscricoes'
 
     def get_queryset(self):
         return Inscricao.objects.all()
 
 
-class EditarInscricaoUltimaHoraWizardView(View):
-    template_name = "inscricoes/inscricao_UH_wizard.html"
-    step_names = [
-        'responsaveis',
-        'almoco',
-        'sessoes',
-        'submissao'
+class EditarInscricaoUltimaHoraWizardView(SessionWizardView):
+    """ View that generates the form with steps to edit an existing inscription """
+    form_list = [
+        ('info', InfoForm),
+        ('responsaveis', ResponsavelForm),
+        ('escola', InscricaoForm),
+        ('almoco', AlmocoForm),
+        ('sessoes', SessoesForm),
     ]
 
-    def get(self, request, pk, step=0, alterar=False):
-        inscricao = get_object_or_404(Inscricao, pk=pk)
-        erro_permissoes = nao_tem_permissoes(request, inscricao)
-        if erro_permissoes:
-            return erro_permissoes
-        if user_check(request, [Participante])['exists'] and datetime.now(
-                pytz.UTC) > inscricao.diaaberto.datainscricaoatividadesfim:
-            m = f"Não pode alterar a inscrição fora do período: {inscricao.diaaberto.datainscricaoatividadesinicio.strftime('%d/%m/%Y')} até {inscricao.diaaberto.datainscricaoatividadesfim.strftime('%d/%m/%Y')}"
-            return render(request=request, template_name="mensagem.html",
-                          context={'m': m, 'tipo': 'error', 'continuar': 'on'})
-
-        form = InscricaoUltimaHoraForm(request.POST or None, instance=inscricao)
-
-        inscricoes = Inscricao.objects.all()
-        table = InscricoesTable(inscricoes)
-        RequestConfig(request).configure(table)
-
-        context = {
-            'alterar': alterar,
-            'pk': pk,
-            'step': step,
-            'individual': inscricao.individual,
-            'form': form,
-            'inscricao': inscricao,
-            'table': table,
-        }
-        update_context(context, self.step_names[step], inscricao=inscricao)
-        return render(request, self.template_name, context)
-
-    def post(self, request, pk, step=0, alterar=False):
-        inscricao = get_object_or_404(Inscricao, pk=pk)
-        erro_permissoes = nao_tem_permissoes(request, inscricao)
-        if erro_permissoes:
-            return erro_permissoes
-        context = {}
-        if alterar:
-            if request.user.groups.filter(name="Participante").exists() and datetime.now(
-                    pytz.UTC) > inscricao.diaaberto.datainscricaoatividadesfim:
-                m = f"Não pode alterar a inscrição fora do período: {inscricao.diaaberto.datainscricaoatividadesinicio.strftime('%d/%m/%Y')} até {inscricao.diaaberto.datainscricaoatividadesfim.strftime('%d/%m/%Y')}"
+    def dispatch(self, request, *args, **kwargs):
+        _user_check = user_check(request, [Administrador])
+        if _user_check['exists']:
+            diaaberto = Diaaberto.current()
+            if diaaberto is None:
+                return redirect('utilizadores:mensagem', 12)
+            if datetime.now(pytz.UTC) < diaaberto.datainscricaoatividadesinicio or datetime.now(
+                    pytz.UTC) > diaaberto.datainscricaoatividadesfim:
+                m = f"Período de abertura das inscrições: {diaaberto.datainscricaoatividadesinicio.strftime('%d/%m/%Y')} até {diaaberto.datainscricaoatividadesfim.strftime('%d/%m/%Y')}"
                 return render(request=request, template_name="mensagem.html",
                               context={'m': m, 'tipo': 'error', 'continuar': 'on'})
-            update_post(self.step_names[step], request.POST, inscricao=inscricao)
 
-            form = InscricaoUltimaHoraForm(request.POST, instance=inscricao)
+            inscricao_id = kwargs.get('inscricao_id', None)
+            if not inscricao_id:
+                return HttpResponse("Inscrição ID is missing.", status=400)
 
-            inscricoessessao = inscricao.inscricaosessao_set.all()
-            if self.step_names[step] == 'sessoes':
-                for inscricao_sessao in inscricoessessao:
-                    add_vagas_sessao(inscricao_sessao.sessao.id, inscricao_sessao.nparticipantes)
-            if form.is_valid():
-                save_form(request, self.step_names[step], form, inscricao)
-                return HttpResponseRedirect(reverse('inscricoes:editar_inscricao_ultima_hora', kwargs={'pk': pk, 'step': step}))
-            if self.step_names[step] == 'sessoes':
-                for inscricao_sessao in inscricoessessao:
-                    add_vagas_sessao(inscricao_sessao.sessao.id, -inscricao_sessao.nparticipantes)
+            try:
+                inscricao = Inscricao.objects.get(id=inscricao_id)
+                responsaveis = Responsavel.objects.get(inscricao=inscricao)
+                almoco = Inscricaoprato.objects.get(inscricao=inscricao)
+                sessoes = Inscricaosessao.objects.filter(inscricao=inscricao)
+            except Inscricao.DoesNotExist:
+                return HttpResponse("Inscrição não existe.", status=404)
+            except Responsavel.DoesNotExist:
+                return HttpResponse("Responsável não existe.", status=404)
+            except Inscricaoprato.DoesNotExist:
+                almoco = None  # Almoço pode não existir
+            except Inscricaosessao.DoesNotExist:
+                sessoes = None  # Sessões podem não existir
+
+            self.instance_dict = {
+                'responsaveis': responsaveis,
+                'almoco': almoco,
+                'sessoes': sessoes,
+            }
+        else:
+            return _user_check['render']
+        return super(EditarInscricaoUltimaHoraWizardView, self).dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, form, **kwargs):
+        context = super().get_context_data(form=form, **kwargs)
+        update_context(context, self.steps.current, self)
+        if self.steps.current != 'info':
+            context.update({
+                'individual': self.get_cleaned_data_for_step('info')['individual']
+            })
+        visited = []
+        for step in self.form_list:
+            cleaned_data = self.get_cleaned_data_for_step(step)
+            if cleaned_data:
+                visited.append(True)
+            else:
+                visited.append(False)
         context.update({
-            'alterar': alterar,
-            'pk': pk,
-            'step': step,
-            'individual': inscricao.individual,
-            'form': form,
+            'visited': visited
+        })
+        return context
+
+    def get_template_names(self):
+        return [f'inscricoes/inscricao_UH_wizard_{self.steps.current}.html']
+
+    def post(self, request, *args, **kwargs):
+        current_step = request.POST.get('editar_inscricao-current_step', self.steps.current)
+        update_post(current_step, request.POST, self)
+        go_to_step = self.request.POST.get('wizard_goto_step', None)
+        if go_to_step is not None:
+            form = self.get_form(data=self.request.POST, files=self.request.FILES)
+
+            if self.get_cleaned_data_for_step(current_step):
+                if form.is_valid():
+                    self.storage.set_step_data(self.steps.current, self.process_step(form))
+                    self.storage.set_step_files(self.steps.current, self.process_step_files(form))
+                else:
+                    return self.render(form)
+        return super(EditarInscricaoUltimaHoraWizardView, self).post(request, *args, **kwargs)
+
+    def done(self, form_list, form_dict, **kwargs):
+        inscricao_id = self.kwargs.get('inscricao_id', None)
+        if not inscricao_id:
+            return HttpResponse("Inscrição ID is missing.", status=400)
+
+        try:
+            inscricao = Inscricao.objects.get(id=inscricao_id)
+        except Inscricao.DoesNotExist:
+            return HttpResponse("Inscrição não existe.", status=404)
+
+        responsaveis = form_dict['responsaveis'].save(commit=False)
+        almoco = form_dict['almoco'].save(commit=False)
+        sessoes = form_dict['sessoes'].cleaned_data['sessoes']
+
+        responsaveis.inscricao = inscricao
+        responsaveis.save()
+        if almoco is not None:
+            almoco.inscricao = inscricao
+            almoco.save()
+        for sessaoid in sessoes:
+            if sessoes[sessaoid] > 0:
+                inscricao_sessao, created = Inscricaosessao.objects.get_or_create(
+                    inscricao=inscricao, sessao_id=sessaoid,
+                    defaults={'nparticipantes': sessoes[sessaoid]}
+                )
+                if not created:
+                    inscricao_sessao.nparticipantes = sessoes[sessaoid]
+                    inscricao_sessao.save()
+                add_vagas_sessao(sessaoid, -sessoes[sessaoid])
+        enviar_mail_confirmacao_inscricao(self.request, inscricao.pk)
+        return render(self.request, 'inscricoes/consultar_inscricaoDia_submissao.html', {
             'inscricao': inscricao,
         })
-        update_context(context, self.step_names[step], inscricao=inscricao)
-        return render(request, self.template_name, context)
-
-
-
 
 
 class CriarUltimaHoraDia(SessionWizardView):

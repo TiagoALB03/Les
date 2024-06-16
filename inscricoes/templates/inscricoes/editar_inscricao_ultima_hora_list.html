@@ -2,8 +2,6 @@
 
 {% block content %}
     <h1 style="display:none;">Lista de Inscrições de Última Hora</h1> <!-- Escondendo o título para centralizar o botão -->
-    <!-- Elemento escondido para armazenar o ID da primeira inscrição -->
-    <div id="first-inscription-id" style="display:none;">{{ inscricoes.first.id }}</div>
     <div class="section is-flex is-justify-content-center is-align-items-center" style="height: 100vh;">
         <a id="edit-button" href="#" class="button is-large is-info">Editar inscrição há última hora</a>
     </div>
@@ -12,9 +10,13 @@
 {% block scripts %}
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        var firstInscriptionId = document.getElementById("first-inscription-id").innerText;
         var editButton = document.getElementById("edit-button");
-        editButton.href = "{% url 'inscricoes:editar_inscricao_ultima_hora_detail' 0 %}".replace("0", firstInscriptionId);
+        // Adiciona um evento de clique ao botão
+        editButton.addEventListener("click", function(event) {
+            event.preventDefault();
+            // Redireciona para a URL sem o ID
+            window.location.href = "{% url 'inscricoes:editar_inscricao_ultima_hora_list' %}";
+        });
     });
 </script>
 {% endblock %}

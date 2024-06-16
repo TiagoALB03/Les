@@ -54,7 +54,7 @@ urlpatterns = [
          name='consultar-presencas'),
     path('editar_inscricao_ultima_hora/', EditarInscricaoUltimaHoraListView.as_view(),
          name='editar_inscricao_ultima_hora_list'),
-    path('editar_inscricao_ultima_hora/<int:pk>/', EditarInscricaoUltimaHoraWizardView.as_view(),
+    path('editar_inscricao_ultima_hora/<int:inscricao_id>/', EditarInscricaoUltimaHoraWizardView.as_view(),
          name='editar_inscricao_ultima_hora_detail'),
 
 ]
