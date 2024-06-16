@@ -58,13 +58,12 @@
                     Roteiros
                 </a>
 
-
             {% elif request.user|has_group:'Administrador' %}
-                {% if datetime.now|date:"d/m/Y" == "16/03/2000" %}
+
                     <a href="{% url 'inscricoes:inscricao_escolha' %}" class="navbar-item">
                         Inscrições última hora
                     </a>
-                {% endif %}
+
                 <a href="{% url 'inscricoes:editar_inscricao_ultima_hora_list' %}" class="navbar-item">
                     Editar Inscrições Última Hora
                 </a>
